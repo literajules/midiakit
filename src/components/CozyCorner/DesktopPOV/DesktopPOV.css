@@ -1,0 +1,237 @@
+/* ——— Janela do desktop: ocupa a tela INTEIRA (viewport 100%), sem moldura,
+   cantos ou fundo desfocado ao redor — é a visão em primeira pessoa da
+   tela do laptop, não um cartão flutuando por cima da cena. ——— */
+.desktop-pov__dialog {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #0d1424; /* evita flash claro antes da imagem carregar */
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.desktop-pov__frame {
+  --desktop-pov-menubar-h: 30px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* ——— Barra de menu (visual MacBook/macOS) — só decorativa. ——— */
+.desktop-pov__menubar {
+  flex: none;
+  height: var(--desktop-pov-menubar-h);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 16px;
+  background: #141518;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.86);
+  font: 0.78rem -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.desktop-pov__menubar-apple {
+  display: flex;
+  line-height: 1;
+  opacity: 0.95;
+}
+
+.desktop-pov__menubar-app {
+  font-weight: 700;
+  margin-right: 2px;
+}
+
+.desktop-pov__menubar-item {
+  opacity: 0.8;
+}
+
+.desktop-pov__menubar-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.86);
+  opacity: 0.9;
+}
+
+.desktop-pov__menubar-clock {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* ——— Palco: wallpaper cobrindo de ponta a ponta (sem borda nenhuma), com
+   as pastas, as janelas e a dock por cima. A foto (1672×941, ≈16:9) é bem
+   próxima da proporção da maioria das telas, então o corte do "cover" é
+   mínimo; `object-position` sobe um pouco o foco (42% em vez de 50%) pra
+   proteger a montanha + a frase por cima dela, sacrificando primeiro o
+   reflexo do lago embaixo (a área menos essencial da composição) — nunca
+   o oposto. ——— */
+.desktop-pov__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #0d1424;
+}
+
+.desktop-pov__bg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  user-select: none;
+}
+
+/* ——— Pastas do desktop: canto superior direito, em coluna. ——— */
+.desktop-pov__folders {
+  position: absolute;
+  top: clamp(16px, 3vh, 32px);
+  right: clamp(16px, 3vw, 40px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ——— Logos de marca: canto superior ESQUERDO, espelhando as pastas (ver
+   brandLogos.ts). O ícone é um "tile" branco arredondado (padrão macOS de
+   ícone de app/atalho — mesma lógica de tile da Dock, ver Dock.css), não
+   o logo flutuando sozinho: assim qualquer logo (fundo colorido, retangular,
+   sem transparência) fica com um recorte consistente. ——— */
+.desktop-pov__brands {
+  position: absolute;
+  top: clamp(16px, 3vh, 32px);
+  left: clamp(16px, 3vw, 40px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.desktop-pov__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 78px;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.18s ease;
+}
+
+.desktop-pov__brand:hover,
+.desktop-pov__brand:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.desktop-pov__brand:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.desktop-pov__brand-logo {
+  display: block;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: #fff;
+  object-fit: cover;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.desktop-pov__brand-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+.desktop-pov__folder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 78px;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.18s ease;
+}
+
+.desktop-pov__folder:hover,
+.desktop-pov__folder:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.desktop-pov__folder:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.desktop-pov__folder-label {
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+/* O "×" genérico do SceneModal fica por cima da barra de menu com o
+   posicionamento padrão (top:14px) — desce pra ficar abaixo dela. */
+.desktop-pov__dialog .scene-modal__close {
+  top: calc(var(--desktop-pov-menubar-h, 30px) + 12px);
+}
+
+.desktop-pov__soon {
+  position: absolute;
+  left: 50%;
+  bottom: 96px;
+  z-index: 7;
+  translate: -50% 10px;
+  margin: 0;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: rgba(13, 10, 6, 0.85);
+  color: var(--off-white);
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    translate 0.25s ease;
+}
+
+.desktop-pov__soon.is-on {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-pov__soon {
+    transition: none;
+  }
+}

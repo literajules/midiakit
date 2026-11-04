@@ -1,0 +1,11 @@
+/* O recibo já tem a própria "cara" de papel (ver Receipt.css) — aqui só
+   removemos o cartão branco padrão do SceneModal pra ele flutuar sozinho
+   sobre o fundo desfocado, igual à referência visual. */
+.book-receipt-modal {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  overflow: visible;
+  max-height: none;
+  width: min(340px, 100%);
+}

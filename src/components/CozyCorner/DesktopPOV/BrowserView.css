@@ -1,0 +1,145 @@
+/* tamanho um pouco maior que o padrão de DesktopWindow — acomoda melhor os
+   prints de perfil (ver .browser-view__screenshot). Mesma especificidade
+   que .desktop-window (uma classe só) — como este arquivo é importado
+   depois de DesktopWindow.css, estas regras vencem. */
+.browser-view {
+  width: min(640px, 90%);
+  height: min(680px, 82%);
+}
+
+.browser-view__tabs {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.browser-view__tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.browser-view__tab {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #555;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.browser-view__tab.is-active {
+  background: #fff;
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+}
+
+.browser-view__tab:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.browser-view__tab-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.browser-view__tab-label {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ——— Barra de endereço: cadeado + link real (abre o perfil de verdade
+   numa aba nova do navegador de verdade, ao clicar). ——— */
+.browser-view__addressbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #f4f4f7;
+  border-bottom: 1px solid #e4e4ea;
+}
+
+.browser-view__lock {
+  flex: none;
+  color: #8a8a92;
+}
+
+.browser-view__url {
+  color: #555;
+  font-size: 0.76rem;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* ——— Conteúdo da aba ativa: print do perfil + botão fixo pra abrir o
+   perfil real. A barra de título e a barra de endereço ficam fixas; só a
+   área do print rola (nunca a janela toda). ——— */
+.browser-view__page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.browser-view__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: #fff;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+
+.browser-view__screenshot {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+/* ——— Botão fixo: único jeito de ir pro perfil real (nova aba) ——— */
+.browser-view__cta {
+  flex: none;
+  display: block;
+  padding: 11px 16px;
+  border-top: 1px solid #e4e4ea;
+  background: var(--burgundy);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.86rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.browser-view__cta:hover {
+  filter: brightness(1.1);
+}
+
+.browser-view__cta:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: -3px;
+}

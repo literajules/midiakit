@@ -1,0 +1,90 @@
+/* Vão de parede entre a planta e a porta — não encosta no mural (que
+   começa em 84.64%) nem na planta (que termina em 71.29%). */
+.door-invite {
+  position: absolute;
+  left: 72.2%;
+  top: 9%;
+  width: 11.5%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  color: var(--ink);
+  text-align: left;
+}
+
+.door-invite.is-visible {
+  opacity: 1;
+}
+
+.door-invite__line {
+  margin: 0;
+  font-family: var(--font-script), "Segoe Script", "Brush Script MT", cursive;
+  font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+  line-height: 1.2;
+  color: var(--burgundy);
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.65), 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.door-invite__caret {
+  display: inline-block;
+  width: 1px;
+  height: 0.9em;
+  margin-left: 1px;
+  background: currentColor;
+  opacity: 0.6;
+  vertical-align: -0.1em;
+  animation: door-invite-blink 0.9s step-end infinite;
+}
+
+.door-invite.is-visible .door-invite__caret {
+  animation-play-state: running;
+}
+
+.door-invite--frozen .door-invite__caret {
+  animation-play-state: paused;
+}
+
+@keyframes door-invite-blink {
+  0%,
+  50% {
+    opacity: 0.6;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.door-invite__arrow {
+  display: block;
+  margin-top: 4px;
+  color: var(--burgundy);
+  opacity: 0.65;
+  filter: drop-shadow(0 1px 4px rgba(255, 255, 255, 0.5));
+}
+
+/* ——— versão noite: a parede fica escura (ver bg-03/04-noite-*.png), então
+   o texto/seta em vinho (pensados pra parede clara) ficam baixo contraste.
+   Troca pra branco, com um halo ESCURO em vez de claro (o halo claro era
+   pra "descolar" do fundo claro — aqui o fundo já é escuro, quem precisa
+   de reforço é o branco contra pedaços mais claros da própria porta). ——— */
+.door-invite--night .door-invite__line,
+.door-invite--night .door-invite__arrow {
+  color: var(--off-white);
+}
+
+.door-invite--night .door-invite__line {
+  text-shadow: 0 1px 8px rgba(20, 14, 10, 0.55), 0 1px 3px rgba(20, 14, 10, 0.6);
+}
+
+.door-invite--night .door-invite__arrow {
+  filter: drop-shadow(0 1px 4px rgba(20, 14, 10, 0.55));
+}
+
+/* Touch (sem hover): alternativa de acesso — fica sempre visível, bem
+   discreta, em vez de depender de um estado de hover que não existe. */
+@media (hover: none) {
+  .door-invite {
+    opacity: 0.55;
+  }
+}

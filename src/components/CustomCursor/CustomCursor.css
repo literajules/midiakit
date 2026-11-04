@@ -1,0 +1,55 @@
+/* Wrapper: só posição (translate3d via JS, ver CustomCursor.tsx). Sem
+   largura/altura própria — quem desenha é o `__img` de dentro, que pode
+   ter tamanho/âncora diferentes no estado padrão vs. hover sem precisar
+   recalcular a posição do mouse. */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Some até o primeiro movimento do mouse (evita aparecer encostado no
+   canto 0,0 antes do primeiro `pointermove`). */
+.custom-cursor__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 34px;
+  background-image: url("/images/cursor/cursor-default.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: top left;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.custom-cursor.is-visible .custom-cursor__img {
+  opacity: 1;
+}
+
+/* Setinha padrão: ponta encostada no canto superior-esquerdo, igual a um
+   cursor de sistema — por isso nenhum deslocamento extra aqui. */
+
+/* Gatinho espantado (hover sobre qualquer coisa clicável): ícone maior,
+   recentralizado por cima da posição real do mouse (em vez de crescer
+   só pra baixo-direita, o que pareceria "errado" / deslocado). */
+.custom-cursor__img.is-hover {
+  width: 38px;
+  height: 45px;
+  background-image: url("/images/cursor/cursor-hover.png");
+  transform: translate(-19px, -22px);
+}
+
+/* Sem suporte a mouse fino (touch) ou com movimento reduzido, o
+   componente nem monta (ver CustomCursor.tsx) — esta classe só existe
+   enquanto ele está realmente ativo. */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
+}

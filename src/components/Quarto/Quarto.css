@@ -1,0 +1,272 @@
+/* Elementos extra desenhados dentro do quadro da cena (ver RoomScene
+   `children`) — mesma lógica de posicionamento em % dos hotspots. */
+
+/* ——— camadas de fundo (crossfade entre as 4 fotos reais) ———
+   empilhadas exatamente por cima da foto base (RoomScene `imageSrc`);
+   cada uma aparece/some por opacidade conforme o estado em Quarto.tsx. */
+.quarto-bg-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  /* bem rápido de propósito: as 4 fotos têm luz/sombra levemente diferentes
+     entre si (cada uma é uma geração separada), então um crossfade longo
+     deixa essa diferença visível por cima dos objetos (dava a impressão de
+     um "sombreamento" passando). Rápido assim fica praticamente instantâneo
+     pra quem tá vendo, sem esse efeito indesejado. */
+  transition: opacity 0.12s linear;
+}
+
+/* ——— balanço ambiente: recortes da própria foto, sempre em movimento ———
+   left/top/width/height vêm fixos por elemento (não são centrados como os
+   hotspots) — são o recorte exato de onde aquele objeto está na foto. */
+.quarto-sway {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+/* planta do vaso: balança a partir da base (ela "cresce" do chão) */
+.quarto-sway--planta-porta {
+  transform-origin: 50% 98%;
+  animation: quarto-sway-b 6s ease-in-out infinite 0.8s;
+}
+
+/* rabo do relógio: pêndulo de verdade, bem mais perceptível que o das
+   plantas — balança a partir de onde encosta no corpo do relógio */
+.quarto-sway--relogio-rabo {
+  transform-origin: 50% 6%;
+  animation: quarto-sway-pendulum 2.6s ease-in-out infinite;
+}
+
+@keyframes quarto-sway-b {
+  0%,
+  100% {
+    transform: rotate(-1.6deg);
+  }
+  50% {
+    transform: rotate(1.6deg);
+  }
+}
+
+@keyframes quarto-sway-pendulum {
+  0%,
+  100% {
+    transform: rotate(-11deg);
+  }
+  50% {
+    transform: rotate(11deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quarto-sway {
+    animation: none;
+  }
+}
+
+/* com qualquer pop-up do quarto aberto (`.quarto-decor.is-frozen`, ver
+   Quarto.tsx `anyModalOpen`), pausa TODO balanço/giro contínuo — o fundo
+   fica completamente fixo atrás do véu, não só sem pular de posição
+   (isso já vem de `scrollbar-gutter: stable` em globals.css). Usa
+   `animation-play-state`, não `animation: none`, pra retomar exatamente
+   de onde parou quando o pop-up fecha, em vez de reiniciar do zero. */
+.quarto-decor.is-frozen .quarto-sway,
+.quarto-decor.is-frozen .quarto-disc-shine.is-on,
+.quarto-decor.is-frozen .quarto-turntable-fx .quarto-note {
+  animation-play-state: paused;
+}
+
+/* ——— toca-discos: notas musicais subindo no hover ——— */
+.quarto-turntable-fx {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.quarto-note {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: var(--off-white);
+  text-shadow: 0 1px 3px rgba(28, 20, 13, 0.55);
+  font-size: 1.1rem;
+  opacity: 0;
+  transform: translate(-50%, 0) scale(0.6);
+}
+
+.quarto-turntable-fx.is-on .quarto-note--1 {
+  animation: quarto-note-float 1.6s ease-out infinite;
+}
+.quarto-turntable-fx.is-on .quarto-note--2 {
+  animation: quarto-note-float 1.6s ease-out 0.35s infinite;
+  left: 14px;
+}
+.quarto-turntable-fx.is-on .quarto-note--3 {
+  animation: quarto-note-float 1.6s ease-out 0.7s infinite;
+  left: -12px;
+}
+
+@keyframes quarto-note-float {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.5) rotate(-6deg);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -46px) scale(1) rotate(10deg);
+  }
+}
+
+/* ——— toca-discos: disco (fixo, nunca rotaciona — ver nota no Quarto.tsx)
+   com brilho girando por dentro do recorte elíptico ——— */
+.quarto-disc {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 50%; /* com largura ≠ altura, isso desenha uma elipse */
+  pointer-events: none;
+}
+
+.quarto-disc img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.quarto-disc-shine {
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.4) 18deg,
+    transparent 45deg,
+    transparent 180deg,
+    rgba(255, 255, 255, 0.22) 205deg,
+    transparent 235deg,
+    transparent 360deg
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.quarto-disc-shine.is-on {
+  opacity: 1;
+  animation: quarto-disc-spin 1.3s linear infinite;
+}
+
+@keyframes quarto-disc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* braço/agulha: rotação curta e mecânica a partir do pivô (lado que encosta
+   no corpo do toca-discos) */
+.quarto-arm {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: 88% 30%;
+}
+
+.quarto-arm.is-playing {
+  animation: quarto-arm-settle 0.9s ease-out 1;
+}
+
+@keyframes quarto-arm-settle {
+  0% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(-3.2deg);
+  }
+  70% {
+    transform: rotate(1deg);
+  }
+  100% {
+    transform: rotate(-0.6deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quarto-disc-shine.is-on,
+  .quarto-arm.is-playing {
+    animation: none;
+  }
+}
+
+/* ——— tratamento de imagem: brilho das luminárias + vinheta ———
+   o grain já é global (globals.css `--grain`, aplicado em toda a página). */
+.quarto-light-glow {
+  position: absolute;
+  width: 18%;
+  height: 22%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 196, 110, 0.4), rgba(255, 196, 110, 0) 70%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.quarto-light-glow--lustre {
+  width: 24%;
+  height: 26%;
+}
+
+/* à noite, o lustre fica mais aceso/amarelado que de dia (a pedido) — mas
+   o quarto continua escuro: o alcance do gradiente não aumenta (acaba na
+   mesma % de antes, só o centro fica mais intenso/saturado), então é só
+   um brilho difuso iluminando de perto o próprio lustre, não uma luz
+   "inundando" o quarto. O resto do escurecimento continua por conta da
+   foto noturna de base + `.quarto-vignette`, nenhum dos dois muda aqui. */
+.quarto-light-glow--lustre.is-night {
+  background: radial-gradient(circle, rgba(255, 191, 92, 0.85) 0%, rgba(255, 170, 60, 0.4) 45%, rgba(255, 170, 60, 0) 68%);
+}
+
+.quarto-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(20, 14, 10, 0.22) 100%);
+}
+
+/* ——— mural: pista de "isso é clicável" só no hover, sem mover o fundo
+   nem duplicar a foto ———
+   Duas tentativas anteriores (ver histórico) sobrepuseram uma cópia dos
+   papéis por cima da foto (uma com transform, outra só com filtro) pra
+   simular "levantar"/brilhar — as duas mostraram costura/duplicação,
+   porque o recorte usado (`sway-mural-papers-*.png`) não é um crop
+   pixel-a-pixel do original (é uma geração separada, com texto e fotos
+   ligeiramente diferentes de posição/escala). Esta versão não usa esse
+   recorte: é só um brilho quente, abstrato, por cima da área do mural —
+   sem nenhum conteúdo de foto por baixo, então não tem como desalinhar. */
+.quarto-mural-glow {
+  position: absolute;
+  border-radius: 10px;
+  pointer-events: none; /* o clique continua só no Hotspot (RoomScene/Hotspot.tsx) */
+  background: radial-gradient(ellipse at 50% 42%, rgba(255, 238, 205, 0.55), rgba(255, 238, 205, 0) 72%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.quarto-mural-glow.is-on {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quarto-mural-glow {
+    transition: opacity 0.2s ease;
+  }
+}
+
+/* ——— porta: seta + convite, ver DoorInvite.css ——— */

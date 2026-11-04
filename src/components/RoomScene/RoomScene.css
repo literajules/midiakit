@@ -1,0 +1,239 @@
+/* ——— Cena genérica (quarto, cozy corner, ...) ———
+   Seção com 2 telas de altura: a primeira é a entrada (fundo sobre fundo,
+   sem borda visível), a segunda é o fade + o assentamento, com o "pin"
+   (sticky) segurando a foto na tela. Generalizado a partir de
+   literajules-site/CafeScene.css. */
+.room-scene {
+  position: relative;
+  height: 200vh;
+  height: 200svh;
+  background: var(--room-scene-bg, var(--cream));
+}
+
+/* Primeira cena do site: nada antes dela pra "revelar" via scroll — ocupa
+   só a própria tela, já visível e interativa desde o primeiro frame. */
+.room-scene--static {
+  height: 100vh;
+  height: 100svh;
+}
+
+.room-scene--static .room-scene__pin {
+  position: relative;
+}
+
+.room-scene__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.room-scene__stage {
+  position: absolute;
+  inset: 0;
+  will-change: opacity;
+}
+
+.room-scene__camera {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 75%;
+  will-change: transform;
+}
+
+/* Rolagem horizontal só no modo "pan" (celular / tablet em pé) */
+.room-scene__scroller {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.room-scene__scroller.is-pan {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.room-scene__scroller.is-pan::-webkit-scrollbar {
+  display: none;
+}
+
+.room-scene__scroller:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: -4px;
+}
+
+.room-scene__track {
+  position: relative;
+  height: 100%;
+}
+
+/* O quadro tem SEMPRE a proporção da foto; tamanho/posição vêm do layout.ts.
+   Hotspots e conteúdo extra são filhos dele, então as porcentagens batem
+   com a imagem. */
+.room-scene__frame {
+  position: absolute;
+}
+
+.room-scene__img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.room-scene__hotspots {
+  position: absolute;
+  inset: 0;
+}
+
+/* Dica de deslize (só no modo pan, some após o primeiro gesto) */
+.room-scene__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  translate: -50% 0;
+  z-index: 3;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--off-white);
+  text-shadow: 0 1px 8px rgba(28, 20, 13, 0.7);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.room-scene__hint.is-hidden {
+  opacity: 0;
+}
+
+/* ——— Modo de teste dos hotspots (nunca aparece na versão pública) ——— */
+.room-scene__badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(28, 20, 13, 0.82);
+  color: var(--pink);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* ——— Hotspot (componente reutilizável) ———
+   O botão em si cobre toda a área clicável (`def.w`/`def.h`, mín. 44px) mas
+   fica sempre invisível — sem quadrado, sem halo. A única marca visual é o
+   "+" centralizado (`.hotspot__pin`/`__plus`), do mesmo tamanho em qualquer
+   objeto, com o nome do objeto aparecendo num tooltip só no hover/foco. */
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hotspot:focus-visible {
+  outline: none;
+}
+
+.hotspot__pin {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.hotspot__plus {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(247, 244, 238, 0.92);
+  color: var(--burgundy);
+  box-shadow:
+    0 3px 9px -4px rgba(28, 20, 13, 0.45),
+    0 0 0 1px rgba(28, 20, 13, 0.08);
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.hotspot:hover .hotspot__plus,
+.hotspot:focus-visible .hotspot__plus {
+  transform: scale(1.12);
+  background: #fff;
+}
+
+.hotspot:focus-visible .hotspot__plus {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+/* confirmação rápida de clique (sem quadrado — só um "ping" saindo do
+   próprio pino), vale em qualquer ambiente, não só no modo de teste */
+.hotspot.is-active .hotspot__plus {
+  animation: hotspot-ping 0.7s ease-out;
+}
+
+/* nome do objeto — pílula escura acima do pino, só aparece no hover/foco */
+.hotspot__tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  translate: -50% 4px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(28, 20, 13, 0.88);
+  color: var(--off-white);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    translate 0.2s ease;
+}
+
+.hotspot:hover .hotspot__tooltip,
+.hotspot:focus-visible .hotspot__tooltip {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hotspot:hover .hotspot__plus,
+  .hotspot:focus-visible .hotspot__plus {
+    transform: none;
+  }
+
+  .hotspot.is-active .hotspot__plus {
+    animation: none;
+  }
+}
+
+@keyframes hotspot-ping {
+  0% {
+    box-shadow: 0 0 0 0 rgba(232, 174, 187, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 16px rgba(232, 174, 187, 0);
+  }
+}

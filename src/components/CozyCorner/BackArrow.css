@@ -1,0 +1,69 @@
+/* Controle de navegação fixo (não faz parte da foto/quadro da cena, por
+   isso vive fora do `room-scene__camera` — não escala/pan com a cena). */
+.back-arrow {
+  position: fixed;
+  left: 18px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 14px 10px 10px;
+  border: 1px solid rgba(28, 20, 13, 0.12);
+  border-radius: 999px;
+  background: rgba(247, 244, 238, 0.88);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--burgundy);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 6px 18px -8px rgba(28, 20, 13, 0.3);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.back-arrow:hover,
+.back-arrow:focus-visible {
+  transform: translate(2px, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 22px -8px rgba(28, 20, 13, 0.38);
+}
+
+.back-arrow:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.back-arrow__icon {
+  display: block;
+  flex: none;
+}
+
+.back-arrow__label {
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .back-arrow {
+    left: 10px;
+    padding: 8px 10px 8px 8px;
+  }
+
+  .back-arrow__label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-arrow:hover,
+  .back-arrow:focus-visible {
+    transform: translate(0, -50%);
+  }
+}

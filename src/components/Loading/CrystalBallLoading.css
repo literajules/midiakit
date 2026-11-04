@@ -1,0 +1,331 @@
+/* ——— Overlay de tela cheia por cima do resto do site (o quarto já está
+   montado e visível por baixo desde sempre — sem scroll nenhum pra
+   "revelar"). `z-index: 100` garante que ela cobre o QuickNav (40) e o
+   SoundToggle (30), que são `position: fixed` e senão apareceriam
+   flutuando por cima dela. Desaparece sozinha: clarão (`.is-leaving`) →
+   esmaece por completo (`.is-hiding`, transição de opacidade) → desmonta
+   (`CrystalBallLoading.tsx` retorna `null` quando `gone`). ——— */
+.crystal-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: radial-gradient(ellipse at 50% 38%, #7a2222 0%, var(--burgundy) 48%, #140d08 100%);
+  background-size: 140% 140%;
+  background-position: 50% 50%;
+  animation: crystal-bg-drift 14s ease-in-out infinite;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.crystal-loading.is-hiding {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes crystal-bg-drift {
+  0%,
+  100% {
+    background-position: 48% 46%;
+  }
+  50% {
+    background-position: 52% 54%;
+  }
+}
+
+/* ——— céu de estrelinhas ——— */
+.crystal-loading__stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.crystal-loading__star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--off-white);
+  opacity: 0;
+  box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.6);
+}
+
+/* só "acende" (começa a piscar) depois que o progresso passa do limiar
+   daquela estrela (ver STARS em CrystalBallLoading.tsx) — antes disso,
+   fica na opacidade 0 ali de cima, invisível. */
+.crystal-loading__star.is-on {
+  animation: crystal-twinkle 3.4s ease-in-out infinite;
+}
+
+@keyframes crystal-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  45% {
+    opacity: 0.9;
+    transform: scale(1.15);
+  }
+}
+
+.crystal-loading__brand-wrap {
+  position: relative;
+  z-index: 1;
+  width: clamp(180px, 40vw, 280px);
+}
+
+.crystal-loading__brand {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.95;
+  animation: crystal-brand-write 1.5s cubic-bezier(0.3, 0.1, 0.3, 1) 0.15s both;
+}
+
+/* ——— "escrito à mão": clip-path com borda inclinada (não uma linha reta
+   de "cortina abrindo") avançando da esquerda pra direita, com uma breve
+   pausa no meio — a pena "levanta" entre "Litera" e "Jules" em vez de
+   escrever tudo de um fôlego só. A arte (wordmark.png) não muda, só o que
+   dela fica visível a cada instante. ——— */
+@keyframes crystal-brand-write {
+  0% {
+    clip-path: polygon(0 0, 3% 0, -3% 100%, 0 100%);
+  }
+  22% {
+    clip-path: polygon(0 0, 25% 0, 19% 100%, 0 100%);
+  }
+  40%,
+  46% {
+    clip-path: polygon(0 0, 37% 0, 31% 100%, 0 100%);
+  }
+  68% {
+    clip-path: polygon(0 0, 63% 0, 57% 100%, 0 100%);
+  }
+  86% {
+    clip-path: polygon(0 0, 88% 0, 82% 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 106% 0, 100% 100%, 0 100%);
+  }
+}
+
+/* ponta da "pena": um traço vertical bem fino e brilhante, acompanhando a
+   mesma linha do tempo da borda do clip-path acima (mesmos pontos de
+   pausa), sumindo quando a "escrita" termina. */
+.crystal-loading__brand-pen {
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: 0%;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.95) 45%, rgba(255, 255, 255, 0.95) 55%, transparent);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.75));
+  opacity: 0;
+  animation: crystal-pen-move 1.5s cubic-bezier(0.3, 0.1, 0.3, 1) 0.15s both;
+}
+
+@keyframes crystal-pen-move {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.9;
+  }
+  22% {
+    left: 22%;
+  }
+  40%,
+  46% {
+    left: 34%;
+  }
+  68% {
+    left: 63%;
+  }
+  86% {
+    left: 88%;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.crystal-loading__orb {
+  position: relative;
+  z-index: 1;
+  width: clamp(130px, 26vw, 200px);
+  height: clamp(158px, 32vw, 244px);
+  display: grid;
+  place-items: center;
+  transition: transform 0.75s ease, filter 0.75s ease;
+}
+
+/* boost bem mais sutil que antes (era scale 1.22 / brightness 1.5): nessa
+   intensidade a aura borrada ficava clara/grande demais por cima do fundo
+   vinho enquanto a seção inteira ainda estava quase 100% opaca (o fade por
+   scroll só termina de verdade perto do final da seção) — lia como um
+   borrão claro "vazando" por cima do fundo em vez de um brilho controlado. */
+.crystal-loading.is-leaving .crystal-loading__orb {
+  transform: scale(1.08);
+  filter: brightness(1.15);
+}
+
+/* a aura e o brilho de progresso são os elementos mais difusos/borrados —
+   são eles que "misturavam" com o fundo. Em vez de ficarem no pico de
+   intensidade durante toda a rolagem (o esmaecimento da seção inteira é
+   lento, vai de 4% a 90% de progresso), somem rápido assim que a rolagem
+   começa — só o clarão (`.crystal-loading__flash`) marca o instante da
+   revelação, e a bola em si continua visível com um brilho discreto. */
+.crystal-loading.is-leaving .crystal-loading__aura,
+.crystal-loading.is-leaving .crystal-loading__progress-glow {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* aura bem difusa, sem borda definida — nada de "anel" visível */
+.crystal-loading__aura {
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 174, 187, 0.42) 0%, rgba(232, 174, 187, 0.14) 45%, transparent 75%);
+  filter: blur(18px);
+  animation: crystal-pulse 3.2s ease-in-out infinite;
+}
+
+/* segunda camada de brilho, SEM animação de loop própria — a intensidade
+   dela vem só de `--crystal-progress` (0→1, setado via JS em
+   CrystalBallLoading.tsx), crescendo de verdade conforme o carregamento
+   avança. `mix-blend-mode: screen` soma com o brilho pulsante que já
+   existe (`.crystal-loading__aura`) em vez de competir com ele. */
+.crystal-loading__progress-glow {
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 221, 170, 0.55) 0%, rgba(255, 221, 170, 0.18) 45%, transparent 72%);
+  mix-blend-mode: screen;
+  opacity: calc(var(--crystal-progress, 0) * 0.85);
+  transform: scale(calc(0.85 + var(--crystal-progress, 0) * 0.35));
+  transition: opacity 0.25s linear, transform 0.25s linear;
+  pointer-events: none;
+}
+
+.crystal-loading__ball {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.5)) brightness(calc(1 + var(--crystal-progress, 0) * 0.3));
+  transition: filter 0.25s linear;
+  animation: crystal-float 3.8s ease-in-out infinite;
+}
+
+/* clarão no instante exato em que a tela começa a sair (`leaving` virou
+   true em CrystalBallLoading.tsx) — a bola "revela" antes de a cena
+   desaparecer, em vez de só esmaecer. Dispara uma vez (`forwards`, não
+   `infinite`). */
+.crystal-loading__flash {
+  position: absolute;
+  inset: -60%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 238, 205, 0.5) 35%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.4);
+  pointer-events: none;
+}
+
+.crystal-loading__flash.is-on {
+  animation: crystal-flash-burst 0.75s ease-out forwards;
+}
+
+@keyframes crystal-flash-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.crystal-loading__count {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: var(--off-white);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+  transition: opacity 0.4s ease;
+}
+
+/* some assim que a contagem chega a 100% (ver `ready` em
+   CrystalBallLoading.tsx) — dá lugar ao convite "role pra continuar", em
+   vez de ficar visível junto com ele durante a rolagem. */
+.crystal-loading__count.is-done {
+  opacity: 0;
+}
+
+@keyframes crystal-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes crystal-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crystal-loading {
+    animation: none;
+    transition: none;
+  }
+  .crystal-loading__aura,
+  .crystal-loading__ball,
+  .crystal-loading__star.is-on {
+    animation: none;
+  }
+  .crystal-loading__brand {
+    animation: none;
+    clip-path: none;
+  }
+  .crystal-loading__brand-pen {
+    display: none;
+  }
+  .crystal-loading__progress-glow {
+    transition: none;
+  }
+  .crystal-loading__flash.is-on {
+    animation: none;
+    opacity: 0;
+  }
+  .crystal-loading__count,
+  .crystal-loading__aura {
+    transition: none;
+  }
+}

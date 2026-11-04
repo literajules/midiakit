@@ -1,0 +1,75 @@
+/* ——— Modal genérico (chrome) ——— */
+.scene-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+/* ——— modificador "tela cheia": pra experiências que devem ocupar o
+   viewport inteiro (sem a moldura/centralização padrão do overlay), como
+   o desktop POV — ver DesktopPOV.css. ——— */
+.scene-modal--fullbleed {
+  padding: 0;
+}
+
+/* Escurecido + desfocado, mas moderado — a foto da cena (quarto, cozy
+   corner...) precisa continuar RECONHECÍVEL de fundo quando um pop-up
+   abre, não escondida atrás de um tom sólido. A versão totalmente
+   transparente (sem nenhum véu) foi tentada e voltou atrás: sem nada
+   suavizando a cena, a foto nítida "vazava" por baixo das bordas
+   semitransparentes do papel do bilhete (ver NoteModal) deixando-o com
+   aparência estranha, e trechos mais lisos da foto (o chão) pareciam um
+   fundo liso "quebrado". Este meio-termo mantém a cena visível e
+   reconhecível, só suavizada o bastante pra qualquer conteúdo por cima
+   (texto, papel, imagem) ler bem. */
+.scene-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 20, 13, 0.38);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.scene-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(640px, 100%);
+  max-height: min(84vh, 760px);
+  overflow: auto;
+  border-radius: 20px;
+  background: var(--off-white);
+  color: var(--ink);
+  box-shadow: 0 24px 64px rgba(28, 20, 13, 0.35);
+  padding: 32px;
+}
+
+.scene-modal__dialog:focus-visible {
+  outline: none;
+}
+
+.scene-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(28, 20, 13, 0.08);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.scene-modal__close:hover {
+  background: rgba(28, 20, 13, 0.16);
+}
+
+.scene-modal__close:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}

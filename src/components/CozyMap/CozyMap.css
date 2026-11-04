@@ -1,0 +1,614 @@
+/* ——— The Cozy Map by Jules ———
+   Modal aberto pela máquina de café. CSS global com nomes BEM (cozy-map__*,
+   cozy-cities__*, cozy-panel__*, cozy-item__*, cozy-pin__*), como o resto do
+   projeto — e agora também a MESMA paleta/tipografia do resto do projeto
+   (--burgundy/--pink/--cream/--off-white/--ink/--muted, fonte sans do
+   `globals.css`), em vez da paleta vinho/serif própria que tinha vindo do
+   `literajules-site`. Visual "mini app": cantos e sombras discretos, sem
+   serifa, sem traços pontilhados — igual ao resto da dollhouse.
+
+   Três composições:
+   • base (celular em pé)     → cabeçalho em cima, mapa no meio, lista rolável embaixo;
+   • celular deitado (baixo)  → mapa à esquerda, lista à direita;
+   • desktop/tablet largo     → mapa ocupa tudo; cabeçalho e lista flutuam sobre ele.
+   A condição do desktop precisa ser a mesma de FLOATING_QUERY em CozyMapModal.tsx. */
+
+.cozy-map {
+  --cm-accent: var(--burgundy);
+  --cm-accent-deep: #3a0b0b;
+  --cm-surface: var(--off-white);
+  --cm-surface-2: var(--cream);
+  --cm-ink: var(--ink);
+  --cm-muted: var(--muted);
+  --cm-line: rgba(28, 20, 13, 0.1);
+  --cm-shadow: 0 24px 64px rgba(28, 20, 13, 0.28);
+
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  overscroll-behavior: contain;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  color: var(--cm-ink);
+}
+
+/* Fundo escurecido (mesmo tom/blur do SceneModal, pra todos os modais lerem como a mesma "camada") */
+.cozy-map__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 20, 13, 0.5);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.cozy-map__dialog {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas: "header" "map" "panel";
+  width: calc(100vw - 20px);
+  height: calc(100vh - 20px);
+  height: calc(100dvh - 20px);
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--cm-surface);
+  box-shadow: var(--cm-shadow);
+  outline: none;
+  will-change: transform, opacity;
+}
+
+/* ——— Mapa ——— */
+.cozy-map__canvas-wrap {
+  grid-area: map;
+  position: relative;
+  min-height: 0;
+  background: var(--cm-surface-2);
+}
+
+.cozy-map__canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.cozy-map__loading {
+  position: absolute;
+  inset: 0;
+  background: var(--cm-surface-2);
+  pointer-events: none;
+}
+
+.cozy-map__fail {
+  position: absolute;
+  inset: auto 16px 40px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--cm-surface);
+  color: var(--cm-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  box-shadow: 0 8px 24px -10px rgba(28, 20, 13, 0.3);
+}
+
+/* ——— Cabeçalho ——— */
+.cozy-map__header {
+  grid-area: header;
+  position: relative;
+  z-index: 3;
+  padding: 14px 60px 12px 16px;
+  background: var(--cm-surface);
+  border-bottom: 1px solid var(--cm-line);
+}
+
+.cozy-map__sign {
+  margin: 0 0 2px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cm-accent);
+}
+
+.cozy-map__title {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 5.6vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--cm-ink);
+}
+
+.cozy-map__sub {
+  margin: 3px 0 10px;
+  font-size: 0.82rem;
+  color: var(--cm-muted);
+}
+
+.cozy-map__demo {
+  position: absolute;
+  top: 16px;
+  right: 60px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cm-muted);
+  background: rgba(28, 20, 13, 0.06);
+  pointer-events: none;
+}
+
+/* ——— Cidades: controle segmentado, como um seletor de app ——— */
+.cozy-cities {
+  display: flex;
+  gap: 2px;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 3px;
+  border-radius: 12px;
+  background: rgba(28, 20, 13, 0.05);
+  scrollbar-width: none;
+}
+
+.cozy-cities::-webkit-scrollbar {
+  display: none;
+}
+
+.cozy-cities__btn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--cm-muted);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.cozy-cities__btn:hover {
+  color: var(--cm-ink);
+}
+
+.cozy-cities__btn.is-on {
+  background: var(--cm-surface);
+  color: var(--cm-ink);
+  box-shadow: 0 2px 8px -2px rgba(28, 20, 13, 0.25);
+}
+
+.cozy-cities__n {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--cm-accent);
+}
+
+.cozy-cities__btn:focus-visible,
+.cozy-item__name:focus-visible,
+.cozy-item__link:focus-visible,
+.cozy-map__close:focus-visible,
+.cozy-pin__btn:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+/* ——— Fechar: mesmo botão circular flat do SceneModal, pra ler como o mesmo app ——— */
+.cozy-map__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(28, 20, 13, 0.08);
+  color: var(--cm-ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.cozy-map__close:hover {
+  background: rgba(28, 20, 13, 0.16);
+}
+
+/* ——— Painel de recomendações ——— */
+.cozy-panel {
+  grid-area: panel;
+  position: relative;
+  z-index: 3;
+  max-height: 38vh;
+  max-height: 38dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--cm-surface);
+  border-top: 1px solid var(--cm-line);
+}
+
+.cozy-panel__scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px 0 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(28, 20, 13, 0.25) transparent;
+}
+
+.cozy-panel__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cozy-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  column-gap: 12px;
+  align-items: start;
+  margin: 0 8px;
+  padding: 12px 12px 12px 10px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cozy-item:hover {
+  background: rgba(28, 20, 13, 0.04);
+}
+
+.cozy-item.is-active {
+  background: var(--pink);
+}
+
+.cozy-item__num {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: rgba(82, 16, 16, 0.1);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--cm-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.cozy-item.is-active .cozy-item__num {
+  background: var(--cm-surface);
+  color: var(--cm-accent);
+}
+
+.cozy-item__title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cozy-item__name {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.3;
+  color: var(--cm-ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cozy-item__link {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--cm-muted);
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.cozy-item__link:hover {
+  color: #fff;
+  background: var(--cm-accent);
+}
+
+.cozy-item__tag {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(28, 20, 13, 0.08);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cm-muted);
+}
+
+/* Só renderiza quando há frase real (ver CozyMapModal.tsx) — sem placeholder visível */
+.cozy-item__desc {
+  margin: 3px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: var(--cm-ink);
+}
+
+.cozy-item__meta {
+  margin: 3px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--cm-muted);
+}
+
+.cozy-item__img {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* ——— Estado vazio ——— */
+.cozy-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 26px 24px 28px;
+  text-align: center;
+}
+
+.cozy-empty__pin {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  background: rgba(82, 16, 16, 0.1);
+}
+
+.cozy-empty__title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--cm-ink);
+}
+
+.cozy-empty__text {
+  max-width: 28ch;
+  margin: 5px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--cm-muted);
+}
+
+/* ——— Pins ——— o MapLibre posiciona .cozy-pin com transform; o visual fica no botão interno */
+.cozy-pin {
+  width: 0;
+  height: 0;
+}
+
+.cozy-pin__btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 2px solid var(--cm-surface);
+  border-radius: 50%;
+  background: var(--cm-accent);
+  color: #fff;
+  font: 700 0.8rem/1 var(--font-sans), system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(28, 20, 13, 0.3);
+  -webkit-tap-highlight-color: transparent;
+  animation: cozy-pin-in 0.45s cubic-bezier(0.2, 1.3, 0.4, 1) var(--pin-delay, 0ms) backwards;
+  transition:
+    scale 0.25s cubic-bezier(0.2, 1.3, 0.4, 1),
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.cozy-pin__btn:hover {
+  scale: 1.1;
+}
+
+.cozy-pin.is-active .cozy-pin__btn {
+  scale: 1.22;
+  background: var(--cm-accent-deep);
+  box-shadow:
+    0 0 0 6px rgba(82, 16, 16, 0.18),
+    0 4px 12px rgba(28, 20, 13, 0.35);
+}
+
+@keyframes cozy-pin-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ——— Controles/atribuição do MapLibre na paleta ——— */
+.cozy-map .maplibregl-ctrl-attrib {
+  background: rgba(247, 244, 238, 0.88);
+  color: var(--cm-muted);
+  font-size: 0.64rem;
+  border-top-left-radius: 8px;
+}
+
+.cozy-map .maplibregl-ctrl-attrib a {
+  color: var(--cm-accent);
+}
+
+.cozy-map .maplibregl-ctrl-group {
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--cm-surface);
+  box-shadow: 0 6px 16px -8px rgba(28, 20, 13, 0.3);
+}
+
+.cozy-map .maplibregl-ctrl-bottom-left .maplibregl-ctrl {
+  margin: 0 0 14px 14px;
+}
+
+/* ——— Celular deitado (pouca altura): mapa + lista lado a lado ——— */
+@media (max-height: 559px) and (min-width: 600px) {
+  .cozy-map__dialog {
+    width: calc(100vw - 20px);
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 38%);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "header header"
+      "map panel";
+  }
+
+  .cozy-map__header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    padding: 8px 60px 8px 16px;
+  }
+
+  .cozy-map__sign,
+  .cozy-map__sub,
+  .cozy-map__demo {
+    display: none;
+  }
+
+  .cozy-map__title {
+    font-size: 1.05rem;
+  }
+
+  .cozy-cities {
+    margin: 0;
+  }
+
+  .cozy-cities__btn {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 0.82rem;
+  }
+
+  .cozy-panel {
+    max-height: none;
+    border-top: 0;
+    border-left: 1px solid var(--cm-line);
+  }
+}
+
+/* ——— Desktop / tablet largo: mapa ocupa tudo, cabeçalho e lista flutuam ——— */
+@media (min-width: 900px) and (min-height: 560px) {
+  .cozy-map__dialog {
+    display: block;
+    width: min(90vw, 1120px);
+    height: 85vh;
+    height: 85dvh;
+    border-radius: 24px;
+  }
+
+  .cozy-map__canvas-wrap {
+    position: absolute;
+    inset: 0;
+  }
+
+  .cozy-map__header {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    right: 78px;
+    padding: 18px 22px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 18px;
+    background: rgba(247, 244, 238, 0.92);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    backdrop-filter: blur(12px) saturate(1.1);
+    box-shadow: var(--cm-shadow);
+  }
+
+  .cozy-map__title {
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+  }
+
+  .cozy-map__sub {
+    margin: 4px 0 14px;
+    font-size: 0.92rem;
+  }
+
+  .cozy-map__demo {
+    top: 20px;
+    right: 22px;
+  }
+
+  .cozy-cities {
+    overflow: visible;
+  }
+
+  .cozy-map__close {
+    top: 18px;
+    right: 18px;
+  }
+
+  .cozy-panel {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    width: min(380px, 36%);
+    max-height: min(56%, 460px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 18px;
+    background: rgba(247, 244, 238, 0.94);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    backdrop-filter: blur(12px) saturate(1.1);
+    box-shadow: var(--cm-shadow);
+  }
+
+  .cozy-panel__scroll {
+    padding: 8px 0 10px;
+  }
+
+  .cozy-item {
+    padding: 12px 14px 12px 12px;
+  }
+}
+
+/* ——— Movimento reduzido: sem animações decorativas ——— */
+@media (prefers-reduced-motion: reduce) {
+  .cozy-pin__btn {
+    animation: none;
+    transition: none;
+  }
+
+  .cozy-cities__btn,
+  .cozy-item,
+  .cozy-map__close,
+  .cozy-item__link {
+    transition: none;
+  }
+}

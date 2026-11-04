@@ -1,0 +1,120 @@
+.receipt {
+  position: relative;
+  width: min(300px, 100%);
+  margin: 0 auto;
+  padding: 22px 16px 26px;
+  background: var(--off-white);
+  color: var(--ink);
+  font-family: var(--font-mono), ui-monospace, "Space Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-align: center;
+  /* `clip-path` (ver Receipt.tsx `PINKING_CLIP_PATH`) cortaria um box-shadow
+     normal nas bordas em zigue-zague — `filter: drop-shadow` segue o
+     contorno recortado de verdade, em vez da caixa reta por baixo. */
+  filter: drop-shadow(0 12px 26px rgba(28, 20, 13, 0.32));
+}
+
+.receipt__shop {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.receipt__location {
+  margin: 2px 0 0;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.receipt__rule {
+  margin: 7px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  letter-spacing: -1px;
+  color: var(--muted);
+}
+
+.receipt__subtitle {
+  margin: 7px 0 2px;
+  font-style: italic;
+}
+
+.receipt__stamp {
+  margin: 0;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.receipt__fields {
+  margin: 0;
+  text-align: left;
+}
+
+.receipt__field {
+  padding: 6px 0;
+}
+
+.receipt__field dt {
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.receipt__field dd {
+  margin: 2px 0 0;
+  font-weight: 700;
+}
+
+.receipt__divider {
+  margin: 6px 0 0;
+  border: none;
+  border-top: 1px dotted var(--muted);
+  opacity: 0.6;
+}
+
+.receipt__footer {
+  margin-top: 4px;
+}
+
+.receipt__thanks {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.receipt__again {
+  margin: 2px 0 8px;
+  color: var(--muted);
+}
+
+.receipt__star {
+  margin: 0 auto 10px;
+  display: block;
+  color: var(--pink);
+  width: 18px;
+  height: 18px;
+}
+
+.receipt__barcode {
+  height: 32px;
+  margin: 0 auto;
+  width: 72%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--ink) 0px,
+    var(--ink) 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+
+.receipt__barcode-num {
+  margin: 4px 0 0;
+  font-size: 0.64rem;
+  color: var(--muted);
+}

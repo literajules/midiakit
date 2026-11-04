@@ -1,0 +1,155 @@
+.dock {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(10px, 2.4vh, 20px);
+  translate: -50% 0;
+  z-index: 6;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.dock__item {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 11px;
+  padding: 0;
+  transform-origin: bottom center;
+  transition:
+    transform 0.15s ease,
+    opacity 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+/* Lixeira: sem tile/sombra — o ícone real fica "solto" na dock */
+.dock__item--bare {
+  box-shadow: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+/* ——— os outros apps (cenário, sem ação) — discretos de propósito, pra
+   contrastar com o Chrome em evidência. `cursor: default`: nada de cursor
+   de clique numa coisa que não clica. ——— */
+.dock__item--inert {
+  cursor: default;
+  opacity: 0.62;
+}
+
+.dock__item--inert.dock__item--bare {
+  opacity: 0.72;
+}
+
+/* ——— Chrome: o único clicável — em evidência, saltitando pra induzir o
+   clique (pedido explícito). Dois efeitos somados, no mesmo ciclo de
+   2,6s: o saltito (`dock-attract`, dá 2 pulos e descansa) e um anel que
+   pulsa pra fora (`dock-glow`, no `::after`). ——— */
+.dock__item--active {
+  cursor: pointer;
+  animation: dock-attract 2.6s ease-in-out infinite;
+}
+
+.dock__item--active::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  z-index: -1;
+  border-radius: 15px;
+  animation: dock-glow 2.6s ease-out infinite;
+  pointer-events: none;
+}
+
+.dock__item:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.dock__item.is-bouncing {
+  animation: dock-bounce 0.42s ease;
+}
+
+.dock__dot {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  translate: -50% 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+@keyframes dock-bounce {
+  0% {
+    translate: 0 0;
+  }
+  35% {
+    translate: 0 -14px;
+  }
+  60% {
+    translate: 0 0;
+  }
+  80% {
+    translate: 0 -5px;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+/* "quique de atenção" do Chrome: 2 pulos (igual notificação real de dock
+   do macOS) e um descanso mais longo antes de repetir — contínuo, não só
+   no clique (ver `.dock__item.is-bouncing`, que é o quique de UM clique). */
+@keyframes dock-attract {
+  0%,
+  52%,
+  100% {
+    translate: 0 0;
+  }
+  60% {
+    translate: 0 -13px;
+  }
+  68% {
+    translate: 0 0;
+  }
+  74% {
+    translate: 0 -6px;
+  }
+  80% {
+    translate: 0 0;
+  }
+}
+
+/* anel que pulsa pra fora em volta do Chrome, no mesmo ritmo do saltito */
+@keyframes dock-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.65);
+    opacity: 1;
+  }
+  65%,
+  100% {
+    box-shadow: 0 0 0 11px rgba(255, 255, 255, 0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock__item {
+    transition: none;
+  }
+  .dock__item.is-bouncing,
+  .dock__item--active,
+  .dock__item--active::after {
+    animation: none;
+  }
+}

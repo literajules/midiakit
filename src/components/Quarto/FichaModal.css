@@ -1,0 +1,320 @@
+/* Mais larga que o padrão do SceneModal — duas colunas (convite + form)
+   não cabem na largura de 640px padrão.
+   `overflow`/`max-height`: o `.scene-modal__dialog` padrão usa
+   `overflow: auto` pra rolar o conteúdo inteiro — mas isso também CORTA
+   qualquer decoração que "vaze" pra fora da caixa (clipe/adesivos com
+   posição negativa, ver `.ficha-modal__clip` etc.), que ficava invisível.
+   Aqui o próprio `.ficha-modal` passa a ter overflow visível (decorações
+   aparecem inteiras) e quem rola é só o miolo (`.ficha-modal__scroll`
+   abaixo) — mesma ideia do `.note-modal` (`NoteModal.css`), que já faz
+   `overflow: visible` por ser mais curto e nunca precisar rolar; aqui o
+   formulário é mais longo, por isso o scroll interno em vez de remover
+   geral. */
+.ficha-modal {
+  position: relative;
+  width: min(760px, 94%);
+  padding: 36px 32px 28px;
+  overflow: visible;
+  max-height: none;
+  /* papel pontilhado — mesmo padrão já usado nas pastas do laptop (ver
+     DesktopPOV/FolderWindow.css `.folder-window__detail`), pra esta ficha
+     usar a mesma "bolinha" das outras janelas do site. */
+  background-color: var(--off-white);
+  background-image: radial-gradient(circle, rgba(82, 16, 16, 0.07) 1.1px, transparent 1.2px);
+  background-size: 15px 15px;
+}
+
+.ficha-modal__scroll {
+  max-height: min(76vh, 660px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* ——— decoração: mesmos adesivos do NoteModal (clipe/estrela/washi),
+   reaproveitados pra manter a mesma "mesa de trabalho" em qualquer
+   pop-up — puramente visual, não interferem no formulário por baixo. ——— */
+.ficha-modal__clip {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  translate: -50% 0;
+  width: 64px;
+  rotate: -4deg;
+  filter: drop-shadow(0 6px 10px rgba(28, 20, 13, 0.35));
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ——— adesivos próprios desta ficha (diferentes do clipe/estrela/washi
+   reaproveitados no NoteModal) — pasta pontilhada (mesmo recorte usado na
+   "pasta de bolinha" do scrapbook) + um postcard vintage, ambos do
+   scrapbook da Jules (jules-assets-scrapbook), processados com fundo
+   removido/otimizado (ver literajules-dollhouse/public/images/notes). ——— */
+.ficha-modal__folder-sticker {
+  position: absolute;
+  bottom: -22px;
+  left: 22px;
+  width: 72px;
+  rotate: -12deg;
+  filter: drop-shadow(0 6px 10px rgba(28, 20, 13, 0.28));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ficha-modal__postcard-sticker {
+  position: absolute;
+  top: -22px;
+  right: 24px;
+  width: 128px;
+  rotate: 9deg;
+  border-radius: 4px;
+  box-shadow: 0 8px 18px -6px rgba(28, 20, 13, 0.4);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ficha-modal__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 28px;
+}
+
+/* ——— coluna da esquerda: convite ——— */
+.ficha-modal__intro {
+  padding-top: 4px;
+}
+
+.ficha-modal__sign {
+  margin: 0 0 4px;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+
+.ficha-modal__title {
+  margin: 0 0 14px;
+  font-family: var(--font-homemade-apple), cursive;
+  font-size: 1.9rem;
+  line-height: 1.15;
+  color: var(--burgundy);
+}
+
+.ficha-modal__text {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.ficha-modal__email {
+  color: var(--burgundy);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* ——— baixar o mídia kit em PDF (gerado por /api/media-kit) ——— */
+.ficha-modal__kit-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 9px 16px;
+  border: 1px solid var(--burgundy);
+  border-radius: 999px;
+  color: var(--burgundy);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.ficha-modal__kit-download:hover {
+  background: var(--burgundy);
+  color: var(--off-white);
+}
+
+.ficha-modal__kit-download:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+/* ——— coluna da direita: formulário ——— */
+.ficha-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ficha-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0 0 12px;
+  border: 0;
+  border-bottom: 1px solid rgba(28, 20, 13, 0.14);
+}
+
+.ficha-modal__field > span,
+.ficha-modal__field legend {
+  padding: 0;
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+
+.ficha-modal__num {
+  margin-right: 6px;
+  color: var(--burgundy);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ficha-modal__field input,
+.ficha-modal__field textarea {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 2px 0;
+  font: inherit;
+  font-size: 0.92rem;
+  color: var(--ink);
+  resize: none;
+}
+
+.ficha-modal__field input::placeholder,
+.ficha-modal__field textarea::placeholder {
+  color: var(--muted);
+}
+
+.ficha-modal__field input:focus-visible,
+.ficha-modal__field textarea:focus-visible {
+  outline: none;
+}
+
+.ficha-modal__field:has(input:focus-visible),
+.ficha-modal__field:has(textarea:focus-visible) {
+  border-bottom-color: var(--pink);
+}
+
+.ficha-modal__field--recado textarea {
+  line-height: 1.4;
+}
+
+.ficha-modal__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ficha-modal__chip {
+  padding: 7px 14px;
+  border: 1px solid rgba(28, 20, 13, 0.2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.ficha-modal__chip:hover {
+  border-color: var(--pink);
+}
+
+.ficha-modal__chip.is-on {
+  border-color: var(--burgundy);
+  background: var(--burgundy);
+  color: var(--off-white);
+}
+
+.ficha-modal__chip:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.ficha-modal__submit {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 11px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--burgundy);
+  color: var(--off-white);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.ficha-modal__submit:hover:not(:disabled) {
+  background: #6a1818;
+  transform: translateY(-1px);
+}
+
+.ficha-modal__submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.ficha-modal__submit:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.ficha-modal__status {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.ficha-modal__status--sent {
+  color: var(--burgundy);
+  font-weight: 600;
+}
+
+.ficha-modal__status--error {
+  color: #9a2f2f;
+}
+
+@media (max-width: 680px) {
+  .ficha-modal {
+    width: min(420px, 94%);
+    padding: 32px 22px 24px;
+  }
+
+  .ficha-modal__grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .ficha-modal__postcard-sticker {
+    right: 16px;
+    width: 96px;
+  }
+
+  .ficha-modal__folder-sticker {
+    width: 56px;
+    bottom: -18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ficha-modal__submit:hover:not(:disabled) {
+    transform: none;
+  }
+}

@@ -1,0 +1,257 @@
+/* Sem cartão sólido: o "papel" (imagem real, borda recortada) é que define
+   a forma — mesmo truque do .playlist-modal (fundo transparente, sem
+   padding/sombra do SceneModal padrão). */
+.note-modal {
+  width: min(360px, 100%);
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  overflow: visible;
+  max-height: none;
+}
+
+/* leve inclinação — parece que alguém acabou de soltar o papel na mesa,
+   não um cartão alinhado ao pixel */
+.note-modal__sheet {
+  position: relative;
+  rotate: -1.6deg;
+}
+
+.note-modal__paper {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-user-select: none;
+  user-select: none;
+  filter: drop-shadow(0 22px 30px rgba(28, 20, 13, 0.4));
+}
+
+/* clipe prendendo o papel no topo — mesmo adesivo (cor rosa) já usado no
+   hero do mídia kit (literajules-site), pra reforçar a identidade visual */
+.note-modal__clip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  translate: -50% 0;
+  width: 25%;
+  rotate: -5deg;
+  filter: drop-shadow(0 6px 10px rgba(28, 20, 13, 0.35));
+  z-index: 2;
+}
+
+.note-modal__star {
+  position: absolute;
+  bottom: 7%;
+  left: -6%;
+  width: 14%;
+  rotate: -14deg;
+  filter: drop-shadow(0 3px 6px rgba(28, 20, 13, 0.3));
+  z-index: 2;
+}
+
+.note-modal__washi {
+  position: absolute;
+  top: 6%;
+  right: -9%;
+  width: 28%;
+  rotate: 26deg;
+  opacity: 0.96;
+  filter: drop-shadow(0 3px 6px rgba(28, 20, 13, 0.25));
+  z-index: 2;
+}
+
+/* área de texto: dentro da moldura ornamentada desenhada no próprio papel
+   — ajustar os % se não encaixar perfeito (medido a olho, como o resto do
+   projeto). Texto direto em cima do papel rosa (sem véu claro atrás) — a
+   pedido da Jules; se a leitura ficar ruim em algum trecho da aquarela, o
+   próximo ajuste é ganhar contraste no texto em si (cor/sombra), não
+   reintroduzir um fundo sólido atrás dele. */
+.note-modal__content {
+  position: absolute;
+  inset: 15% 13% 11%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 16px 12px;
+}
+
+.note-modal__title {
+  margin: 0 0 12px;
+  font-family: var(--font-homemade-apple), cursive;
+  font-size: 2.1rem;
+  line-height: 1.05;
+  color: var(--burgundy);
+}
+
+/* cursor piscando enquanto o título é digitado (ver NoteModal.tsx) — some
+   assim que a digitação termina (`.is-done`), em vez de ficar piscando pro
+   resto da vida do bilhete. Mesma técnica do `.door-invite__caret`. */
+.note-modal__title-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.85em;
+  margin-left: 2px;
+  background: currentColor;
+  vertical-align: -0.08em;
+  animation: note-modal-caret-blink 0.9s step-end infinite;
+}
+
+.note-modal__title-caret.is-done {
+  display: none;
+}
+
+@keyframes note-modal-caret-blink {
+  0%,
+  50% {
+    opacity: 0.7;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-modal__title-caret {
+    display: none;
+  }
+}
+
+/* ——— gráfico de rosca opcional (ex. gênero, no mural) ——— */
+.note-modal__chart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+.note-modal__chart svg {
+  flex: none;
+}
+
+.note-modal__chart-legend {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  font-size: 0.78rem;
+  color: var(--ink);
+}
+
+.note-modal__chart-legend b {
+  color: var(--burgundy);
+}
+
+.note-modal__chart-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 5px;
+  border-radius: 50%;
+}
+
+/* ——— grade de métricas (número em destaque + rótulo + legenda) ———
+   Mesmo princípio de um mídia kit "de verdade": o NÚMERO é a estrela
+   (grande, bold, cor de marca), o rótulo curto embaixo dele é só o nome
+   da métrica (bold, tom neutro) e a legenda (menor, mais clara) carrega o
+   contexto extra — sem precisar abreviar nada dentro do número em si
+   (nada de "(30d)" colado: o período vira texto normal na legenda). 2
+   colunas, com uma linha pontilhada separando cada par de linhas (mesmo
+   traço do `.receipt__divider`). */
+.note-modal__fields {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 18px;
+  row-gap: 14px;
+  text-align: left;
+}
+
+.note-modal__field {
+  display: flex;
+  flex-direction: column;
+}
+
+.note-modal__field:nth-child(n + 3) {
+  padding-top: 12px;
+  border-top: 1px dotted var(--burgundy);
+  opacity: 1;
+}
+
+.note-modal__field dt {
+  margin: 0;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--burgundy);
+}
+
+.note-modal__field dd {
+  margin: 4px 0 0;
+}
+
+.note-modal__field-label {
+  margin: 0;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.note-modal__field-desc {
+  margin: 2px 0 0;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+/* botão de fechar (herdado do SceneModal): sem cartão sólido atrás dele
+   aqui, então precisa do próprio contraste — mesmo ajuste do
+   .playlist-modal (ver PlaylistModal.css). */
+.note-modal .scene-modal__close {
+  z-index: 3;
+  background: rgba(247, 244, 238, 0.95);
+  box-shadow: 0 2px 6px rgba(28, 20, 13, 0.3);
+}
+
+.note-modal .scene-modal__close:hover {
+  background: #fff;
+}
+
+@media (max-width: 420px) {
+  .note-modal__title {
+    font-size: 1.8rem;
+  }
+
+  .note-modal__clip {
+    width: 30%;
+  }
+
+  .note-modal__chart svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .note-modal__chart-legend {
+    font-size: 0.72rem;
+  }
+
+  .note-modal__fields {
+    column-gap: 12px;
+    row-gap: 12px;
+  }
+
+  .note-modal__field dt {
+    font-size: 1.28rem;
+  }
+}

@@ -1,0 +1,487 @@
+/* tamanho maior que o padrão de DesktopWindow — o case precisa de espaço
+   pra vídeo vertical (reels) + badges + descrição + galeria de insights,
+   sem ficar espremido. Mesmo truque de especificidade do .browser-view
+   (uma classe só, CSS importado depois de DesktopWindow.css). */
+.folder-window {
+  width: min(640px, 92%);
+  height: min(760px, 88%);
+}
+
+.folder-window__grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 86px);
+  gap: 14px;
+  justify-content: start;
+  align-content: start;
+  padding: 20px;
+  overflow-y: auto;
+  background: var(--off-white);
+}
+
+.folder-window__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 86px;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.18s ease;
+}
+
+.folder-window__item:hover,
+.folder-window__item:focus-visible {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.folder-window__item:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.folder-window__item-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* logo real da marca, quando `imageUrl` existir (ver projects.ts) — mesmo
+   tamanho/cantos do ícone com inicial, fundo branco pra logos que não têm
+   transparência (a maioria dos logos de marca vem num retângulo colorido). */
+.folder-window__item-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  background: #fff;
+}
+
+.folder-window__item-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.74rem;
+  text-align: center;
+  color: var(--ink);
+}
+
+/* ——— estado vazio (pasta ainda sem conteúdo definitivo) ——— */
+.folder-window__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px;
+  background: var(--off-white);
+  color: var(--muted);
+  text-align: center;
+}
+
+.folder-window__empty-icon {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.folder-window__empty p {
+  margin: 0;
+  max-width: 280px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* ——— detalhe de um case (Entregas/Conteúdos) ———
+   Toque "site pessoal dos anos 2000": moldura pontilhada + fundo de
+   bolinhas quase imperceptível + fita washi real na capa + divisor ✦ +
+   selos com relevo tipo botão Web 1.0 — ver FolderWindow.tsx. Página rola
+   na vertical; em janelas largas, vídeo e texto ficam lado a lado (ver
+   `@container` mais abaixo). */
+.folder-window__detail-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.folder-window__detail {
+  container: folder-detail / inline-size;
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 20px 20px 32px;
+  background: var(--off-white);
+  /* bolinhas de fundo, quase imperceptíveis — pedido explícito do toque "anos 2000" */
+  background-image: radial-gradient(circle, rgba(82, 16, 16, 0.07) 1.1px, transparent 1.2px);
+  background-size: 15px 15px;
+  text-align: center;
+}
+
+.folder-window__back {
+  align-self: flex-start;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.folder-window__back:hover {
+  color: var(--ink);
+}
+
+/* "moldura" pontilhada em volta do conteúdo — clássico de home page antiga */
+.folder-window__detail::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  z-index: 0;
+  border: 2px dashed rgba(82, 16, 16, 0.22);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.folder-window__detail > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ——— layout: coluna única empilhada por padrão; vídeo à esquerda e
+   texto à direita quando a PRÓPRIA janela (não a tela) tiver espaço —
+   `@container` reage ao tamanho real do `.folder-window__detail`. ——— */
+.folder-window__detail-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.folder-window__detail-media {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  /* espaço extra pra fita washi "sair" um pouco da capa sem forçar scroll horizontal */
+  margin: 6px 10px 0;
+}
+
+.folder-window__detail-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+@container folder-detail (min-width: 480px) {
+  .folder-window__detail-grid {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 22px;
+  }
+
+  .folder-window__detail-media {
+    flex: none;
+    width: 42%;
+    max-width: 240px;
+    margin-top: 10px;
+  }
+
+  .folder-window__detail-info {
+    flex: 1;
+    align-items: flex-start;
+    text-align: left;
+    padding-top: 6px;
+  }
+
+  .folder-window__badges {
+    justify-content: flex-start;
+  }
+}
+
+/* ——— fita washi (real, ver /public/images/desktop/decor) nos cantos da
+   capa — "multiply" apaga o fundo branco do jpg contra o fundo da página. ——— */
+.folder-window__tape {
+  position: absolute;
+  top: -12px;
+  width: 64px;
+  z-index: 2;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  user-select: none;
+}
+
+.folder-window__tape--left {
+  left: -8px;
+  rotate: -20deg;
+}
+
+.folder-window__tape--right {
+  right: -8px;
+  rotate: 18deg;
+}
+
+/* ——— capa: vídeo no formato REAL dele (ver `videoAspect`, projects.ts) —
+   aspect-ratio vem por inline style quando sabemos o formato; sem isso,
+   cai no 16:9 abaixo. `object-fit: contain` garante que nunca corta nada,
+   só encaixa (mesmo se algum case futuro vier sem `videoAspect`). ——— */
+.folder-window__cover {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 62vh;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #000;
+  box-shadow: 0 6px 16px -6px rgba(28, 20, 13, 0.4);
+}
+
+.folder-window__cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.folder-window__cover-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.folder-window__cover-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  background: #8a7a63;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.folder-window__title {
+  margin: 4px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.folder-window__demo-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--muted);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ——— badges (marca/formato/categoria): relevo tipo botão "Web 1.0" em
+   vez da pílula flat usada no resto do site — é o acento retrô pedido,
+   só aqui, pra não bagunçar a linguagem visual do resto do mídia kit. ——— */
+.folder-window__badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.folder-window__badge {
+  padding: 4px 11px;
+  border: 1px solid rgba(28, 20, 13, 0.18);
+  border-radius: 5px;
+  background: var(--cream);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.8),
+    inset -1px -1px 0 rgba(28, 20, 13, 0.12);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.folder-window__badge--brand {
+  background: var(--pink);
+  color: var(--burgundy);
+}
+
+/* ——— selos de formato/categoria: relevo "selo"/"carimbo", cor sólida da
+   paleta + leve rotação — o acento mais "anos 2000" dos badges, só pra
+   esses dois (marca fica como pílula normal, acima). ——— */
+.folder-window__badge--seal {
+  border-radius: 999px;
+  border: 2px dashed currentColor;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.64rem;
+  box-shadow: 0 2px 5px -2px rgba(28, 20, 13, 0.35);
+}
+
+.folder-window__badge--format {
+  background: var(--burgundy);
+  color: var(--cream);
+  rotate: -3deg;
+}
+
+.folder-window__badge--category {
+  background: var(--pink);
+  color: var(--burgundy);
+  rotate: 3deg;
+}
+
+.folder-window__eyebrow {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.folder-window__desc {
+  margin: 0;
+  max-width: 420px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.folder-window__visit {
+  margin-top: 4px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.folder-window__visit:hover {
+  filter: brightness(0.96);
+}
+
+/* ——— divisor ✦ e galeria de insights/comentários ——— */
+.folder-window__divider {
+  margin: 6px 0 0;
+  color: var(--burgundy);
+  opacity: 0.5;
+  letter-spacing: 0.3em;
+  font-size: 0.7rem;
+}
+
+.folder-window__insights-title {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.folder-window__insights {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.folder-window__insight-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(28, 20, 13, 0.14);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px -4px rgba(28, 20, 13, 0.3);
+}
+
+/* ——— números do print, "traduzidos" em chips nossos (ver insightStats,
+   projects.ts) — ficam embaixo do print bruto, pra quem só passa o olho
+   já ver o resultado sem precisar ler a UI escura do Instagram. ——— */
+.folder-window__stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.folder-window__stat {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--cream);
+  border: 1px solid rgba(28, 20, 13, 0.12);
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.folder-window__stat strong {
+  color: var(--burgundy);
+  font-size: 0.86rem;
+}
+
+/* ——— setas de navegação entre itens: ficam fora da área que rola (ver
+   .folder-window__detail-wrap), então não se movem com o scroll. ——— */
+.folder-window__nav {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(28, 20, 13, 0.14);
+  border-radius: 50%;
+  background: rgba(247, 244, 238, 0.9);
+  color: var(--burgundy);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px -4px rgba(28, 20, 13, 0.35);
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.folder-window__nav:hover {
+  background: #fff;
+}
+
+.folder-window__nav:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.folder-window__nav--prev {
+  left: 6px;
+}
+
+.folder-window__nav--next {
+  right: 6px;
+}
