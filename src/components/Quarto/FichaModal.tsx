@@ -154,12 +154,10 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
               </a>
             </p>
 
-            {/* mídia kit "de bolso" — PDF gerado na hora por
-                `/api/media-kit` (ver MediaKitDocument.tsx), sempre com os
-                mesmos números do site. `download` é só uma dica pro
-                navegador; quem força o download de verdade é o header
-                `Content-Disposition` da própria rota. */}
-            <a className="ficha-modal__kit-download" href="/api/media-kit" download>
+            {/* mídia kit "de bolso" — abre a página /media-kit numa aba
+                nova (ver MediaKitPage.tsx); lá tem o botão que chama
+                `window.print()` pra "salvar como PDF" de verdade. */}
+            <a className="ficha-modal__kit-download" href="/media-kit" target="_blank" rel="noopener noreferrer">
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
                 <path
                   d="M8 1.5v8.3M4.6 6.6 8 10l3.4-3.4M2.5 12.5h11"

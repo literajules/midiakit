@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scripts/saídas temporárias de depuração visual (screenshots, probes) —
+# não fazem parte do site, só ferramentas de verificação locais.
+.tmp-*
+.artifacts-*
+*.tmp-out.*

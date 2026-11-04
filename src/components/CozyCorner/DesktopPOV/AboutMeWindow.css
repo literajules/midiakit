@@ -1,0 +1,174 @@
+/* tamanho próprio — mais alto que o padrão de DesktopWindow pra acomodar
+   o texto inteiro sem precisar rolar demais em telas grandes. Mesma
+   especificidade/truque de ordem de import que .browser-view/.folder-window
+   (uma classe só, este arquivo importado depois de DesktopWindow.css). */
+.about-me-window {
+  width: min(680px, 92%);
+  height: min(700px, 88%);
+}
+
+.about-me-window .desktop-window__body {
+  /* fundo creme + papel levemente granulado — "página de livro", não a
+     janela branca padrão do Finder (ver .folder-window__grid/empty, que
+     ficam com --off-white; aqui é de propósito diferente). */
+  background: var(--cream);
+}
+
+.about-me {
+  container: about-me / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 28px 30px 36px;
+}
+
+/* ——— collage de fotos pessoais ———
+   em janela estreita: uma fileira horizontal, rolável, acima do texto.
+   Em janela larga (`@container` abaixo): vira uma coluna lateral, com
+   cada foto numa leve rotação/deslocamento — efeito "fotos coladas na
+   página", não uma grade alinhada. */
+.about-me__photos {
+  display: flex;
+  gap: 14px;
+  padding: 6px 4px 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.about-me__photos::-webkit-scrollbar {
+  display: none;
+}
+
+.about-me__photo {
+  flex: none;
+  display: block;
+  height: 150px;
+  width: auto;
+  object-fit: cover;
+  border: 6px solid var(--off-white);
+  box-shadow: 0 8px 18px -8px rgba(28, 20, 13, 0.4);
+  user-select: none;
+}
+
+.about-me__photo--triptych {
+  rotate: -3deg;
+}
+
+.about-me__photo--selfie {
+  rotate: 2deg;
+}
+
+.about-me__photo--bts {
+  rotate: -1.5deg;
+}
+
+.about-me__photo--matcha {
+  rotate: 3deg;
+  border-radius: 50%;
+  height: 120px;
+  width: 120px;
+  object-fit: cover;
+  align-self: center;
+}
+
+/* ——— texto ——— */
+.about-me__text {
+  min-width: 0;
+}
+
+.about-me__title {
+  margin: 0 0 22px;
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  font-size: clamp(1.9rem, 5vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--burgundy);
+}
+
+.about-me__p {
+  margin: 0 0 20px;
+  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  font-size: clamp(1.05rem, 2.6vw, 1.22rem);
+  font-weight: 500;
+  line-height: 1.65;
+  color: var(--ink);
+  text-align: left;
+  max-width: 54ch;
+}
+
+/* ——— os 5 destaques do texto original (**negrito** → 3 tratamentos
+   diferentes, pra não repetir a mesma marcação 5 vezes — "hierarquia
+   visual natural" pedida, não um recurso só aplicado igual em tudo) ——— */
+
+/* grifo rosa — tom de marca-texto, pros 2 trechos "tese" do texto
+   (abertura e fecho: "histórias em absolutamente tudo" / "histórias que
+   merecem ser contadas") */
+.about-me__accent--highlight {
+  font-style: italic;
+  color: var(--burgundy);
+  background: linear-gradient(to top, rgba(232, 174, 187, 0.55) 34%, transparent 34%);
+  padding: 0 2px;
+}
+
+/* peso forte + leve espaçamento — pros trechos mais "afirmativos"
+   ("tudo planejado" / "criar uma vida que tenha a minha cara") */
+.about-me__accent--bold {
+  font-weight: 700;
+  color: var(--burgundy);
+  letter-spacing: 0.01em;
+}
+
+/* itálico simples, sem grifo nem peso extra — pro trecho mais reflexivo
+   ("realizar sonhos nem sempre significa se sentir realizada") */
+.about-me__accent--italic {
+  font-style: italic;
+  color: var(--burgundy);
+}
+
+/* ——— assinatura final — separada do corpo do texto, pequena, em
+   itálico, como um colofão editorial (não é mais um parágrafo normal) ——— */
+.about-me__signature {
+  margin: 10px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(82, 16, 16, 0.18);
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(0.92rem, 2.2vw, 1.05rem);
+  color: var(--muted);
+  text-align: right;
+}
+
+/* janela larga: fotos passam pra coluna lateral, ao lado do texto —
+   `@container` reage à largura da PRÓPRIA janela (arrastável/redimensionável
+   só por "maximizar"), não da tela, mesma técnica de FolderWindow.css. */
+@container about-me (min-width: 540px) {
+  .about-me {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 30px;
+  }
+
+  .about-me__photos {
+    flex-direction: column;
+    flex: none;
+    width: 160px;
+    overflow: visible;
+    padding: 4px;
+  }
+
+  .about-me__photo {
+    height: auto;
+    width: 100%;
+  }
+
+  .about-me__photo--matcha {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-me__photo {
+    rotate: none;
+  }
+}

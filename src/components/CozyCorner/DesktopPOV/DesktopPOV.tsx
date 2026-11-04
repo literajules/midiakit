@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import SceneModal from "@/components/SceneModal/SceneModal";
+import AboutMeWindow from "./AboutMeWindow";
 import BrowserView from "./BrowserView";
 import FolderWindow from "./FolderWindow";
 import Dock from "./Dock";
@@ -251,6 +252,21 @@ export default function DesktopPOV({ onClosed, originPoint, initialFolder }: Pro
                 <BrowserView
                   key={win.id}
                   onClosed={() => closeWindow(win.id)}
+                  onFocus={() => focusWindow(win.id)}
+                  zIndex={zIndex}
+                  initialOffset={initialOffset}
+                />
+              );
+            }
+            // "Sobre mim" (inspo) é uma página editorial fixa, não uma grade
+            // de cases — vive no componente próprio AboutMeWindow (ver
+            // comentário lá) em vez de mais um branch dentro do FolderWindow
+            // genérico (pensado pra Entregas/Conteúdos).
+            if (win.folderId === "inspo") {
+              return (
+                <AboutMeWindow
+                  key={win.id}
+                  onClose={() => closeWindow(win.id)}
                   onFocus={() => focusWindow(win.id)}
                   zIndex={zIndex}
                   initialOffset={initialOffset}

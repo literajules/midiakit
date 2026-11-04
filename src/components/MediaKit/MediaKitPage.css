@@ -1,0 +1,345 @@
+/* ——— tela: barra de ação + a "folha" centralizada, com sombra de cartão.
+   Na impressão (ver @media print embaixo) a barra some e a folha vira a
+   página inteira (A4), sem sombra/moldura. ——— */
+.media-kit-page {
+  min-height: 100vh;
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 16px 56px;
+}
+
+.media-kit-page__toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.media-kit-page__print-btn {
+  padding: 12px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--burgundy);
+  color: var(--off-white);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.media-kit-page__print-btn:hover {
+  background: #6a1818;
+  transform: translateY(-1px);
+}
+
+.media-kit-page__print-btn:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.media-kit-page__hint {
+  margin: 0;
+  max-width: 360px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ——— a "folha": na tela, a altura é a do próprio conteúdo (sem sobra de
+   espaço vazio) — só na impressão ela vira A4 de verdade (ver
+   @media print). Largura fixa pra manter a proporção de leitura de uma
+   folha em qualquer tamanho de tela. ——— */
+.media-kit-page__sheet {
+  position: relative;
+  width: 700px;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 30px 70px rgba(28, 20, 13, 0.35);
+}
+
+.media-kit-page__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.media-kit-page__content {
+  position: relative;
+  padding: 48px 52px 44px;
+}
+
+/* ——— cabeçalho ——— */
+.media-kit-page__header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.media-kit-page__photobooth-wrap {
+  position: relative;
+  flex: none;
+  width: 108px;
+}
+
+.media-kit-page__photobooth {
+  width: 100%;
+  display: block;
+  filter: drop-shadow(0 8px 14px rgba(28, 20, 13, 0.3));
+}
+
+.media-kit-page__washi {
+  position: absolute;
+  top: -16px;
+  left: 14px;
+  width: 64px;
+  rotate: -8deg;
+  pointer-events: none;
+}
+
+.media-kit-page__header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.media-kit-page__kicker {
+  margin: 0 0 4px;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.media-kit-page__title {
+  margin: 0;
+  font-family: var(--font-homemade-apple), cursive;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--burgundy);
+}
+
+.media-kit-page__handle {
+  margin: 4px 0 0;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--burgundy);
+}
+
+.media-kit-page__tagline {
+  margin: 8px 0 0;
+  font-size: 0.84rem;
+  font-style: italic;
+  color: var(--ink);
+}
+
+.media-kit-page__bioline {
+  margin: 3px 0 0;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.media-kit-page__lace {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 26px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* ——— seções: mesmo título em todas (antes "nichos"/"formatos" tinham um
+   estilo diferente de "números de agora"/"quem tá por aqui") ——— */
+.media-kit-page__section {
+  margin-bottom: 26px;
+}
+
+.media-kit-page__section--last {
+  margin-bottom: 30px;
+}
+
+.media-kit-page__section-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 12px;
+}
+
+.media-kit-page__section-title h2 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--burgundy);
+}
+
+.media-kit-page__star {
+  width: 15px;
+  pointer-events: none;
+}
+
+.media-kit-page__folder-icon {
+  width: 22px;
+  pointer-events: none;
+}
+
+.media-kit-page__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.media-kit-page__card {
+  flex: 1 1 140px;
+  padding: 12px 14px;
+  border: 1px solid rgba(82, 16, 16, 0.18);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.media-kit-page__value {
+  margin: 0;
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: var(--burgundy);
+}
+
+.media-kit-page__label {
+  margin: 4px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+/* ——— nichos + formatos: uma seção só, duas colunas (antes eram duas
+   "pastinhas" separadas, e o ícone da segunda cortava na borda da
+   folha) ——— */
+.media-kit-page__two-col {
+  display: flex;
+  gap: 32px;
+}
+
+.media-kit-page__col {
+  flex: 1;
+  min-width: 0;
+}
+
+.media-kit-page__col-label {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.media-kit-page__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.media-kit-page__chip {
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(232, 174, 187, 0.65);
+  color: var(--burgundy);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* ——— rodapé ——— */
+.media-kit-page__footer {
+  position: relative;
+  padding-top: 22px;
+  border-top: 1px solid rgba(82, 16, 16, 0.2);
+  text-align: center;
+}
+
+.media-kit-page__clip {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  translate: -50% 0;
+  width: 20px;
+  rotate: -4deg;
+  pointer-events: none;
+}
+
+.media-kit-page__footer-sign {
+  margin: 0 0 6px;
+  font-family: var(--font-homemade-apple), cursive;
+  font-size: 1.3rem;
+  color: var(--burgundy);
+}
+
+.media-kit-page__footer-contact {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.media-kit-page__footer-link {
+  margin: 3px 0 0;
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .media-kit-page__content {
+    padding: 32px 26px 30px;
+  }
+
+  .media-kit-page__title {
+    font-size: 2.1rem;
+  }
+
+  .media-kit-page__two-col {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* ——— impressão: a folha vira a página A4 inteira, sem UI/sombra ——— */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  .media-kit-page {
+    min-height: 0;
+    padding: 0;
+    gap: 0;
+    background: none;
+  }
+
+  .media-kit-page__toolbar {
+    display: none;
+  }
+
+  .media-kit-page__sheet {
+    width: 210mm;
+    min-height: 297mm;
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* cores de fundo (chips, cards, fitas) somem na impressão por padrão em
+     alguns navegadores — isso força a impressão "fiel" ao que aparece na
+     tela. */
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
