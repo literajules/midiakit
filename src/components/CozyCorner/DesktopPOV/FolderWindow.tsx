@@ -111,7 +111,6 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                     <video
                       key={selected.videoUrl}
                       src={selected.videoUrl}
-                      poster={selected.imageUrl}
                       controls
                       playsInline
                       preload="metadata"

@@ -1,0 +1,218 @@
+/* ——— réplica em miniatura da tela do laptop (ver MiniDesktopScreen.tsx) ———
+   o wrapper ocupa o quadro inteiro da cena (mesma convenção dos outros
+   `children` do RoomScene); o `.mini-desktop` é o canvas "de frente"
+   (480×270, sem distorção nenhuma) que recebe o `matrix3d` calculado em
+   JS (ver cornerPin.ts) — a perspectiva de verdade vem só desse
+   transform, nunca de CSS escrito à mão aqui. */
+.mini-desktop-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* máscara de verdade: tudo que for desenhado dentro de `.mini-desktop`
+   (barra de menu, pastas, dock) fica preso a esses 480×270 por
+   `overflow: hidden` — nenhum elemento filho escapa daqui, nem antes nem
+   depois do `matrix3d` (o corte acontece no espaço local do elemento,
+   então viaja junto com a transformação). Sem wallpaper próprio (ver
+   MiniDesktopScreen.tsx) — o fundo visível é a própria foto, por baixo. */
+.mini-desktop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 480px;
+  height: 270px;
+  transform-origin: 0 0;
+  overflow: hidden;
+  border-radius: 10px; /* arredonda os cantos pra aproximar o bisel da tela */
+  user-select: none;
+}
+
+/* ——— barra de menu: altura proporcional à tela (≈8% de 270px), fundo
+   escuro translúcido (aparência nativa do macOS), SEMPRE a camada mais
+   de cima (z-index mais alto de toda a miniatura — ver doc de hierarquia
+   em MiniDesktopScreen.tsx). ——— */
+.mini-desktop__menubar {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  /* SEM raio próprio de propósito — isso é cantos quadrados de verdade,
+     recortados só pela máscara do `.mini-desktop` (`overflow: hidden` +
+     `border-radius` no container-pai, ver acima). Uma tentativa anterior
+     deu um raio igual aqui TAMBÉM — resultado: dois arredondamentos
+     concêntricos (o do container + o da barra) that não coincidem
+     perfeitamente pixel a pixel depois do `matrix3d`, parecendo uma
+     "janelinha flutuante" em vez de uma barra de verdade encaixada na
+     tela. O gatilho original desse ajuste (um triângulo vazado no canto)
+     já tinha sido resolvido antes disso, pela correção dos 4 cantos da
+     perspectiva — não precisava mais do raio aqui. */
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 8px;
+  background: rgba(20, 21, 24, 0.88);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 7.5px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.mini-desktop__menubar-apple svg {
+  display: block;
+  width: 7px;
+  height: 8px;
+}
+
+.mini-desktop__menubar-app {
+  font-weight: 700;
+  margin-right: 1px;
+}
+
+.mini-desktop__menubar-item {
+  opacity: 0.78;
+}
+
+.mini-desktop__menubar-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  opacity: 0.92;
+}
+
+.mini-desktop__menubar-status svg {
+  display: block;
+  width: 8px;
+  height: 7px;
+}
+
+.mini-desktop__menubar-clock {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ——— pastas do desktop: grade de 2 colunas, canto superior direito,
+   abaixo da barra de menu (z-index acima do wallpaper/foto, abaixo da
+   dock e da barra de menu). ——— */
+.mini-desktop__folders {
+  position: absolute;
+  z-index: 2;
+  top: 36px;
+  right: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px 6px;
+  justify-items: center;
+}
+
+.mini-desktop__folder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 30px;
+}
+
+.mini-desktop__folder svg {
+  display: block;
+  width: 16px;
+  height: 13px;
+}
+
+.mini-desktop__folder-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 4.6px;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.mini-desktop__brands {
+  position: absolute;
+  z-index: 2;
+  /* mais afastado da barra de menu que a 1ª versão (28px → 36px): o
+     1º logo de marca ficava quase colado embaixo da maçã, pequeno
+     demais e perto o bastante pra se confundir com ela à distância —
+     lia como "dois símbolos sobrepostos" (ver conversa "corrigir
+     definitivamente a barra superior"), mesmo sem nenhuma duplicação de
+     verdade no código (validado com 1 só `<AppleMark>` no DOM). */
+  top: 36px;
+  left: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mini-desktop__brand-logo {
+  display: block;
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: #fff;
+  object-fit: cover;
+}
+
+/* ——— dock: ~40% maior que a versão anterior, centralizada, com margem
+   de segurança até a borda inferior (nunca encostada nela). ——— */
+.mini-desktop__dock {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 9px;
+  translate: -50% 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 2.4px;
+  padding: 3.5px 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.18);
+  /* nenhum ícone pode ficar cortado: a dock cresce com o conteúdo (não
+     tem largura fixa) e fica sempre dentro da margem do canvas. */
+  max-width: calc(480px - 16px);
+}
+
+.mini-desktop__dock-item {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 3.5px;
+  box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.35);
+  /* "lupa" suave no hover — mesma ideia do Dock.tsx de verdade, só que
+     aqui via CSS puro (sem JS medindo distância do vizinho). RESSALVA
+     (ver comentário em MiniDesktopScreen.tsx): o botão do hotspot
+     `laptop`, por cima desta camada, intercepta o mouse antes dele
+     chegar aqui — então este `:hover` está correto, mas não tem como
+     disparar de verdade nessa estrutura hoje. */
+  transition: transform 0.16s ease;
+  transform-origin: 50% 100%;
+}
+
+.mini-desktop__dock-item:hover {
+  transform: scale(1.3);
+}
+
+.mini-desktop__dock-item--bare {
+  box-shadow: none;
+  background: none !important;
+}
+
+.mini-desktop__dock-item svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mini-desktop__dock-item {
+    transition: none;
+  }
+}

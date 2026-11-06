@@ -4,12 +4,40 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import RoomScene from "@/components/RoomScene/RoomScene";
 import type { HotspotDef } from "@/components/RoomScene/types";
-import { playCoffeeMachineSound } from "@/lib/sound";
 import BackArrow from "./BackArrow";
 import DesktopPOV from "./DesktopPOV/DesktopPOV";
+import MiniDesktopScreen from "./DesktopPOV/MiniDesktopScreen";
 import DjiPhotobooth from "./DjiPhotobooth";
 import { COZY_CORNER_HOTSPOTS } from "./hotspots";
 import "./CozyCorner.css";
+
+/**
+ * Os 4 cantos da TELA do laptop (não a moldura/teclado — só o retângulo
+ * de vidro, por DENTRO do bisel preto) dentro da foto `cafe-scene.webp`
+ * (1672×941), em % da cena. Medidos com grades de referência finas
+ * (passo de 5px) nos 4 lados separadamente + 3px de margem pra dentro em
+ * cada canto — garante que a miniatura nunca vaze pro bisel preto mesmo
+ * com um resto pequeno de imprecisão de medida.
+ *
+ * 2ª rodada de medição (ver conversa "ícones das marcas ultrapassando a
+ * tela"): a 1ª medida da borda ESQUERDA tinha pego a borda do CHASSI de
+ * alumínio (a moldura metálica fora da tela), não a borda real do vidro
+ * depois do bisel preto — erro de ~23px, bem maior que a margem de 3px
+ * prevista, por isso os logos de marca (perto da borda esquerda da
+ * miniatura) e a maçã da barra de menu vazavam visivelmente. Medido de
+ * novo com uma grade separada pra cada lado (esquerda/direita/cima/baixo)
+ * em vez de uma grade só cobrindo tudo de uma vez, pra não repetir esse
+ * erro de "qual bisel é esse".
+ *
+ * Alimenta a `MiniDesktopScreen` (réplica em miniatura do desktop,
+ * projetada com a perspectiva real da foto — ver lib/cornerPin.ts).
+ */
+const LAPTOP_SCREEN_CORNERS = {
+  tl: { x: 38.94, y: 36.13 },
+  tr: { x: 65.43, y: 35.92 },
+  br: { x: 65.31, y: 61.11 },
+  bl: { x: 38.82, y: 61.11 },
+};
 
 /**
  * Caixas (em % da imagem original, 1670×942 — mesma convenção dos
@@ -146,14 +174,11 @@ export default function CozyCorner({
     window.setTimeout(() => setActiveId((cur) => (cur === def.id ? null : cur)), 1200);
   };
 
-  // hover de um hotspot de verdade (hoje só a `breville` dispara algo além
-  // do realce padrão) + da zona muda do copo (mesma assinatura, pra
-  // reaproveitar no onPointerEnter/Leave dela).
+  // hover de um hotspot de verdade (`breville`, pro vapor subir — ver
+  // `.cozy-steam` abaixo, SEM som, a pedido) + da zona muda do copo (mesma
+  // assinatura, pra reaproveitar no onPointerEnter/Leave dela).
   const handleHover = (id: string, hovering: boolean) => {
     setHoveredId(hovering ? id : null);
-    // "sempre que o mouse passa em cima" (não só na 1ª vez) — toca de novo
-    // a cada entrada, igual ao telefone do quarto.
-    if (id === "breville" && hovering) playCoffeeMachineSound();
   };
 
   return (
@@ -206,9 +231,15 @@ export default function CozyCorner({
           onPointerLeave={() => handleHover("drink", false)}
         />
 
-        {/* ——— máquina de café: vapor sobe + som sintetizado enquanto o
-            mouse está no hotspot `breville` (clique continua abrindo o
-            mapa de cafeterias, normalmente — ver handleActivate) ——— */}
+        {/* ——— miniatura do desktop, projetada na tela do laptop (ver
+            MiniDesktopScreen.tsx) — só decoração, por baixo do hotspot
+            `laptop` de verdade (que continua abrindo o DesktopPOV de tela
+            cheia no clique). ——— */}
+        <MiniDesktopScreen corners={LAPTOP_SCREEN_CORNERS} />
+
+        {/* ——— máquina de café: vapor sobe enquanto o mouse está no
+            hotspot `breville` (sem som, a pedido — clique continua
+            abrindo o mapa de cafeterias, normalmente — ver handleActivate) ——— */}
         <div
           className={`cozy-steam${hoveredId === "breville" ? " is-on" : ""}`}
           aria-hidden="true"

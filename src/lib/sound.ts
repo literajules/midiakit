@@ -104,7 +104,7 @@ export function playSound(id: SoundId) {
   void audio.play().catch(() => {});
 }
 
-/* ---------- máquina de café: sintetizado, sem arquivo de terceiro ---------- */
+/* ---------- sons sintetizados via Web Audio (sem arquivo de terceiro) ---------- */
 
 let audioCtx: AudioContext | null = null;
 
@@ -114,77 +114,6 @@ function getAudioContext(): AudioContext | null {
   if (!Ctor) return null;
   if (!audioCtx) audioCtx = new Ctor();
   return audioCtx;
-}
-
-/**
- * Vapor + zumbido mecânico da máquina de café (hover do hotspot `breville`
- * no cozy corner) — sintetizado na hora via Web Audio API, sem depender de
- * um arquivo de som de terceiros (sem questão de licença pra resolver).
- * Toca inteiro (~0,65s) a cada vez que o mouse encosta na máquina, mesmo
- * que a chamada anterior ainda esteja terminando — cada chamada cria seus
- * próprios nós, ao contrário do `playSound` acima (que reaproveita um único
- * <audio> por som).
- *
- * Como os outros efeitos deste arquivo: sem-op se mudo; qualquer bloqueio
- * do navegador (AudioContext parado antes da 1ª interação real de clique)
- * é ignorado em silêncio.
- */
-export function playCoffeeMachineSound() {
-  ensureInitialized();
-  if (muted) return;
-  const ctx = getAudioContext();
-  if (!ctx) return;
-
-  try {
-    if (ctx.state === "suspended") void ctx.resume();
-
-    const now = ctx.currentTime;
-    const master = ctx.createGain();
-    master.gain.value = 0.35;
-    master.connect(ctx.destination);
-
-    // chiado de vapor: ruído branco num filtro passa-faixa, ataque rápido e
-    // decaimento suave (~0,65s no total).
-    const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.65, ctx.sampleRate);
-    const data = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-
-    const noise = ctx.createBufferSource();
-    noise.buffer = noiseBuffer;
-
-    const bandpass = ctx.createBiquadFilter();
-    bandpass.type = "bandpass";
-    bandpass.frequency.value = 2600;
-    bandpass.Q.value = 0.9;
-
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.0001, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.9, now + 0.05);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
-
-    noise.connect(bandpass).connect(noiseGain).connect(master);
-
-    // zumbido mecânico curto no início (a bomba "ligando"), tom descendo.
-    const hum = ctx.createOscillator();
-    hum.type = "sawtooth";
-    hum.frequency.setValueAtTime(140, now);
-    hum.frequency.exponentialRampToValueAtTime(70, now + 0.3);
-
-    const humGain = ctx.createGain();
-    humGain.gain.setValueAtTime(0.0001, now);
-    humGain.gain.exponentialRampToValueAtTime(0.5, now + 0.03);
-    humGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
-
-    hum.connect(humGain).connect(master);
-
-    noise.start(now);
-    noise.stop(now + 0.65);
-    hum.start(now);
-    hum.stop(now + 0.3);
-  } catch {
-    /* API indisponível ou contexto bloqueado — ignora, mesmo espírito do
-       catch em playSound(). */
-  }
 }
 
 let phoneRingTimer: number | null = null;
@@ -229,8 +158,7 @@ function scheduleBellDing(ctx: AudioContext, destination: AudioNode, startTime: 
 
 /**
  * Toque do telefone ao encostar o mouse — sintetizado na hora via Web Audio
- * (mesmo motivo/padrão do `playCoffeeMachineSound` acima: sem depender de
- * um arquivo de áudio de terceiros).
+ * (sem depender de um arquivo de áudio de terceiros).
  *
  * "Trim... trim": DUAS batidas de sino curtas (`scheduleBellDing`), não um
  * tom contínuo com trêmulo — a versão anterior (um tom sustentado
@@ -266,7 +194,7 @@ export function playPhoneRing() {
     }, PHONE_RING_DURATION * 1000);
   } catch {
     /* API indisponível ou contexto bloqueado — ignora, mesmo espírito do
-       catch em playCoffeeMachineSound(). */
+       catch em playSound(). */
     phoneRingTimer = null;
   }
 }

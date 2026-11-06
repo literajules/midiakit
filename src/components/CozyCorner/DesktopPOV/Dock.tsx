@@ -19,7 +19,7 @@ type Props = {
  * ícone real da Lixeira (vazia) é uma lata de malha metálica solta, sem
  * fundo colorido — ver `BARE_IDS` abaixo.
  */
-const BG: Record<DockAppId, string> = {
+export const BG: Record<DockAppId, string> = {
   finder: "linear-gradient(115deg,#1f6fe0 0%,#1f6fe0 49.5%,#7fd1ff 50.5%,#7fd1ff 100%)",
   safari: "radial-gradient(circle at 35% 30%,#fafdff,#dde6ee)",
   chrome: "radial-gradient(circle at 35% 30%,#ffffff,#eef1f5)",
@@ -33,10 +33,12 @@ const BG: Record<DockAppId, string> = {
 };
 
 /** apps sem tile/sombra — o ícone fica "solto" na dock, igual o original */
-const BARE_IDS: DockAppId[] = ["trash"];
+export const BARE_IDS: DockAppId[] = ["trash"];
 
-/** glifos — desenhos originais inspirados no esquema visual dos apps reais do macOS, não os logos exatos */
-function DockGlyph({ id }: { id: DockAppId }) {
+/** glifos — desenhos originais inspirados no esquema visual dos apps reais do macOS, não os logos exatos.
+ * Exportado (junto com `BG`/`BARE_IDS` abaixo) pra reaproveitar na miniatura da tela do laptop
+ * (MiniDesktopScreen.tsx) sem duplicar os ~150 linhas de desenho dos ícones. */
+export function DockGlyph({ id }: { id: DockAppId }) {
   switch (id) {
     case "finder":
       return (

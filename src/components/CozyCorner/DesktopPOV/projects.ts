@@ -74,7 +74,7 @@ export const PROJECTS: ProjectCase[] = [
     description: "Case ainda no forno — falta só o texto (o que foi pedido, formato de entrega, link). O vídeo já está aqui.",
     videoUrl: "/videos/projects/oui-paris.mp4",
     videoAspect: { w: 480, h: 848 },
-    // logo real da marca — mostrado no ícone da grade e como poster do vídeo
+    // logo real da marca — mostrado no ícone da grade (sem aparecer como poster do vídeo)
     imageUrl: "/images/desktop/brands/oui-paris.jpg",
   },
   {
@@ -84,7 +84,7 @@ export const PROJECTS: ProjectCase[] = [
     description: "Case ainda no forno — falta só o texto (o que foi pedido, formato de entrega, link). O vídeo já está aqui.",
     videoUrl: "/videos/projects/maracugina.mp4",
     videoAspect: { w: 720, h: 1280 },
-    // logo real da marca — mostrado no ícone da grade e como poster do vídeo
+    // logo real da marca — mostrado no ícone da grade (sem aparecer como poster do vídeo)
     imageUrl: "/images/desktop/brands/maracugina.jpg",
   },
   {
@@ -94,9 +94,9 @@ export const PROJECTS: ProjectCase[] = [
     description: "Case ainda no forno — falta só o texto (o que foi pedido, formato de entrega, link). O vídeo já está aqui.",
     videoUrl: "/videos/projects/vinko.mp4",
     videoAspect: { w: 720, h: 1280 },
-    // logo real da marca — mostrado no ícone da grade e (letterboxed, não
-    // esticado — `object-fit: contain` no FolderWindow.css) como poster do
-    // vídeo antes de carregar/dar play
+    // logo real da marca — mostrado no ícone da grade (letterboxed, não
+    // esticado — `object-fit: contain` no FolderWindow.css); sem aparecer
+    // como poster do vídeo
     imageUrl: "/images/desktop/brands/vinko.png",
     // print real de Insights do Instagram + os mesmos números, transcritos à mão (não inventados)
     insightImages: [{ src: "/images/desktop/projects/vinko-insights.png", alt: "Print dos Insights do Instagram da publi da Vinko" }],

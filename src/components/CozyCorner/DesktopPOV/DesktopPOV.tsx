@@ -23,8 +23,10 @@ type Props = {
   initialFolder?: DesktopFolderId | null;
 };
 
-/** itens decorativos da barra de menu (sem função — é só o visual do mockup) */
-const MENU_ITEMS = ["File", "Edit", "View", "History", "Window"];
+/** itens decorativos da barra de menu (sem função — é só o visual do mockup).
+ * Exportado pra reaproveitar na miniatura (MiniDesktopScreen.tsx) — mesma
+ * lista nos dois, sem duplicar o array. */
+export const MENU_ITEMS = ["File", "Edit", "View", "History", "Window"];
 
 const WEEKDAYS = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
@@ -33,9 +35,11 @@ const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "
  * Relógio da barra de menu — só decorativo (bate hora local de quem
  * visita), atualiza a cada minuto. Sem risco de mismatch de hidratação:
  * o `DesktopPOV` só monta no cliente, dentro de um portal aberto por
- * clique (nunca é renderizado no servidor).
+ * clique (nunca é renderizado no servidor). Exportado pra reaproveitar
+ * na miniatura (MiniDesktopScreen.tsx) — mesmo relógio de verdade, não
+ * um texto estático.
  */
-function useMenubarClock() {
+export function useMenubarClock() {
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), 30_000);
@@ -45,7 +49,10 @@ function useMenubarClock() {
   return `${WEEKDAYS[now.getDay()]}. ${now.getDate()} ${MONTHS[now.getMonth()]} · ${pad(now.getHours())}:${pad(now.getMinutes())}`;
 }
 
-function AppleMark() {
+// Exportados (junto com WifiMark/BatteryMark/FolderGlyph abaixo) pra
+// reaproveitar na miniatura da tela do laptop (MiniDesktopScreen.tsx),
+// sem duplicar os desenhos.
+export function AppleMark() {
   return (
     <svg viewBox="0 0 14 16" width="11" height="13" fill="currentColor" aria-hidden="true">
       <path d="M11.2 8.4c0-1.6.8-2.5 2-3.2-.7-1-1.8-1.6-3.1-1.6-1 0-1.9.4-2.7.4-.8 0-1.8-.4-2.8-.4C2.4 3.6.6 5.4.6 8.4c0 2 1.1 5.4 2.9 7 .8.7 1.5 1.4 2.5 1.4.9 0 1.3-.6 2.4-.6s1.5.6 2.4.6c1 0 1.7-.8 2.5-1.5.6-.6 1-1.1 1.4-1.8-1.9-.9-2.5-2.6-2.5-4.3zM8.6 1.7c.6-.8 1.1-1.9 1-3-1 .1-2.1.7-2.8 1.5-.6.7-1.1 1.8-1 2.9 1.1.1 2.2-.5 2.8-1.4z" />
@@ -53,7 +60,7 @@ function AppleMark() {
   );
 }
 
-function WifiMark() {
+export function WifiMark() {
   return (
     <svg viewBox="0 0 16 12" width="13" height="10" aria-hidden="true">
       <path d="M1 4.5a10 10 0 0 1 14 0" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
@@ -63,7 +70,7 @@ function WifiMark() {
   );
 }
 
-function BatteryMark() {
+export function BatteryMark() {
   return (
     <svg viewBox="0 0 22 12" width="19" height="10" aria-hidden="true">
       <rect x="1" y="1.5" width="18" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.2" />
@@ -74,7 +81,7 @@ function BatteryMark() {
 }
 
 /** ícone de pasta macOS — duas tonalidades de rosa (paleta do site: --pink) */
-function FolderGlyph() {
+export function FolderGlyph() {
   return (
     <svg viewBox="0 0 48 40" width="38" height="32" aria-hidden="true">
       <path d="M2 8a3 3 0 0 1 3-3h12l4 5h22a3 3 0 0 1 3 3v22a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3Z" fill="#d98ba0" />

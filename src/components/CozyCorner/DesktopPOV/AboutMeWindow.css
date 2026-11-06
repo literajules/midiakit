@@ -20,6 +20,15 @@
   flex-direction: column;
   gap: 28px;
   padding: 28px 30px 36px;
+  /* `.desktop-window__body` (DesktopWindow.css) é `overflow: hidden` de
+     propósito — é só a moldura que recorta os cantos arredondados; quem
+     rola de verdade é o conteúdo de dentro (mesmo padrão de
+     `.folder-window__grid`/`.browser-view__page`). Sem isso, texto mais
+     longo que a altura fixa da janela ficava simplesmente cortado, sem
+     nenhum jeito de rolar até o resto. */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 /* ——— collage de fotos pessoais ———
@@ -164,6 +173,22 @@
   .about-me__photo--matcha {
     width: 110px;
     height: 110px;
+  }
+
+  /* a tirinha de fotomaton (234×862 — bem mais alta/estreita que as
+     outras 3 fotos) virava um problemão nessa coluna de 160px: a 100% da
+     largura, a altura ia pra ~590px (160 ÷ 0,27), dominando a janela
+     inteira e empurrando o resto (texto incluso) pra fora da área
+     visível. Limita pela ALTURA em vez da largura aqui — a largura
+     acompanha proporcionalmente, bem mais estreita que a coluna, mas sem
+     cortar nenhuma das 3 fotos da tira (`object-fit: contain`). */
+  .about-me__photo--triptych {
+    width: auto;
+    height: auto;
+    max-height: 260px;
+    max-width: 100%;
+    object-fit: contain;
+    align-self: flex-start;
   }
 }
 

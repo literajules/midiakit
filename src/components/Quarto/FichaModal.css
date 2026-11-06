@@ -113,35 +113,6 @@
   text-decoration: underline;
 }
 
-/* ——— baixar o mídia kit em PDF (gerado por /api/media-kit) ——— */
-.ficha-modal__kit-download {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  padding: 9px 16px;
-  border: 1px solid var(--burgundy);
-  border-radius: 999px;
-  color: var(--burgundy);
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    background-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.ficha-modal__kit-download:hover {
-  background: var(--burgundy);
-  color: var(--off-white);
-}
-
-.ficha-modal__kit-download:focus-visible {
-  outline: 2px solid var(--pink);
-  outline-offset: 2px;
-}
-
 /* ——— coluna da direita: formulário ——— */
 .ficha-modal__form {
   display: flex;
