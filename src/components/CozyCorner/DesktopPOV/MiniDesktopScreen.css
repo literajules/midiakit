@@ -25,7 +25,16 @@
   height: 270px;
   transform-origin: 0 0;
   overflow: hidden;
-  border-radius: 10px; /* arredonda os cantos pra aproximar o bisel da tela */
+  /* SEM raio aqui: os 4 cantos em `LAPTOP_SCREEN_CORNERS` (CozyCorner.tsx)
+     já foram medidos por DENTRO do bisel preto — ou seja, já é só o
+     retângulo de vidro, que é reto (a curvatura fica no bisel plástico,
+     fora desse quadrilátero). Um border-radius aqui arredonda os 4
+     cantos do canvas ANTES da perspectiva — como a barra de menu fica
+     encostada no topo sem raio próprio (ver comentário abaixo, de
+     propósito), o arredondamento do container corta um cantinho dela,
+     vazando um pouco da foto de fundo nos 2 cantos de cima (bug
+     reportado: "barra do Finder não alinhada, aparece o fundo nos
+     cantos"). */
   user-select: none;
 }
 
