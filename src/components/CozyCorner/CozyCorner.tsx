@@ -56,8 +56,12 @@ const LAPTOP_SCREEN_CORNERS = {
  * mão, legível sem nenhuma camada por cima — ver conversa "remover o blur
  * do caderno".
  */
-const DRINK_ZONE = { cx: 32.04, cy: 50.96, w: 17.96, h: 46.71 };
-const STEAM_POS = { left: 35.75, top: 9 };
+// reposicionados depois da foto nova (2026-11-09, "sunset v2"): o drink e a
+// máquina de café trocaram de lado na nova composição (antes à esquerda do
+// laptop, agora à direita, perto do abajur/DJI) — remedido com grade de
+// referência em cima da foto nova, não é mais o mesmo ponto da foto anterior.
+const DRINK_ZONE = { cx: 74, cy: 50, w: 16, h: 46 };
+const STEAM_POS = { left: 72, top: 10 };
 
 // o mapa (e o MapLibre) só é baixado quando alguém clica na máquina de café.
 const CozyMapModal = dynamic(() => import("@/components/CozyMap/CozyMapModal"), { ssr: false });

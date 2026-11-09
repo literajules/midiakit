@@ -18,10 +18,14 @@ export const COZY_CORNER_HOTSPOTS: HotspotDef[] = [
     id: "breville",
     label: "Máquina de café",
     destination: "Mapa de cafeterias favoritas",
-    cx: 35.75,
-    cy: 21.4,
-    w: 17.4,
-    h: 33.8,
+    // reposicionado depois da foto nova (2026-11-09, "sunset v2"): a máquina
+    // trocou de lado na nova composição (esquerda → direita, perto do
+    // abajur) — remedido com grade de referência em cima da foto nova, não
+    // é mais o mesmo ponto da foto anterior.
+    cx: 72,
+    cy: 24,
+    w: 24,
+    h: 32,
     enabled: HAS_REAL_PLACES,
   },
   {
