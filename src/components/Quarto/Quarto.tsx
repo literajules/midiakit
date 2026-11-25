@@ -369,14 +369,14 @@ export default function Quarto({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/quarto/closet-open.webp" alt="" draggable={false} />
             {!doorsOpen && <button className="quarto-closet__doors" type="button" aria-label="Abrir as portas do armário"
-              onPointerEnter={(event) => { if (event.pointerType === "mouse") setDoorsOpen(true); }}
+              onPointerMove={(event) => { if (event.pointerType === "mouse") setDoorsOpen(true); }}
               onClick={() => {
                 const firstOutfit = document.getElementById("quarto-closet-first-outfit");
                 setDoorsOpen(true);
                 requestAnimationFrame(() => firstOutfit?.focus());
               }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/quarto/closet-closed.webp" alt="" draggable={false} />
+              <img src="/images/quarto/closet-closed.png" alt="" draggable={false} />
             </button>}
             <div className="quarto-closet__rack" hidden={!doorsOpen}>
               {CLOSET_RACK.map((look, index) => (
