@@ -121,4 +121,5 @@
 @media (max-width: 620px) {
   .content-scrapbook__cutout--tag { right: 0; top: 1%; }
   .content-scrapbook__cutout--paper { right: 0; }
+  .content-scrapbook__cutout--envelope { left: 2%; }
 }
