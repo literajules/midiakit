@@ -75,7 +75,6 @@
 .guestbook button.guestbook-sticker { pointer-events: auto; touch-action: none; cursor: grab; }
 .guestbook button.guestbook-sticker:active { cursor: grabbing; }
 .guestbook-sticker img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-.guestbook-rotation { display: flex; gap: .35rem; flex-wrap: wrap; }
 
 .guestbook-paper--draft .guestbook-page { min-height: 95%; }
 .guestbook-paper--admin { grid-column: 1 / -1; padding: 0 4%; }
@@ -99,5 +98,27 @@
   outline-offset: 2px;
   z-index: 1;
 }
-.guestbook-rotation { justify-content: center; }
-.guestbook-rotation button { min-width: 38px; min-height: 34px; }
+
+.guestbook-sticker-anchor { position: absolute; }
+.guestbook-sticker-anchor[data-selected="true"] { z-index: 1; }
+.guestbook button.guestbook-sticker-rotate {
+  position: absolute;
+  top: 0;
+  left: 26px;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  color: #412524;
+  font-size: 1.1rem;
+  line-height: 1;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+.guestbook button.guestbook-sticker-rotate[data-side="left"] {
+  left: auto;
+  right: 26px;
+}
