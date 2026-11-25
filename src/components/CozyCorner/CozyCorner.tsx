@@ -24,8 +24,8 @@ function screenPoint(x: number, y: number) {
 }
 
 const LAPTOP_SCREEN_CORNERS = {
-  tl: screenPoint(643.5, 338),
-  tr: screenPoint(1102, 338),
+  tl: screenPoint(642.5, 336),
+  tr: screenPoint(1103, 336),
   br: screenPoint(1109.5, 592),
   bl: screenPoint(637, 592),
 };

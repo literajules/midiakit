@@ -39,7 +39,7 @@
 }
 
 /* ——— barra de menu: altura proporcional à tela (≈8% de 270px), fundo
-   escuro translúcido (aparência nativa do macOS), SEMPRE a camada mais
+   escuro (aparência nativa do macOS), SEMPRE a camada mais
    de cima (z-index mais alto de toda a miniatura — ver doc de hierarquia
    em MiniDesktopScreen.tsx). ——— */
 .mini-desktop__menubar {
@@ -63,7 +63,7 @@
   align-items: center;
   gap: 7px;
   padding: 0 8px;
-  background: rgba(20, 21, 24, 0.88);
+  background: #161d26;
   color: rgba(255, 255, 255, 0.9);
   font-size: 7.5px;
   line-height: 1;
