@@ -208,7 +208,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
             )}
           </article>
 
-          {items.length > 1 && (
+          {folderId !== "projects" && items.length > 1 && (
             <>
               <button type="button" className="folder-window__nav folder-window__nav--prev" onClick={() => goToOffset(-1)} aria-label="Item anterior">
                 ‹
@@ -222,7 +222,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
       ) : items.length > 0 ? (
         <div className="folder-window__grid">
           {items.map((project, i) => (
-            <button key={project.id} type="button" className="folder-window__item" onClick={() => selectItem(project)}>
+            <button key={project.id} type="button" className="folder-window__item" aria-label={project.brand ?? displayName(project)} onClick={() => selectItem(project)}>
               {project.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={project.imageUrl} alt="" className="folder-window__item-logo" />
@@ -231,7 +231,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                   {displayName(project).trim().charAt(0).toUpperCase() || "?"}
                 </span>
               )}
-              <span className="folder-window__item-label">{folderId === "projects" ? project.brand ?? displayName(project) : displayName(project)}</span>
+              {folderId !== "projects" && <span className="folder-window__item-label">{displayName(project)}</span>}
             </button>
           ))}
         </div>
