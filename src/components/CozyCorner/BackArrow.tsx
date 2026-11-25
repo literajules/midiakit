@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import "./BackArrow.css";
 
@@ -9,8 +10,9 @@ import "./BackArrow.css";
  * hotspot da cena, então não depende de hover/foco pra aparecer.
  */
 export default function BackArrow({ onClick }: { onClick: () => void }) {
+  const { t } = useLanguage();
   return (
-    <button type="button" className="back-arrow" onClick={onClick} aria-label="Voltar para o quarto">
+    <button type="button" className="back-arrow" onClick={onClick} aria-label={t("Voltar para o quarto", "Back to the bedroom")}>
       <svg className="back-arrow__icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
         <path
           d="M15 5 L7 12 L15 19"
@@ -21,7 +23,7 @@ export default function BackArrow({ onClick }: { onClick: () => void }) {
           strokeLinejoin="round"
         />
       </svg>
-      <span className="back-arrow__label">quarto</span>
+      <span className="back-arrow__label">{t("quarto", "bedroom")}</span>
     </button>
   );
 }

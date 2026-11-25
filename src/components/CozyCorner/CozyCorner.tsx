@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import RoomScene from "@/components/RoomScene/RoomScene";
@@ -22,8 +24,8 @@ function screenPoint(x: number, y: number) {
 }
 
 const LAPTOP_SCREEN_CORNERS = {
-  tl: screenPoint(643.5, 338),
-  tr: screenPoint(1102, 338),
+  tl: screenPoint(642.5, 336),
+  tr: screenPoint(1103, 336),
   br: screenPoint(1109.5, 592),
   bl: screenPoint(637, 592),
 };
@@ -52,16 +54,10 @@ function centerOf(el: HTMLElement): OriginPoint {
  * pequena aqui, mas é ela que garante o laptop sempre centralizado de
  * verdade, em vez de culpa de um "center center" genérico.
  *
- * Única faixa testada em que o laptop não cabe 100% inteiro: celular em pé
- * (390×844 → só 26,1% da largura original visível, contra os 35,2% que o
- * laptop ocupa) — corta ~13% de cada borda externa dele (o teclado/dobradiça
- * nas pontas), mas a tela do MacBook, mais central, continua inteira.
- * `panTrigger = 0.2` deixa essa faixa em "cover" mesmo assim (a perda é bem
- * menor que a do quarto nessa mesma faixa) — serve só de rede de segurança
- * pra proporções mais extremas que as testadas.
+ * Em telas estreitas, a foto pode ser explorada horizontalmente.
  */
 const GUESTBOOK_PREVIEW = process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
-const COZY_CORNER_LAYOUT = { focalX: 0.524, panTrigger: GUESTBOOK_PREVIEW ? 1 : 0.2 };
+const COZY_CORNER_LAYOUT = { focalX: 0.524, panTrigger: 0.75 };
 const hotspots: HotspotDef[] = GUESTBOOK_PREVIEW ? [
   ...COZY_CORNER_HOTSPOTS,
   { id: "guestbook", label: "Caderno", destination: "Livro de visitas", teaser: "meu journal", cx: 16.6, cy: 82.5, w: 28, h: 20, enabled: true },
@@ -107,6 +103,7 @@ export default function CozyCorner({
   openFolder?: "work" | "projects" | null;
   onOpenFolderHandled?: () => void;
 }) {
+  const { t } = useLanguage();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mapOpen, setMapOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(false);
@@ -163,7 +160,7 @@ export default function CozyCorner({
     <>
       <RoomScene
         id="cozy-corner"
-        ariaLabel="A cafeteria"
+        ariaLabel={t("A cafeteria", "The café")}
         sceneW={CAFE_SCENE_WIDTH}
         sceneH={CAFE_SCENE_HEIGHT}
         imageSrc="/images/cafe/cafe-scene.webp"
@@ -175,12 +172,18 @@ export default function CozyCorner({
         background="var(--cream)"
         revealOnScroll={false}
         layoutOptions={COZY_CORNER_LAYOUT}
+        showPanArrows
       >
         {/* ——— miniatura do desktop, projetada na tela do laptop (ver
             MiniDesktopScreen.tsx) — só decoração, por baixo do hotspot
             `laptop` de verdade (que continua abrindo o DesktopPOV de tela
             cheia no clique). ——— */}
         <MiniDesktopScreen corners={LAPTOP_SCREEN_CORNERS} />
+        <div className="cozy-window-leaves" aria-hidden="true">
+          <span className="cozy-window-leaf" />
+          <span className="cozy-window-leaf" />
+          <span className="cozy-window-leaf" />
+        </div>
 
         {/* ——— máquina de café: vapor sobe enquanto o mouse está no
             hotspot `breville` (sem som, a pedido — clique continua

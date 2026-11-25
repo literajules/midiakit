@@ -70,6 +70,16 @@ export default function MiniDesktopScreen({ corners }: Props) {
     <div ref={wrapRef} className="mini-desktop-wrap" aria-hidden="true">
       {transform && (
         <div className="mini-desktop" style={{ transform: `matrix3d(${transform})` }}>
+          <svg className="mini-desktop__quote" viewBox="0 0 480 270" aria-hidden="true">
+            <defs>
+              <path id="cafe-macbook-quote-arc" d="M 62 134 Q 240 12 418 134" />
+            </defs>
+            <text>
+              <textPath href="#cafe-macbook-quote-arc" startOffset="50%" textAnchor="middle" textLength="369" lengthAdjust="spacingAndGlyphs">
+                To the stars who listen — and the dreams that are answered.
+              </textPath>
+            </text>
+          </svg>
           {/* SEM wallpaper próprio de propósito: a foto já tem o wallpaper
               de verdade "gravado" na tela do laptop — o fundo visível
               aqui é a própria foto, por baixo desta camada. */}

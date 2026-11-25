@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { createPortal } from "react-dom";
@@ -35,6 +36,7 @@ const sameInsets = (a: Insets, b: Insets) =>
   a.top === b.top && a.right === b.right && a.bottom === b.bottom && a.left === b.left;
 
 export default function CozyMapModal({ onClosed }: Props) {
+  const { t } = useLanguage();
   const reduced = usePrefersReducedMotion();
 
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -294,12 +296,12 @@ export default function CozyMapModal({ onClosed }: Props) {
           </div>
           <p className="cozy-map__sign">the cozy map · by jules</p>
           <h2 id="cozy-map-title" className="cozy-map__title">
-            um bom café &amp; um livro
+            {t("um bom café & um livro", "good coffee & a book")}
           </h2>
           <p id="cozy-map-sub" className="cozy-map__sub">
-            minha coleção de lugares que vale a pena conhecer.
+            {t("minha coleção de lugares que vale a pena conhecer.", "my collection of places worth a visit.")}
           </p>
-          <div className="cozy-cities" role="group" aria-label="Escolha a cidade">
+          <div className="cozy-cities" role="group" aria-label={t("Escolha a cidade", "Choose a city")}>
             {CITIES.map((c) => {
               const n = placesIn(c.id).length;
               const on = c.id === city;
@@ -317,10 +319,10 @@ export default function CozyMapModal({ onClosed }: Props) {
               );
             })}
           </div>
-          {hasDemo && <span className="cozy-map__demo">dados de exemplo</span>}
+          {hasDemo && <span className="cozy-map__demo">{t("dados de exemplo", "sample data")}</span>}
         </header>
 
-        <aside ref={panelRef} className="cozy-panel" aria-label={`Lugares em ${cityDef.label}`}>
+        <aside ref={panelRef} className="cozy-panel" aria-label={t(`Lugares em ${cityDef.label}`, `Places in ${cityDef.label}`)}>
           <div ref={scrollRef} className="cozy-panel__scroll">
             {places.length > 0 ? (
               <ol className="cozy-panel__list">
@@ -354,7 +356,7 @@ export default function CozyMapModal({ onClosed }: Props) {
                             href={p.mapsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            title="Abrir no Google Maps"
+                            title={t("Abrir no Google Maps", "Open in Google Maps")}
                             aria-label={`Abrir ${p.name} no Google Maps (nova aba)`}
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -362,7 +364,7 @@ export default function CozyMapModal({ onClosed }: Props) {
                               <path d="M3 9 9 3M4.2 3H9v4.8" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           </a>
-                          {p.demo && <span className="cozy-item__tag">exemplo</span>}
+                          {p.demo && <span className="cozy-item__tag">{t("exemplo", "sample")}</span>}
                         </div>
                         {p.description && <p className="cozy-item__desc">{p.description}</p>}
                         <p className="cozy-item__meta">
@@ -380,14 +382,14 @@ export default function CozyMapModal({ onClosed }: Props) {
             ) : (
               <div className="cozy-empty">
                 <span className="cozy-empty__pin" aria-hidden="true" />
-                <p className="cozy-empty__title">{cityDef.label} ainda está no forno.</p>
-                <p className="cozy-empty__text">Os lugares favoritos daqui entram em breve. Volte para espiar.</p>
+                <p className="cozy-empty__title">{t(`${cityDef.label} ainda está no forno.`, `${cityDef.label} is coming soon.`)}</p>
+                <p className="cozy-empty__text">{t("Os lugares favoritos daqui entram em breve. Volte para espiar.", "My favorite spots here are coming soon. Check back later.")}</p>
               </div>
             )}
           </div>
         </aside>
 
-        <button type="button" className="cozy-map__close" onClick={requestClose} aria-label="Fechar o mapa">
+        <button type="button" className="cozy-map__close" onClick={requestClose} aria-label={t("Fechar o mapa", "Close the map")}>
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
             <path d="M3 3 13 13M13 3 3 13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>

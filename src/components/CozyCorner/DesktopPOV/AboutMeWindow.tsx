@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import DesktopWindow from "./DesktopWindow";
 import "./AboutMeWindow.css";
 
@@ -34,10 +36,11 @@ type Props = {
  * do que com um texto íntimo sobre histórias/cafés/livros.
  */
 export default function AboutMeWindow({ onClose, onFocus, zIndex, initialOffset }: Props) {
+  const { language, t } = useLanguage();
   return (
     <DesktopWindow
       className="about-me-window"
-      title="Sobre mim"
+      title={t("Sobre mim", "About me")}
       onClose={onClose}
       onFocus={onFocus}
       zIndex={zIndex}
@@ -54,6 +57,11 @@ export default function AboutMeWindow({ onClose, onFocus, zIndex, initialOffset 
         <div className="about-me__text">
           <h3 className="about-me__title">a little bit about me. ♡</h3>
 
+          {language === "en" ? <>
+            <p className="about-me__p">hi, i’m jules. i’m a content creator and UGC creator, and i love filming things i’d already be doing anyway: making coffee, reading a few pages, or trying a new hobby for the first time.</p>
+            <p className="about-me__p">i studied advertising, but i’ve always found stories in the smallest details of my day. for a long time, i thought i had to have everything figured out before i could start living mine.</p>
+            <p className="about-me__p">these days, somewhere between cafés, books and an unreasonable number of thoughts per minute, i’m learning to build a life that feels like mine. my favorite part is turning those little moments into stories worth sharing.</p>
+          </> : <>
           <p className="about-me__p">oi, eu sou a jules. sou criadora de conteúdo &amp; UGC, e adoro gravar as coisas que já fariam parte do meu dia: um café, algumas páginas de um livro ou a primeira tentativa de um hobby novo.</p>
 
           <p className="about-me__p">
@@ -85,6 +93,7 @@ export default function AboutMeWindow({ onClose, onFocus, zIndex, initialOffset 
             <span className="about-me__accent about-me__accent--highlight">histórias que merecem ser contadas.</span>
           </p>
 
+          </>}
           <p className="about-me__signature">still figuring it out, one little chapter at a time. ✷</p>
         </div>
         <div className="about-me__photos about-me__photos--right" aria-hidden="true">

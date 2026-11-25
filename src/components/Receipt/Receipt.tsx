@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import { useState } from "react";
 import "./Receipt.css";
@@ -59,10 +60,9 @@ type Props = {
   comeAgainLine?: string;
 };
 
-function formatNow() {
-  const now = new Date();
-  const date = now.toLocaleDateString("pt-BR");
-  const time = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+function formatNow(now: Date, locale: string) {
+  const date = now.toLocaleDateString(locale);
+  const time = now.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
   // número do pedido "do dia": determinístico a partir da data, só pra ter graça sem ficar aleatório à toa
   const order = String(
     now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate()
@@ -78,7 +78,9 @@ export default function Receipt({
   thankYouLine = "OBRIGADA",
   comeAgainLine = "volte em breve",
 }: Props) {
-  const [stamp] = useState(formatNow);
+  const { t } = useLanguage();
+  const [now] = useState(() => new Date());
+  const stamp = formatNow(now, t("pt-BR", "en-US"));
 
   return (
     <div className="receipt" style={{ clipPath: PINKING_CLIP_PATH }}>
@@ -95,7 +97,7 @@ export default function Receipt({
       <p className="receipt__stamp">
         {stamp.date}  {stamp.time}
         <br />
-        PEDIDO #{stamp.order}
+        {t("PEDIDO", "ORDER")} #{stamp.order}
       </p>
 
       <p className="receipt__rule receipt__rule--equals" aria-hidden="true">

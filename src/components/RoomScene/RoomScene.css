@@ -272,3 +272,15 @@
     box-shadow: 0 0 0 16px rgba(232, 174, 187, 0);
   }
 }
+
+#cozy-corner .room-scene__pan-arrow {
+  top: auto;
+  bottom: calc(42px + env(safe-area-inset-bottom, 0px));
+  translate: none;
+}
+#cozy-corner .room-scene__pan-arrow--left {
+  left: max(12px, env(safe-area-inset-left, 0px));
+}
+#cozy-corner .room-scene__pan-arrow--right {
+  right: max(12px, env(safe-area-inset-right, 0px));
+}

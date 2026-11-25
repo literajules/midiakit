@@ -1,10 +1,10 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import { useEffect, useState } from "react";
 import { useNoHover, usePrefersReducedMotion } from "@/lib/motion";
 import "./DoorInvite.css";
 
-const MESSAGE = "vamos tomar um café?";
 const TYPE_MS = 38; // por caractere
 
 /**
@@ -32,6 +32,8 @@ export default function DoorInvite({
    * (ver Quarto.tsx `anyModalOpen`), pro fundo ficar completamente fixo. */
   frozen?: boolean;
 }) {
+  const { t } = useLanguage();
+  const message = t("vamos tomar um café?", "shall we grab a coffee?");
   const reduced = usePrefersReducedMotion();
   const [typed, setTyped] = useState(0);
   // touch (sem hover): a dica já fica sempre visível por CSS — o texto
@@ -42,7 +44,7 @@ export default function DoorInvite({
   useEffect(() => {
     if (noHover) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza com capacidade de hover do dispositivo, não com props/estado do próprio componente
-      setTyped(MESSAGE.length);
+      setTyped(message.length);
       return;
     }
     if (!visible) {
@@ -50,12 +52,12 @@ export default function DoorInvite({
       return;
     }
     if (reduced) {
-      setTyped(MESSAGE.length);
+      setTyped(message.length);
       return;
     }
     const id = window.setInterval(() => {
       setTyped((n) => {
-        if (n >= MESSAGE.length) {
+        if (n >= message.length) {
           window.clearInterval(id);
           return n;
         }
@@ -63,7 +65,7 @@ export default function DoorInvite({
       });
     }, TYPE_MS);
     return () => window.clearInterval(id);
-  }, [visible, reduced, noHover]);
+  }, [visible, reduced, noHover, message]);
 
   return (
     <div
@@ -71,7 +73,7 @@ export default function DoorInvite({
       aria-hidden="true"
     >
       <p className="door-invite__line">
-        {MESSAGE.slice(0, typed)}
+        {message.slice(0, typed)}
         <span className="door-invite__caret" />
       </p>
       <svg className="door-invite__arrow" viewBox="0 0 90 70" width="72" height="56" aria-hidden="true">

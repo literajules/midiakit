@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import SceneModal from "@/components/SceneModal/SceneModal";
@@ -9,10 +10,19 @@ type Entry = {
   id: string;
   message: string;
   signature: string;
+  ink?: string;
   selfie: string | null;
   stickers: (Sticker | string)[];
   approved: boolean;
 };
+
+const inks = [
+  { color: "#702b42", pt: "Vinho", en: "Burgundy" },
+  { color: "#303e69", pt: "Azul", en: "Blue" },
+  { color: "#342b28", pt: "Grafite", en: "Charcoal" },
+  { color: "#31594c", pt: "Verde", en: "Green" },
+  { color: "#64466f", pt: "Ameixa", en: "Plum" },
+];
 
 const storageKey = "literajules-guestbook-preview";
 const stickerRoot = "/journal-stickers/";
@@ -21,13 +31,12 @@ function Page({ entry, onMove }: {
   entry: Omit<Entry, "id" | "approved">;
   onMove?: (name: string, update: Partial<Sticker>) => void;
 }) {
+  const { t } = useLanguage();
   const [active, setActive] = useState<string | null>(null);
   const drag = useRef<{ pointer: number; dx: number; dy: number } | null>(null);
-  const selected = entry.stickers.find((item): item is Sticker => typeof item !== "string" && item.name === active);
 
   return (
-    <>
-    <article className="guestbook-page">
+    <article className="guestbook-page" style={{ color: inks.find(({ color }) => color === entry.ink)?.color }}>
       {entry.selfie && <span className="guestbook-selfie">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={entry.selfie} alt="Selfie de quem deixou o recado" />
@@ -41,8 +50,9 @@ function Page({ entry, onMove }: {
           // eslint-disable-next-line @next/next/no-img-element
           const image = <img src={stickerRoot + sticker.name} alt="" draggable={false} />;
           if (!onMove) return <span className="guestbook-sticker" key={sticker.name} style={style}>{image}</span>;
-          return <button className="guestbook-sticker" key={sticker.name} type="button" style={style}
-            aria-label={"Mover sticker " + (index + 1)} aria-pressed={active === sticker.name}
+          return <div className="guestbook-sticker-anchor" key={sticker.name} style={{ left: style.left, top: style.top }} data-selected={active === sticker.name}>
+          <button className="guestbook-sticker" type="button" style={{ rotate: style.rotate }}
+            aria-label={t("Mover sticker", "Move sticker") + " " + (index + 1)} aria-pressed={active === sticker.name}
             onFocus={() => setActive(sticker.name)}
             onClick={() => setActive(sticker.name)}
             onPointerDown={(event) => {
@@ -58,7 +68,7 @@ function Page({ entry, onMove }: {
               const target = event.currentTarget;
               const start = drag.current;
               if (start?.pointer !== event.pointerId || !target.hasPointerCapture(event.pointerId)) return;
-              const bounds = target.parentElement!.getBoundingClientRect();
+              const bounds = target.closest(".guestbook-decoration")!.getBoundingClientRect();
               const limit = (value: number, inset: number) => Math.max(inset, Math.min(100 - inset, value));
               onMove(sticker.name, {
                 x: limit((event.clientX - start.dx - bounds.left) / bounds.width * 100, 30 / bounds.width * 100),
@@ -71,17 +81,18 @@ function Page({ entry, onMove }: {
               if (!step) return;
               event.preventDefault();
               onMove(sticker.name, { x: Math.max(10, Math.min(90, sticker.x + step[0])), y: Math.max(15, Math.min(85, sticker.y + step[1])) });
-            }}>{image}</button>;
+            }}>{image}</button>
+          {active === sticker.name && <button
+            className="guestbook-sticker-rotate"
+            type="button"
+            data-side={sticker.x > 65 ? "left" : "right"}
+            aria-label={t("Girar sticker", "Rotate sticker")}
+            onClick={() => onMove(sticker.name, { angle: (sticker.angle + 15) % 360 })}
+          ><span aria-hidden="true">↻</span></button>}
+          </div>;
         })}
       </div>
     </article>
-    {onMove && selected && (
-      <div className="guestbook-rotation" aria-label="Girar sticker selecionado">
-        <button type="button" aria-label="Girar para a esquerda" onClick={() => onMove(selected.name, { angle: (selected.angle + 345) % 360 })}>↶</button>
-        <button type="button" aria-label="Girar para a direita" onClick={() => onMove(selected.name, { angle: (selected.angle + 15) % 360 })}>↷</button>
-      </div>
-    )}
-    </>
   );
 }
 
@@ -97,11 +108,14 @@ function paginate(entries: Entry[]) {
 }
 
 export default function Guestbook({ selfie, onClosed }: { selfie: string | null; onClosed: () => void }) {
+  const { t } = useLanguage();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [stickers, setStickers] = useState<string[]>([]);
   const [tab, setTab] = useState<"read" | "write" | "admin">(selfie ? "write" : "read");
   const [page, setPage] = useState(0);
+  const [stickersOpen, setStickersOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [ink, setInk] = useState(inks[0].color);
   const [signature, setSignature] = useState("");
   const [includePhoto, setIncludePhoto] = useState(false);
   const [selection, setSelection] = useState<Sticker[]>([]);
@@ -137,7 +151,7 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
   const pages = paginate(entries.filter((entry) => entry.approved));
   const spreads = Math.ceil(pages.length / 2);
   const index = Math.min(page, Math.max(0, spreads - 1));
-  const draft = { message, signature, selfie: includePhoto ? selfie : null, stickers: selection };
+  const draft = { message, signature, ink, selfie: includePhoto ? selfie : null, stickers: selection };
 
   function save(next: Entry[]) {
     try {
@@ -158,7 +172,7 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
       setSignature("");
       setSelection([]);
       setIncludePhoto(false);
-      setNotice("Recado salvo como pendente neste navegador.");
+      setNotice(t("Recado salvo como pendente neste navegador.", "Note saved as pending in this browser."));
       setTab("read");
     }
   }
@@ -168,13 +182,13 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
     try {
       const response = await fetch("/api/journal-admin", { method: "POST", body: JSON.stringify({ password }) });
       if (!response.ok) {
-        setNotice(response.status === 503 ? "O acesso de admin ainda precisa ser configurado." : "Senha incorreta.");
+        setNotice(response.status === 503 ? t("O acesso de admin ainda precisa ser configurado.", "Admin access still needs to be set up.") : t("Senha incorreta.", "Incorrect password."));
         return;
       }
       setAdmin(true);
       setNotice("");
     } catch {
-      setNotice("Não foi possível validar o acesso.");
+      setNotice(t("Não foi possível validar o acesso.", "Couldn’t verify access."));
     } finally {
       setPassword("");
     }
@@ -192,34 +206,65 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
 
   return (
     <SceneModal onClosed={onClosed} dialogClassName="guestbook" aria-labelledby="guestbook-title">
-      <h2 id="guestbook-title" className="guestbook-sr-only">Meu journal</h2>
-      <nav className="guestbook-tabs" aria-label="Livro de visitas">
-        {tab !== "read" && <button type="button" onClick={() => setTab("read")}>folhear</button>}
-        {tab !== "write" && <button type="button" onClick={() => setTab("write")}>deixar um recado</button>}
+      <h2 id="guestbook-title" className="guestbook-sr-only">{t("Meu journal", "My journal")}</h2>
+      <nav className="guestbook-tabs" aria-label={t("Livro de visitas", "Guestbook")}>
+        {tab !== "read" && <button type="button" onClick={() => setTab("read")}>{t("folhear", "browse")}</button>}
+        {tab !== "write" && <button type="button" onClick={() => setTab("write")}>{t("deixar um recado", "leave a note")}</button>}
         {tab !== "admin" && <button type="button" onClick={() => setTab("admin")}>admin</button>}
       </nav>
       <div className="guestbook-spread">
         {tab === "read" && [0, 1].map((side) => (
           <div className="guestbook-paper" key={side}>
             {pages[index * 2 + side]?.map((entry) => <Page entry={entry} key={entry.id} />)}
-            {side === 0 && !pages.length && <p className="guestbook-page">Ainda não há recados aprovados.</p>}
+            {side === 0 && !pages.length && <p className="guestbook-page">{t("Ainda não há recados aprovados.", "No approved notes yet.")}</p>}
           </div>
         ))}
         {tab === "write" && <>
           <div className="guestbook-paper guestbook-paper--draft">
-            {selection.length > 0 && <p className="guestbook-sticker-tip">Arraste na página. Toque no sticker para girar.</p>}
+            {selection.length > 0 && <p className="guestbook-sticker-tip">{t("Arraste o sticker. Toque no ↻ para girar.", "Drag the sticker. Tap ↻ to rotate it.")}</p>}
             <Page entry={draft} onMove={moveSticker} />
           </div>
           <div className="guestbook-paper">
-        <form onSubmit={submit}>
-          <label>Seu recado<textarea required maxLength={500} rows={4} value={message} onChange={(event) => setMessage(event.target.value)} /></label>
-          <label>Assinatura (opcional)<input maxLength={40} value={signature} onChange={(event) => setSignature(event.target.value)} /></label>
+        <form className="guestbook-compose" onSubmit={submit}>
+          <h3>{t("deixe um recado", "leave a note")}</h3>
+          <label>
+            <span className="guestbook-sr-only">{t("Seu recado", "Your note")}</span>
+            <textarea required maxLength={500} rows={4} value={message}
+              style={{ color: ink }} placeholder={t("escreva alguma coisa…", "write something…")}
+              onChange={(event) => setMessage(event.target.value)} />
+          </label>
+          <div className="guestbook-signature-row">
+            <label>
+              <span className="guestbook-sr-only">{t("Assinatura (opcional)", "Signature (optional)")}</span>
+              <input maxLength={40} value={signature} style={{ color: ink }}
+                placeholder={t("seu nome (opcional)", "your name (optional)")}
+                onChange={(event) => setSignature(event.target.value)} />
+            </label>
+            <span>{message.length}/500</span>
+          </div>
+          <div className="guestbook-tools">
+          <div className="guestbook-inks" role="group" aria-label={t("Cor da tinta", "Ink color")}>
+            {inks.map(({ color, pt, en }) => (
+              <button key={color} type="button" aria-label={t(pt, en)} aria-pressed={ink === color}
+                style={{ backgroundColor: color }} onClick={() => setInk(color)} />
+            ))}
+          </div>
           {selfie && <label className="guestbook-consent">
             <input type="checkbox" checked={includePhoto} onChange={(event) => setIncludePhoto(event.target.checked)} />
-            Quero incluir minha selfie e autorizo que ela apareça com o recado após aprovação.
+            {t("Quero incluir minha selfie e autorizo que ela apareça com o recado após aprovação.", "Include my selfie and allow it to appear with my note after approval.")}
           </label>}
-          <fieldset>
-            <legend>Stickers (opcional)</legend>
+
+            <button className="guestbook-sticker-tool" type="button" aria-expanded={stickersOpen}
+              aria-label={t("Cartela de stickers", "Sticker sheet")} aria-controls="guestbook-sticker-sheet"
+              onClick={() => setStickersOpen((open) => !open)}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+                <path d="M5 3h14a2 2 0 0 1 2 2v8l-8 8H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z M13 21v-6a2 2 0 0 1 2-2h6" />
+                <path d="M8 9h.01M15 8h.01M8 13q1 2 3 1" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+          <fieldset className="guestbook-sticker-sheet" id="guestbook-sticker-sheet" hidden={!stickersOpen}>
+            <legend>{t("Cartela de stickers", "Sticker sheet")}</legend>
             <div className="guestbook-stickers">
               {stickers.map((name, i) => (
                 <button key={name} type="button" aria-label={"Sticker " + (i + 1)} aria-pressed={selection.some((item) => item.name === name)}
@@ -230,33 +275,34 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
               ))}
             </div>
           </fieldset>
-          <button type="submit" disabled={!message.trim()}>enviar para aprovação</button>
+          <button className="guestbook-send" type="submit" disabled={!message.trim()}>{t("enviar recado", "send note")}</button>
         </form>
           </div>
+
         </>}
         {tab === "admin" && <div className="guestbook-paper guestbook-paper--admin">
       {tab === "admin" && !admin && <form onSubmit={unlock}>
-        <label>Senha de admin<input required type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
-        <button type="submit">entrar</button>
+        <label>{t("Senha de admin", "Admin password")}<input required type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+        <button type="submit">{t("entrar", "sign in")}</button>
       </form>}
       {tab === "admin" && admin && (
-        <section aria-label="Moderação de teste">
-          {entries.length === 0 && <p>Receba seu primeiro recado para testar a moderação.</p>}
+        <section aria-label={t("Moderação de teste", "Test moderation")}>
+          {entries.length === 0 && <p>{t("Receba seu primeiro recado para testar a moderação.", "Submit a note to try moderation.")}</p>}
           {entries.map((entry) => (
             <div className="guestbook-review" key={entry.id}>
               <Page entry={entry} />
-              <p>{entry.approved ? "Aprovado" : "Pendente"}</p>
-              {!entry.approved && <button type="button" onClick={() => save(entries.map((item) => item.id === entry.id ? { ...item, approved: true } : item))}>aprovar</button>}
-              <button type="button" onClick={() => save(entries.filter((item) => item.id !== entry.id))}>{entry.approved ? "excluir recado publicado" : "recusar"}</button>
+              <p>{entry.approved ? t("Aprovado", "Approved") : t("Pendente", "Pending")}</p>
+              {!entry.approved && <button type="button" onClick={() => save(entries.map((item) => item.id === entry.id ? { ...item, approved: true } : item))}>{t("aprovar", "approve")}</button>}
+              <button type="button" onClick={() => save(entries.filter((item) => item.id !== entry.id))}>{entry.approved ? t("excluir recado publicado", "delete published note") : t("recusar", "decline")}</button>
             </div>
           ))}
         </section>
       )}
         </div>}
         {tab === "read" && spreads > 1 && <div className="guestbook-pages">
-          <button type="button" aria-label="Página anterior" disabled={index === 0} onClick={() => setPage(index - 1)}>←</button>
+          <button type="button" aria-label={t("Página anterior", "Previous page")} disabled={index === 0} onClick={() => setPage(index - 1)}>←</button>
           <span>{index + 1} / {spreads}</span>
-          <button type="button" aria-label="Próxima página" disabled={index === spreads - 1} onClick={() => setPage(index + 1)}>→</button>
+          <button type="button" aria-label={t("Próxima página", "Next page")} disabled={index === spreads - 1} onClick={() => setPage(index + 1)}>→</button>
         </div>}
       </div>
       {notice && <p className="guestbook-notice" role="status">{notice}</p>}

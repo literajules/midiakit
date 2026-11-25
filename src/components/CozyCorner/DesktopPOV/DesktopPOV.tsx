@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import { useEffect, useRef, useState } from "react";
 import SceneModal from "@/components/SceneModal/SceneModal";
 import AboutMeWindow from "./AboutMeWindow";
@@ -121,6 +123,7 @@ function offsetFor(index: number) {
  * seu próprio z-index (clicar numa janela traz ela pra frente).
  */
 export default function DesktopPOV({ onClosed, originPoint, initialFolder, onOpenScrapbook }: Props) {
+  const { t } = useLanguage();
   const clock = useMenubarClock();
 
   const [wins, setWins] = useState<WinInstance[]>(
@@ -241,14 +244,14 @@ export default function DesktopPOV({ onClosed, originPoint, initialFolder, onOpe
                 onClick={() => handleFolderClick(folder.id)}
               >
                 <FolderGlyph />
-                <span className="desktop-pov__folder-label">{folder.label}</span>
+                <span className="desktop-pov__folder-label">{t(folder.label, { projects: "Brand work", inspo: "About me", work: "Content" }[folder.id])}</span>
               </button>
             ))}
             <button type="button" className="desktop-pov__folder" onClick={() => setContactOpen(true)}>
               <span aria-hidden="true" style={{ width: 34, height: 28, display: "grid", placeItems: "center", background: "#286cd0", color: "white", borderRadius: 7 }}>
                 <DockGlyph id="mail" />
               </span>
-              <span className="desktop-pov__folder-label">Contato</span>
+              <span className="desktop-pov__folder-label">{t("Contato", "Contact")}</span>
             </button>
           </div>
 

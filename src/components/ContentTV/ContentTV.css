@@ -108,3 +108,37 @@
 .content-scrapbook__post[data-format="reel"] { width: min(360px, calc(100vw - 36px), 36svh); }
 .content-scrapbook__post[data-format="reel"] .content-scrapbook__media { aspect-ratio: 9 / 16; }
 .content-scrapbook__media iframe { height: calc(100% + var(--instagram-header-height) + 156px); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .content-scrapbook {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .content-scrapbook::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    inset: 1px 0 auto;
+    height: clamp(40px, 11svh, 100px);
+    transform-origin: center bottom;
+    transform: translateY(-100%) scaleY(var(--scrapbook-curl, 0));
+    border-radius: 74% 24% 0 0 / 100% 65% 0 0;
+    background:
+      linear-gradient(174deg, #fdf3e6 5%, #fff7ec00 54%),
+      repeating-linear-gradient(0deg, #f3e6d7 0 24px, #e9d9c8 25px 26px);
+    box-shadow: 0 -8px 22px #38231b35;
+    opacity: min(1, calc(var(--scrapbook-curl, 0) * 2));
+    pointer-events: none;
+  }
+
+  .content-scrapbook__header,
+  .content-scrapbook__viewport {
+    opacity: calc(.45 + .55 * var(--scrapbook-entry, 1));
+    translate: 0 calc(18px * (1 - var(--scrapbook-entry, 1)));
+  }
+
+  .content-scrapbook:focus-within {
+    --scrapbook-entry: 1 !important;
+  }
+}

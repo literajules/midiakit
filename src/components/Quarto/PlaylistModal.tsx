@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import { useState } from "react";
 import SceneModal from "@/components/SceneModal/SceneModal";
@@ -11,6 +12,7 @@ import "./PlaylistModal.css";
 const PLAYLIST_ID = "3t0T3zLO6bYG47YbMLNna0";
 
 export default function PlaylistModal({ onClosed }: { onClosed: () => void }) {
+  const { t } = useLanguage();
   // a playlist precisa carregar primeiro; as fitas washi (decorativas) só
   // aparecem depois que o iframe termina de carregar, senão elas "piscam"
   // na tela vazia antes do player do Spotify estar pronto.
@@ -19,11 +21,11 @@ export default function PlaylistModal({ onClosed }: { onClosed: () => void }) {
   return (
     <SceneModal onClosed={onClosed} dialogClassName="playlist-modal" aria-labelledby="playlist-modal-title">
       <h2 id="playlist-modal-title" className="sr-only">
-        Playlist do quarto, no Spotify
+        {t("Playlist do quarto, no Spotify", "Bedroom playlist on Spotify")}
       </h2>
       <iframe
         className="playlist-modal__embed"
-        title="Playlist do Spotify"
+        title={t("Playlist do Spotify", "Spotify playlist")}
         src={`https://open.spotify.com/embed/playlist/${PLAYLIST_ID}?utm_source=generator&theme=0`}
         width="100%"
         height="352"
