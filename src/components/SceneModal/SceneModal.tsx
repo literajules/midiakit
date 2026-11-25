@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import { useCallback, useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -56,6 +57,7 @@ export default function SceneModal({
   onOpened,
   ...aria
 }: Props) {
+  const { t } = useLanguage();
   const reduced = usePrefersReducedMotion();
 
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -224,7 +226,7 @@ export default function SceneModal({
       >
         {children}
 
-        <button type="button" className="scene-modal__close" onClick={requestClose} aria-label="Fechar">
+        <button type="button" className="scene-modal__close" onClick={requestClose} aria-label={t("Fechar", "Close")}>
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
             <path d="M3 3 13 13M13 3 3 13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>

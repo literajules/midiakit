@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type UIEvent } from "react";
 import { ramp, useElementSize, usePrefersReducedMotion, useScrollProgress } from "@/lib/motion";
@@ -80,6 +81,7 @@ export default function RoomScene({
   revealOnScroll = true,
   children,
 }: RoomSceneProps) {
+  const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -204,7 +206,7 @@ export default function RoomScene({
               <button
                 type="button"
                 className="room-scene__pan-arrow room-scene__pan-arrow--left"
-                aria-label="Explorar o lado esquerdo do quarto"
+                aria-label={t("Explorar o lado esquerdo do quarto", "Explore the left side of the room")}
                 disabled={panPosition <= 1}
                 onClick={() => panBy(-1)}
               >
@@ -215,7 +217,7 @@ export default function RoomScene({
               <button
                 type="button"
                 className="room-scene__pan-arrow room-scene__pan-arrow--right"
-                aria-label="Explorar o lado direito do quarto"
+                aria-label={t("Explorar o lado direito do quarto", "Explore the right side of the room")}
                 disabled={panPosition >= layout.frameW - w - 1}
                 onClick={() => panBy(1)}
               >
@@ -228,7 +230,7 @@ export default function RoomScene({
 
           {isPan && (
             <span className={`room-scene__hint${panned ? " is-hidden" : ""}`} aria-hidden="true">
-              {panHint}
+              {t(panHint, "‹ swipe to explore ›")}
             </span>
           )}
 

@@ -91,6 +91,10 @@ export default function Quarto({
   revealOnScroll?: boolean;
 }) {
   const { t } = useLanguage();
+  const lookName = (look: DollLook) => t(DOLL_LOOKS[look].label, {
+    dress: "white dress", pajamas: "pink pajamas", denim: "jeans and a tee",
+    cognac: "midi skirt and boots", bustier: "corset and polka dots",
+  }[look]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   // padrão: luz acesa (quarto abre de dia/iluminado) — a pessoa apaga no
@@ -186,7 +190,7 @@ export default function Quarto({
     <>
       <RoomScene
         id="quarto"
-        ariaLabel="O quarto"
+        ariaLabel={t("O quarto", "The bedroom")}
         sceneW={1536}
         sceneH={659}
         imageSrc="/images/quarto/bg-01-dia-fechada.png"
@@ -358,7 +362,7 @@ export default function Quarto({
               </div>}
             </div>
           ))}
-          <button className="quarto-doll__closet-button" type="button" aria-label="Abrir closet da Jules"
+          <button className="quarto-doll__closet-button" type="button" aria-label={t("Abrir closet da Jules", "Open Jules’s closet")}
             aria-haspopup="dialog" onClick={() => { setDoorsOpen(false); setClosetOpen(true); }}>
             <span aria-hidden="true">+</span>
           </button>
@@ -367,7 +371,7 @@ export default function Quarto({
 
       {closetOpen && (
         <SceneModal dialogClassName="quarto-closet" aria-labelledby="quarto-closet-title" onClosed={() => setClosetOpen(false)}>
-          <h2 id="quarto-closet-title" className="quarto-closet__title">closet da jules</h2>
+          <h2 id="quarto-closet-title" className="quarto-closet__title">{t("closet da jules", "jules’s closet")}</h2>
           <div className="quarto-closet__cabinet"
             onPointerLeave={(event) => {
               if (event.pointerType === "mouse" && !event.currentTarget.querySelector(":focus-visible")) {
@@ -376,7 +380,7 @@ export default function Quarto({
             }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/quarto/closet-open.webp" alt="" draggable={false} />
-            {!doorsOpen && <button className="quarto-closet__doors" type="button" aria-label="Abrir as portas do armário"
+            {!doorsOpen && <button className="quarto-closet__doors" type="button" aria-label={t("Abrir as portas do armário", "Open the closet doors")}
               onPointerMove={(event) => { if (event.pointerType === "mouse") setDoorsOpen(true); }}
               onClick={() => {
                 const firstOutfit = document.getElementById("quarto-closet-first-outfit");
@@ -389,9 +393,9 @@ export default function Quarto({
             <div className="quarto-closet__rack" hidden={!doorsOpen}>
               {CLOSET_RACK.map((look, index) => (
                 <button type="button" key={look} id={index === 0 ? "quarto-closet-first-outfit" : undefined}
-                  aria-label={DOLL_LOOKS[look].label} aria-pressed={dollLook === look}
+                  aria-label={lookName(look)} aria-pressed={dollLook === look}
                   onClick={() => { setChosenLook(look); setClosetOpen(false); }}>
-                  <span>{DOLL_LOOKS[look].label}</span>
+                  <span>{lookName(look)}</span>
                 </button>
               ))}
             </div>

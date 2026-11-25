@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/components/Language";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import SceneModal from "@/components/SceneModal/SceneModal";
@@ -30,6 +31,7 @@ type Props = {
 };
 
 export default function DjiPhotobooth({ onClosed, originPoint, onJournal }: Props) {
+  const { t } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -133,13 +135,13 @@ export default function DjiPhotobooth({ onClosed, originPoint, onJournal }: Prop
 
   const statusText =
     phase === "requesting"
-      ? "pedindo acesso à câmera…"
+      ? t("pedindo acesso à câmera…", "requesting camera access…")
       : phase === "counting"
         ? count > 0
           ? String(count)
           : "diga xis!"
         : phase === "captured"
-          ? "foto tirada!"
+          ? t("foto tirada!", "photo taken!")
           : null;
 
   return (
@@ -149,7 +151,7 @@ export default function DjiPhotobooth({ onClosed, originPoint, onJournal }: Prop
       aria-labelledby="dji-photobooth-title"
       originPoint={originPoint}
     >
-      <p className="dji-photobooth__sign">click · câmera DJI</p>
+      <p className="dji-photobooth__sign">{t("click · câmera DJI", "click · DJI camera")}</p>
       <h2 id="dji-photobooth-title" className="dji-photobooth__title">
         diga &ldquo;xis&rdquo;!
       </h2>
@@ -161,7 +163,7 @@ export default function DjiPhotobooth({ onClosed, originPoint, onJournal }: Prop
       <div className="dji-photobooth__frame">
         {phase === "captured" && photo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={photo} alt="Sua selfie redonda" className="dji-photobooth__photo" />
+          <img src={photo} alt={t("Sua selfie redonda", "Your round selfie")} className="dji-photobooth__photo" />
         ) : (
           <video ref={videoRef} className="dji-photobooth__video" autoPlay muted playsInline aria-hidden="true" />
         )}
@@ -174,7 +176,7 @@ export default function DjiPhotobooth({ onClosed, originPoint, onJournal }: Prop
 
         {phase === "requesting" && (
           <span className="dji-photobooth__hint" aria-hidden="true">
-            pedindo acesso à câmera…
+            {t("pedindo acesso à câmera…", "requesting camera access…")}
           </span>
         )}
       </div>
@@ -183,35 +185,34 @@ export default function DjiPhotobooth({ onClosed, originPoint, onJournal }: Prop
 
       {phase === "denied" && (
         <p className="dji-photobooth__msg">
-          Sem acesso à câmera — a permissão deve ter sido negada. Dá pra permitir de novo nas configurações do
-          navegador (geralmente no ícone de cadeado da barra de endereço) e tentar de novo.
+          {t("Sem acesso à câmera. Permita o acesso nas configurações do navegador e tente de novo.", "Camera access was denied. Allow access in your browser settings and try again.")}
         </p>
       )}
       {phase === "unsupported" && (
         <p className="dji-photobooth__msg">
-          Esse navegador (ou essa conexão) não deixa usar a câmera aqui — costuma funcionar em HTTPS ou localhost.
+          {t("Esse navegador (ou essa conexão) não deixa usar a câmera aqui — costuma funcionar em HTTPS ou localhost.", "The camera is unavailable in this browser or connection.")}
         </p>
       )}
 
       <div className="dji-photobooth__actions">
         {phase === "live" && (
           <button type="button" className="dji-photobooth__btn" onClick={startCountdown}>
-            tirar foto
+            {t("tirar foto", "take a photo")}
           </button>
         )}
         {phase === "captured" && (
           <>
             <button type="button" className="dji-photobooth__btn dji-photobooth__btn--ghost" onClick={retake}>
-              tirar outra
+              {t("tirar outra", "retake")}
             </button>
             {photo && (
               <a className="dji-photobooth__btn" href={photo} download="selfie-dollhouse.png">
-                baixar
+                {t("baixar", "download")}
               </a>
             )}
             {photo && onJournal && (
               <button type="button" className="dji-photobooth__btn" onClick={() => onJournal(photo)}>
-                deixar um recado no meu journal
+                {t("deixar um recado no meu journal", "leave a note in my journal")}
               </button>
             )}
           </>
