@@ -92,8 +92,7 @@ export const PROJECTS: ProjectCase[] = [
   {
     id: "maracugina",
     brand: "Maracugina",
-    role: "Entrega em breve",
-    description: "Case ainda no forno — falta só o texto (o que foi pedido, formato de entrega, link). O vídeo já está aqui.",
+    description: "",
     videoUrl: "/videos/projects/maracugina.mp4",
     videoAspect: { w: 720, h: 1280 },
     // logo real da marca — mostrado no ícone da grade (sem aparecer como poster do vídeo)
@@ -102,8 +101,7 @@ export const PROJECTS: ProjectCase[] = [
   {
     id: "vinko",
     brand: "Vinko",
-    role: "Entrega em breve",
-    description: "Case ainda no forno — falta só o texto (o que foi pedido, formato de entrega, link). O vídeo já está aqui.",
+    description: "",
     videoUrl: "/videos/projects/vinko.mp4",
     videoAspect: { w: 720, h: 1280 },
     // logo real da marca — mostrado no ícone da grade (letterboxed, não
