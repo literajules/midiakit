@@ -72,7 +72,7 @@ function buildMailto(data: FichaData) {
 const STATUS_MESSAGE: Record<Status, string | null> = {
   idle: null,
   sending: "enviando…",
-  sent: "chegou! te respondo rapidinho ♡",
+  sent: "chegou aqui! te respondo em breve ♡",
   error: `não consegui enviar — escreve direto pra ${TO_EMAIL}, por favor?`,
   mailto: `abri seu e-mail com tudo prontinho, só clicar em enviar! se não abriu nada, escreve direto pra ${TO_EMAIL}.`,
 };
