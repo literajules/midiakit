@@ -114,6 +114,16 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
     setStatus("mailto");
   };
 
+  if (status === "sent") {
+    return (
+      <SceneModal onClosed={onClosed} dialogClassName="ficha-modal" aria-labelledby="ficha-modal-title">
+        <div style={{ display: "grid", placeItems: "center", minHeight: "min(270px, 48svh)", padding: "36px 24px", textAlign: "center" }}>
+          <p id="ficha-modal-title" role="status" className="ficha-modal__title">{STATUS_MESSAGE.sent}</p>
+        </div>
+      </SceneModal>
+    );
+  }
+
   return (
     <SceneModal onClosed={onClosed} dialogClassName="ficha-modal" aria-labelledby="ficha-modal-title">
       {/* decoração — clipe reaproveitado do bilhete do quadro/relógio (ver
