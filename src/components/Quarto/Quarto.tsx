@@ -19,34 +19,8 @@ function centerOf(el: HTMLElement): OriginPoint {
   return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 }
 
-/**
- * Ponto focal do recorte "cover" do quarto (ver RoomScene/layout.ts).
- *
- * `bg-01-dia-fechada.png` é 1536×659 (2,33:1) — mais larga que qualquer
- * tela comum, então cobrir SEMPRE recorta dos lados; a pergunta é só qual
- * lado sacrificar. Ajuste feito a pedido (cama mais centralizada, telefone
- * mais visível, mural pode perder um pouco — ver conversa "ajustes no
- * enquadramento do quarto"): `focalX` baixou de 0,90 pra **0,60**, puxando
- * o recorte pra perto do centro da cama em vez de ancorado na porta/mural.
- *
- * Resultado por tela (fração de largura visível entre parênteses):
- *  - Desktop 1920×1080 / 1366×768 (76%): cama bem centralizada; telefone
- *    ~39% visível (bem melhor que 0% antes); porta inteira; mural ~31%.
- *  - Notebook 1440×900 (69% — a faixa mais apertada que ainda usa "cover"):
- *    cama centralizada, porta inteira; telefone e mural quase não aparecem
- *    aqui especificamente (a janela de 69% não é larga o suficiente pra
- *    incluir telefone + mural ao mesmo tempo que cama + porta inteiras —
- *    nessa faixa, mural cede o lugar).
- *  - Celular na horizontal (93%): quase tudo visível — telefone e porta
- *    inteiros, mural ~81%.
- *
- * `panTrigger` subiu de 0,5 pra **0,6**: tablet em paisagem (1024×768, 57%
- * de largura visível) não cabia mais com esse focal point sem cortar a
- * própria porta — em vez disso, passa pro modo "pan" (sem recorte, rolagem
- * horizontal) junto com tablet/celular em pé, preservando porta+mural+cama
- * inteiros ali, só a um gesto de distância.
- */
-const QUARTO_LAYOUT = { focalX: 0.6, panTrigger: 0.6 };
+// Permite explorar toda a largura do quarto sempre que a foto excede a tela.
+const QUARTO_LAYOUT = { focalX: 0.6, panTrigger: 1 };
 
 /**
  * Cena 1 — o quarto. Primeira seção interativa do mídia kit.
@@ -195,6 +169,7 @@ export default function Quarto({
         background="var(--cream)"
         revealOnScroll={revealOnScroll}
         layoutOptions={QUARTO_LAYOUT}
+        showPanArrows
       >
         {/* ——— as outras 3 fotos (dia+entreaberta, noite+fechada, noite+entreaberta)
             empilhadas por cima da base (dia+fechada), cada uma some/aparece
