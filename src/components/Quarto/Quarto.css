@@ -273,6 +273,7 @@
 
 .quarto-doll {
   position: absolute;
+  z-index: 1;
   left: var(--room-pan-center, 50%);
   bottom: 5%;
   height: 77.5%;
