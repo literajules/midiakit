@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import { useRef, useState } from "react";
 import DesktopWindow from "./DesktopWindow";
 import { visibleContentFormats } from "./contentFormats";
@@ -51,8 +53,10 @@ const displayName = (c: ProjectCase) => c.title ?? c.brand ?? "?";
  * (nada inventado).
  */
 export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initialOffset, initialSelectedId }: Props) {
+  const { t } = useLanguage();
   const def = DESKTOP_FOLDERS.find((f) => f.id === folderId);
 
+  const folderTitle = t(def?.label ?? "Pasta", { projects: "Brand work", inspo: "About me", work: "Content" }[folderId]);
   const items =
     folderId === "projects" ? visibleProjects : folderId === "work" ? visibleContentFormats : [];
 
@@ -79,7 +83,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
   return (
     <DesktopWindow
       className={folderId === "projects" ? "folder-window folder-window--projects" : "folder-window"}
-      title={def?.label ?? "Pasta"}
+      title={folderTitle}
       onClose={onClose}
       onFocus={onFocus}
       zIndex={zIndex}
@@ -89,7 +93,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
         <div className="folder-window__detail-wrap">
           <article ref={detailRef} className="folder-window__detail">
             <button type="button" className="folder-window__back" onClick={() => setSelected(null)}>
-              ‹ {def?.label}
+              ‹ {folderTitle}
             </button>
 
             {folderId === "projects" ? (
@@ -184,7 +188,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                 <p className="folder-window__divider" aria-hidden="true">
                   ✦ ✦ ✦
                 </p>
-                <h4 className="folder-window__insights-title">insights &amp; comentários</h4>
+                <h4 className="folder-window__insights-title">{t("insights & comentários", "insights & comments")}</h4>
 
                 {selected.insightImages && selected.insightImages.length > 0 && (
                   <div className="folder-window__insights">

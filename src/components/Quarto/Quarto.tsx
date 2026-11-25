@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import { useEffect, useState } from "react";
 import RoomScene from "@/components/RoomScene/RoomScene";
 import SceneModal from "@/components/SceneModal/SceneModal";
@@ -88,6 +90,7 @@ export default function Quarto({
   /** `true` só na primeira vez que o quarto aparece (ver doc em Site.tsx). */
   revealOnScroll?: boolean;
 }) {
+  const { t } = useLanguage();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   // padrão: luz acesa (quarto abre de dia/iluminado) — a pessoa apaga no
@@ -402,20 +405,20 @@ export default function Quarto({
         <NoteModal
           onClosed={() => setNote(null)}
           originPoint={origin}
-          title="quem tá por aqui"
+          title={t("quem tá por aqui", "who’s here")}
           titleId="mural-note-title"
           chart={{
             ariaLabel: "Distribuição por gênero: 96,9% feminino, 3,1% outros",
             slices: [
-              { label: "feminino", value: 96.9 },
-              { label: "outros", value: 3.1 },
+              { label: t("feminino", "women"), value: 96.9 },
+              { label: t("outros", "other"), value: 3.1 },
             ],
           }}
           fields={[
-            { value: "96,9%", label: "público feminino", description: "da audiência" },
-            { value: "76,4%", label: "entre 18 e 34 anos", description: "faixa etária mais presente" },
-            { value: "46%", label: "tem 25 a 34 anos", description: "a faixa predominante" },
-            { value: "95,6%", label: "público no Brasil", description: "2,6% em Portugal" },
+            { value: "96,9%", label: t("público feminino", "women"), description: t("da audiência", "of the audience") },
+            { value: "76,4%", label: t("entre 18 e 34 anos", "ages 18–34"), description: t("faixa etária mais presente", "largest age group") },
+            { value: "46%", label: t("tem 25 a 34 anos", "ages 25–34"), description: t("a faixa predominante", "top age bracket") },
+            { value: "95,6%", label: t("público no Brasil", "audience in Brazil"), description: t("2,6% em Portugal", "2.6% in Portugal") },
           ]}
         />
       )}
@@ -423,15 +426,15 @@ export default function Quarto({
         <NoteModal
           onClosed={() => setNote(null)}
           originPoint={origin}
-          title="números de agora"
+          title={t("números de agora", "the numbers right now")}
           titleId="clock-note-title"
           fields={[
-            { value: "19,9 mil", label: "seguidores", description: "no Instagram" },
-            { value: "2,07 mi", label: "visualizações", description: "orgânicas, em 30 dias" },
-            { value: "90 mil", label: "interações", description: "nos últimos 30 dias" },
-            { value: "+19,6%", label: "crescimento", description: "+3.270 seguidores em 30 dias" },
-            { value: "23 mil", label: "visitas ao perfil", description: "nos últimos 30 dias" },
-            { value: "122", label: "toques no link", description: "da bio, em 30 dias" },
+            { value: t("19,9 mil", "19.9K"), label: t("seguidores", "followers"), description: t("no Instagram", "on Instagram") },
+            { value: t("2,07 mi", "2.07M"), label: t("visualizações", "views"), description: t("orgânicas, em 30 dias", "organic, in 30 days") },
+            { value: t("90 mil", "90K"), label: t("interações", "interactions"), description: t("nos últimos 30 dias", "in the last 30 days") },
+            { value: t("+19,6%", "+19.6%"), label: t("crescimento", "growth"), description: t("+3.270 seguidores em 30 dias", "+3,270 followers in 30 days") },
+            { value: t("23 mil", "23K"), label: t("visitas ao perfil", "profile visits"), description: t("nos últimos 30 dias", "in the last 30 days") },
+            { value: "122", label: t("toques no link", "link taps"), description: t("da bio, em 30 dias", "from the bio, in 30 days") },
           ]}
         />
       )}

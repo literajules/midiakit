@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import { useState, type FormEvent } from "react";
 import SceneModal from "@/components/SceneModal/SceneModal";
 import "./FichaModal.css";
@@ -78,6 +80,7 @@ const STATUS_MESSAGE: Record<Status, string | null> = {
 };
 
 export default function FichaModal({ onClosed }: { onClosed: () => void }) {
+  const { t } = useLanguage();
   const [data, setData] = useState<FichaData>(EMPTY);
   const [status, setStatus] = useState<Status>("idle");
 
@@ -120,7 +123,7 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
         <div className="ficha-confirmation">
           <span className="ficha-confirmation__ziggy" aria-hidden="true" />
 
-          <p id="ficha-modal-title" role="status" className="ficha-modal__title">{STATUS_MESSAGE.sent}</p>
+          <p id="ficha-modal-title" role="status" className="ficha-modal__title">{t(STATUS_MESSAGE.sent ?? "", "got it! I’ll get back to you soon ♡")}</p>
         </div>
       </SceneModal>
     );
@@ -154,13 +157,13 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
       <div className="ficha-modal__scroll">
         <div className="ficha-modal__grid">
           <div className="ficha-modal__intro">
-            <p className="ficha-modal__sign">alô? · ficha de interesse</p>
+            <p className="ficha-modal__sign">{t("alô? · ficha de interesse", "hello? · collaboration inquiry")}</p>
             <h2 id="ficha-modal-title" className="ficha-modal__title">
-              vamos criar algo juntas? ♡
+              {t("vamos criar algo juntas? ♡", "let’s create something together ♡")}
             </h2>
-            <p className="ficha-modal__text">Me conta da campanha que eu te respondo logo logo.</p>
+            <p className="ficha-modal__text">{t("Me conta da campanha que eu te respondo logo logo.", "Tell me about your campaign and I’ll get back to you soon.")}</p>
             <p className="ficha-modal__text">
-              Ou escreve direto pra{" "}
+              {t("Ou escreve direto pra", "Or email me at")}{" "}
               <a className="ficha-modal__email" href={`mailto:${TO_EMAIL}`}>
                 {TO_EMAIL}
               </a>
@@ -170,7 +173,7 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
           <form className="ficha-modal__form" onSubmit={handleSubmit}>
             <fieldset className="ficha-modal__field">
               <legend>
-                <span className="ficha-modal__num">01</span> Formato
+                <span className="ficha-modal__num">01</span> {t("Formato", "Format")}
               </legend>
               <div className="ficha-modal__chips">
                 {FORMATOS.map((f) => (
@@ -181,7 +184,7 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
                     aria-pressed={data.formatos.includes(f)}
                     onClick={() => set("formatos", toggle(data.formatos, f))}
                   >
-                    {f}
+                    {t(f, f === "Evento ou viagem" ? "Event or travel" : f)}
                   </button>
                 ))}
               </div>
@@ -189,7 +192,7 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
 
             <fieldset className="ficha-modal__field">
               <legend>
-                <span className="ficha-modal__num">02</span> Nicho
+                <span className="ficha-modal__num">02</span> {t("Nicho", "Category")}
               </legend>
               <div className="ficha-modal__chips">
                 {NICHOS.map((n) => (
@@ -200,7 +203,7 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
                     aria-pressed={data.nichos.includes(n)}
                     onClick={() => set("nichos", toggle(data.nichos, n))}
                   >
-                    {n}
+                    {t(n, ({ Autocuidado: "Self-care", Rotina: "Daily life", Moda: "Fashion", Decor: "Decor" } as Record<string, string>)[n] ?? n)}
                   </button>
                 ))}
               </div>
@@ -208,12 +211,12 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
 
             <label className="ficha-modal__field">
               <span>
-                <span className="ficha-modal__num">03</span> Nome
+                <span className="ficha-modal__num">03</span> {t("Nome", "Name")}
               </span>
               <input
                 required
                 type="text"
-                placeholder="Seu nome"
+                placeholder={t("Seu nome", "Your name")}
                 value={data.nome}
                 onChange={(e) => set("nome", e.target.value)}
               />
@@ -221,12 +224,12 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
 
             <label className="ficha-modal__field">
               <span>
-                <span className="ficha-modal__num">04</span> Marca
+                <span className="ficha-modal__num">04</span> {t("Marca", "Brand")}
               </span>
               <input
                 required
                 type="text"
-                placeholder="Empresa ou marca"
+                placeholder={t("Empresa ou marca", "Company or brand")}
                 value={data.marca}
                 onChange={(e) => set("marca", e.target.value)}
               />
@@ -234,12 +237,12 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
 
             <label className="ficha-modal__field">
               <span>
-                <span className="ficha-modal__num">05</span> E-mail
+                <span className="ficha-modal__num">05</span> {t("E-mail", "Email")}
               </span>
               <input
                 required
                 type="email"
-                placeholder="seu@email.com"
+                placeholder={t("seu@email.com", "you@example.com")}
                 value={data.email}
                 onChange={(e) => set("email", e.target.value)}
               />
@@ -247,11 +250,11 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
 
             <label className="ficha-modal__field">
               <span>
-                <span className="ficha-modal__num">06</span> Prazo
+                <span className="ficha-modal__num">06</span> {t("Prazo", "Timeline")}
               </span>
               <input
                 type="text"
-                placeholder="Data, se tiver"
+                placeholder={t("Data, se tiver", "Date, if you have one")}
                 value={data.prazo}
                 onChange={(e) => set("prazo", e.target.value)}
               />
@@ -259,10 +262,10 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
 
             <label className="ficha-modal__field ficha-modal__field--recado">
               <span>
-                <span className="ficha-modal__num">07</span> Recado
+                <span className="ficha-modal__num">07</span> {t("Recado", "Message")}
               </span>
               <textarea
-                placeholder="Conta um pouco da campanha ou da ideia"
+                placeholder={t("Conta um pouco da campanha ou da ideia", "Tell me a little about the campaign or idea")}
                 rows={3}
                 value={data.recado}
                 onChange={(e) => set("recado", e.target.value)}
@@ -270,12 +273,12 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
             </label>
 
             <button type="submit" className="ficha-modal__submit" disabled={status === "sending"}>
-              {status === "sending" ? "enviando…" : "enviar ficha"}
+              {status === "sending" ? t("enviando…", "sending…") : t("enviar ficha", "send inquiry")}
             </button>
 
             {STATUS_MESSAGE[status] && (
               <p className={`ficha-modal__status ficha-modal__status--${status}`} role="status" aria-live="polite">
-                {STATUS_MESSAGE[status]}
+                {t(STATUS_MESSAGE[status] ?? "", status === "error" ? `I couldn’t send your message. Please email me at ${TO_EMAIL}.` : status === "sending" ? "Sending…" : "Your email draft is ready to send.")}
               </p>
             )}
           </form>

@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Geist, Geist_Mono, Homemade_Apple, Playfair_Display
 import CustomCursor from "@/components/CustomCursor/CustomCursor";
 import SoundToggle from "@/components/SoundToggle/SoundToggle";
 import "./globals.css";
+import { LanguageProvider } from "@/components/Language";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,13 +45,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} ${homemadeApple.variable} ${playfairDisplay.variable} ${cormorantGaramond.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <CustomCursor />
         <SoundToggle />
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

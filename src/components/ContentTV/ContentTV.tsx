@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import { useEffect, useRef } from "react";
 import "./ContentTV.css";
 
@@ -11,6 +13,7 @@ const channels = [
 ];
 
 export default function ContentTV() {
+  const { t } = useLanguage();
   const section = useRef<HTMLElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const strip = useRef<HTMLDivElement>(null);
@@ -55,21 +58,23 @@ export default function ContentTV() {
     <section id="meu-scrapbook" className="content-scrapbook" ref={section} aria-labelledby="scrapbook-title">
       <div className="content-scrapbook__stage">
         <header className="content-scrapbook__header">
-          <h2 id="scrapbook-title">meu scrapbook</h2>
-          <p>Role para explorar meus conteúdos.</p>
+          <h2 id="scrapbook-title">{t("meu scrapbook", "my scrapbook")}</h2>
+          <p>{t("Role para explorar meus conteúdos.", "Scroll to explore my work.")}</p>
         </header>
         <div className="content-scrapbook__viewport" ref={viewport}>
           <div className="content-scrapbook__strip" ref={strip}>
-            {channels.map(({ id, title, format }) => {
+            {channels.map(({ id, title: category, format: kind }) => {
+              const title = t(category, category === 'moda' ? 'fashion' : category);
+              const format = t(kind, kind === 'carrossel' ? 'carousel' : kind);
               const post = "https://www.instagram.com/p/" + id + "/";
               return (
-                <article key={id} className="content-scrapbook__post" data-format={format}>
+                <article key={id} className="content-scrapbook__post" data-format={kind}>
                   <h3 className="content-scrapbook__labels">
-                    <span className="content-scrapbook__category" data-category={title}>{title}</span>
+                    <span className="content-scrapbook__category" data-category={category}>{title}</span>
                     <span className="content-scrapbook__format">{format}</span>
                   </h3>
                   <a className="content-scrapbook__media" href={post} target="_blank" rel="noreferrer"
-                    aria-label={`Abrir ${title} · ${format} no Instagram`}>
+                    aria-label={t(`Abrir ${title} no Instagram`, `Open ${title} on Instagram`)}>
                     <iframe src={post + "embed/"} title={title + " · " + format} loading="lazy" tabIndex={-1} aria-hidden="true" />
                   </a>
 
