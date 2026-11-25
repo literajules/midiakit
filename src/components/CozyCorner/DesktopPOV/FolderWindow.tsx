@@ -119,13 +119,11 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
             ) : (
             <div className="folder-window__detail-grid">
               <div className="folder-window__detail-media">
-                {folderId !== "projects" && <>
                 {/* fita washi real, dois pedaços — mesmo truque de Polaroid colada na página */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/desktop/decor/washi-tape.jpg" alt="" aria-hidden="true" className="folder-window__tape folder-window__tape--left" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/desktop/decor/washi-tape.jpg" alt="" aria-hidden="true" className="folder-window__tape folder-window__tape--right" />
-                </>}
 
                 <div
                   className="folder-window__cover"
