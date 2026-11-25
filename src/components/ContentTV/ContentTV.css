@@ -1,11 +1,11 @@
 .content-scrapbook {
   color: #51252d;
   min-height: 340svh;
-  background: repeating-linear-gradient(0deg, #f3e6d7 0 24px, #e9d9c8 25px 26px);
 }
 .content-scrapbook__stage {
   position: sticky;
   top: 0;
+  background: repeating-linear-gradient(0deg, #f3e6d7 0 24px, #e9d9c8 25px 26px);
   height: 100svh;
   display: flex;
   flex-direction: column;
@@ -13,6 +13,18 @@
   overflow: hidden;
 }
 .content-scrapbook__header { position: relative; text-align: center; padding: 0 20px 15px; }
+.content-scrapbook__header::before,
+.content-scrapbook__header::after {
+  content: "";
+  position: absolute;
+  width: clamp(60px, 13vw, 150px);
+  aspect-ratio: 1;
+  background: url("/images/cozy-map/stickers.png") no-repeat;
+  background-size: 200% 200%;
+  pointer-events: none;
+}
+.content-scrapbook__header::before { left: 5%; top: -12px; rotate: -10deg; }
+.content-scrapbook__header::after { right: 5%; top: -18px; background-position: right top; rotate: 12deg; }
 .content-scrapbook__header h2 { margin: 0; font: clamp(1.4rem, 4vw, 2.4rem) var(--font-homemade-apple), cursive; }
 .content-scrapbook__header p { margin: 5px 0 0; font-size: .84rem; }
 .content-scrapbook__viewport { flex: 1; min-height: 0; overflow: clip; }
@@ -49,7 +61,22 @@
 .content-scrapbook__post:nth-child(even)::before { rotate: 6deg; background: #aab89aab; }
 .content-scrapbook__post h3 { margin: 0 0 6px; font-size: .92rem; }
 .content-scrapbook__post h3 span { font-weight: normal; }
-.content-scrapbook__post iframe { width: 100%; flex: 1; min-height: 0; background: white; border: 0; }
+.content-scrapbook__media {
+  --instagram-header-height: 54px;
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  background: white;
+}
+.content-scrapbook__media iframe {
+  position: absolute;
+  top: calc(-1 * var(--instagram-header-height));
+  left: 0;
+  width: 100%;
+  height: calc(100% + var(--instagram-header-height));
+  border: 0;
+}
 .content-scrapbook__post a { color: inherit; font-size: .8rem; padding-top: 7px; }
 .content-scrapbook__post:focus-within { outline: 2px solid #8c4653; }
 @media (prefers-reduced-motion: reduce) {
@@ -58,68 +85,4 @@
   .content-scrapbook__viewport { overflow: visible; }
   .content-scrapbook__strip { width: auto; height: auto; flex-wrap: wrap; justify-content: center; padding: 16px; transform: none; }
   .content-scrapbook__post { height: min(620px, 85svh); }
-}
-
-.content-scrapbook__stage { isolation: isolate; }
-.content-scrapbook__collage { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-.content-scrapbook__cutout {
-  position: absolute;
-  background-repeat: no-repeat;
-  filter: drop-shadow(0 4px 5px #51252d30);
-}
-.content-scrapbook__cutout--cork {
-  width: clamp(190px, 36vw, 500px);
-  aspect-ratio: 1088 / 730;
-  left: -4%;
-  top: 27%;
-  rotate: -9deg;
-  background: url("/images/scrapbook/sheet.webp") 51.6% 48.8% / 105.88% 280.55% no-repeat;
-}
-.content-scrapbook__cutout--paper {
-  width: clamp(100px, 19vw, 268px);
-  aspect-ratio: 380 / 568;
-  right: 12%;
-  top: 28%;
-  rotate: 13deg;
-  background: url("/images/scrapbook/sheet.webp") 67.62% 95.54% / 303.16% 360.56% no-repeat;
-}
-.content-scrapbook__cutout--lace {
-  width: clamp(120px, 27vw, 400px);
-  aspect-ratio: 854 / 1299;
-  left: 0;
-  top: 0;
-  background: url("/images/scrapbook/lace.webp") center / contain no-repeat;
-  mix-blend-mode: multiply;
-  opacity: .75;
-}
-.content-scrapbook__cutout--fridge {
-  width: clamp(74px, 15vw, 190px);
-  aspect-ratio: 556 / 1299;
-  right: 1%;
-  bottom: 4%;
-  rotate: 7deg;
-  background: url("/images/scrapbook/fridge.webp") center / contain no-repeat;
-}
-.content-scrapbook__cutout--tag {
-  width: clamp(60px, 12vw, 155px);
-  aspect-ratio: 736 / 1584;
-  right: 21%;
-  top: 4%;
-  rotate: -13deg;
-  background: url("/images/scrapbook/tag.webp") center / contain no-repeat;
-  mix-blend-mode: multiply;
-}
-.content-scrapbook__cutout--envelope {
-  width: clamp(84px, 13vw, 175px);
-  aspect-ratio: 194 / 197;
-  left: 10%;
-  bottom: 3%;
-  rotate: -11deg;
-  background: url("/images/scrapbook/sheet.webp") 31.34% 96.76% / 593.81% 1039.59% no-repeat;
-  mix-blend-mode: multiply;
-}
-@media (max-width: 620px) {
-  .content-scrapbook__cutout--tag { right: 0; top: 1%; }
-  .content-scrapbook__cutout--paper { right: 0; }
-  .content-scrapbook__cutout--envelope { left: 2%; }
 }
