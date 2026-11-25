@@ -8,69 +8,13 @@
   will-change: opacity;
 }
 
-/* ——— área de hover "muda" (café gelado) ———
-   mesma convenção de posicionamento dos hotspots (left/top = centro em %,
-   translate -50%/-50%), mas sem botão, sem "+", sem tooltip: não abre
-   nada, só dispara a animação enquanto o mouse está em cima. Onde essa
-   área se sobrepõe a um hotspot de verdade (ex. canto do café com o
-   laptop) o hotspot vence — ele é desenhado depois, no DOM
-   (`.room-scene__hotspots` vem após `children` no RoomScene) —
-   comportamento esperado, não é bug. */
-.cozy-fx-zone {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  pointer-events: auto;
-}
-
-/* ——— café gelado: o copo inteiro balança levemente no hover ———
-   mesma técnica da planta/pêndulo do quarto (recorte da própria foto,
-   borda com alfa emplumada — ver sway-drink.png — girando a partir de um
-   ponto de apoio) só que a animação liga/desliga com o hover, em vez de
-   ficar sempre ativa: aqui representa "alguém mexeu no copo", não um
-   balanço ambiente constante. Gira a partir de perto da base do copo
-   (sobre o pires), então líquido + chantilly + canudo se movem juntos —
-   canudo de verdade independente do líquido exigiria reconstruir o pedaço
-   da foto atrás dele (risco de emenda visível, combinado que não vale
-   pra esta versão). */
-.cozy-drink-wrap {
-  position: absolute;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
-
-.cozy-drink {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  user-select: none;
-  transform-origin: 50% 93%;
-}
-
-.cozy-drink.is-on {
-  animation: cozy-drink-sway 1.7s ease-in-out infinite;
-}
-
-@keyframes cozy-drink-sway {
-  0%,
-  100% {
-    transform: rotate(-1.1deg);
-  }
-  50% {
-    transform: rotate(1.1deg);
-  }
-}
-
 /* O caderno ("escrevendo minha própria história...") não tem mais nenhuma
    camada por cima — era um retalho tentando cobrir a tinta da foto e
    redesenhar o texto, mas aparecia como uma mancha em vez de papel.
    Removido: a foto original já mostra esse texto, escrito à mão,
    legível sem nada sobreposto (ver conversa "remover o blur do caderno"). */
 
-/* ——— máquina de café: vapor subindo no hover (visual abstrato — sem
-   recorte da foto, mesma lógica das notas musicais do toca-discos no
-   quarto) + som sintetizado (ver CozyCorner.tsx/lib/sound.ts) ——— */
+/* Vapor da máquina de café ao passar o mouse. */
 .cozy-steam {
   position: absolute;
   width: 1px;
@@ -119,7 +63,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cozy-drink.is-on,
   .cozy-steam.is-on .cozy-steam__wisp--1,
   .cozy-steam.is-on .cozy-steam__wisp--2,
   .cozy-steam.is-on .cozy-steam__wisp--3 {
