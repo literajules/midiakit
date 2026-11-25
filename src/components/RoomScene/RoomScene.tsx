@@ -144,6 +144,7 @@ export default function RoomScene({
     top: layout.top,
     width: layout.frameW,
     height: layout.frameH,
+    ...(isPan && showPanArrows ? { "--room-pan-center": `${panPosition + w / 2}px` } : {}),
   };
 
   return (

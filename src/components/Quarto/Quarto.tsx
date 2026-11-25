@@ -39,10 +39,7 @@ const DOLL_LOOKS: Record<"dress" | "pajamas" | "denim" | "cognac" | "bustier", O
 
 type DollLook = keyof typeof DOLL_LOOKS;
 const DOLL_LOOK_OPTIONS: DollLook[] = ["dress", "pajamas", "denim", "cognac", "bustier"];
-const QUARTO_WITH_CLOSET: HotspotDef[] = [
-  ...QUARTO_HOTSPOTS,
-  { id: "closet", label: "Doll", destination: "Trocar look", teaser: "trocar look", cx: 50, cy: 48, w: 3.5, h: 13, enabled: true },
-];
+const CLOSET_RACK: DollLook[] = ["dress", "pajamas", "denim", "bustier", "cognac"];
 
 const QUARTO_LAYOUT = { focalX: 0.6, panTrigger: 1 };
 
@@ -98,6 +95,7 @@ export default function Quarto({
   const [roomDark, setRoomDark] = useState(false);
   const [chosenLook, setChosenLook] = useState<DollLook | null>(null);
   const [closetOpen, setClosetOpen] = useState(false);
+  const [doorsOpen, setDoorsOpen] = useState(false);
   const dollLook = chosenLook ?? (roomDark ? "pajamas" : "dress");
   const doorHover = hoveredId === "porta";
   const swaySuffix = roomDark ? "noite" : "dia";
@@ -160,9 +158,6 @@ export default function Quarto({
         setOrigin(centerOf(el));
         setNote("relogio");
         return;
-      case "closet":
-        setClosetOpen(true);
-        return;
       case "interruptor":
         playSound("switch");
         setRoomDark((v) => !v);
@@ -193,7 +188,7 @@ export default function Quarto({
         sceneH={659}
         imageSrc="/images/quarto/bg-01-dia-fechada.png"
         imageAlt="Quarto cozy da Jules: cama de bolinhas, cômoda com toca-discos e telefone vintage, relógio de gato, quadro de recados, luminária de papel e porta branca."
-        hotspots={QUARTO_WITH_CLOSET}
+        hotspots={QUARTO_HOTSPOTS}
         onActivate={handleActivate}
         activeId={activeId}
         onHotspotHover={handleHover}
@@ -360,20 +355,38 @@ export default function Quarto({
               </div>}
             </div>
           ))}
+          <button className="quarto-doll__closet-button" type="button" aria-label="Abrir closet da Jules"
+            aria-haspopup="dialog" onClick={() => { setDoorsOpen(false); setClosetOpen(true); }}>
+            <span aria-hidden="true">+</span>
+          </button>
         </figure>
       </RoomScene>
 
       {closetOpen && (
         <SceneModal dialogClassName="quarto-closet" aria-labelledby="quarto-closet-title" onClosed={() => setClosetOpen(false)}>
-          <h2 id="quarto-closet-title">closet da jules</h2>
-          <div className="quarto-closet__looks">
-            {DOLL_LOOK_OPTIONS.map((look) => (
-              <button type="button" key={look} aria-pressed={dollLook === look} onClick={() => setChosenLook(look)}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/images/quarto/${DOLL_LOOKS[look].image}`} alt="" />
-                <span>{DOLL_LOOKS[look].label}</span>
-              </button>
-            ))}
+          <h2 id="quarto-closet-title" className="quarto-closet__title">closet da jules</h2>
+          <div className="quarto-closet__cabinet">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/quarto/closet-open.webp" alt="" draggable={false} />
+            {!doorsOpen && <button className="quarto-closet__doors" type="button" aria-label="Abrir as portas do armário"
+              onPointerEnter={(event) => { if (event.pointerType === "mouse") setDoorsOpen(true); }}
+              onClick={() => {
+                const firstOutfit = document.getElementById("quarto-closet-first-outfit");
+                setDoorsOpen(true);
+                requestAnimationFrame(() => firstOutfit?.focus());
+              }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/quarto/closet-closed.webp" alt="" draggable={false} />
+            </button>}
+            <div className="quarto-closet__rack" hidden={!doorsOpen}>
+              {CLOSET_RACK.map((look, index) => (
+                <button type="button" key={look} id={index === 0 ? "quarto-closet-first-outfit" : undefined}
+                  aria-label={DOLL_LOOKS[look].label} aria-pressed={dollLook === look}
+                  onClick={() => { setChosenLook(look); setClosetOpen(false); }}>
+                  <span>{DOLL_LOOKS[look].label}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </SceneModal>
       )}
