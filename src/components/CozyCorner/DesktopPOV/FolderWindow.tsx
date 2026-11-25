@@ -59,8 +59,8 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
   const [selected, setSelected] = useState<ProjectCase | null>(
     () => (initialSelectedId ? items.find((it) => it.id === initialSelectedId) ?? null : null)
   );
-  const [deliveryIndex, setDeliveryIndex] = useState(0);
-  const delivery = selected?.deliveries?.[deliveryIndex];
+  const [deliveryIndex, setDeliveryIndex] = useState<number | null>(null);
+  const delivery = deliveryIndex === null ? undefined : selected?.deliveries?.[deliveryIndex];
   const videoUrl = delivery?.videoUrl ?? selected?.videoUrl;
   const detailRef = useRef<HTMLDivElement>(null);
 
@@ -70,7 +70,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
    * sem isso, trocar de item pelas setas manteria a rolagem do item anterior. */
   const selectItem = (item: ProjectCase) => {
     setSelected(item);
-    setDeliveryIndex(0);
+    setDeliveryIndex(null);
     requestAnimationFrame(() => detailRef.current?.scrollTo({ top: 0 }));
   };
 
@@ -81,7 +81,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
 
   return (
     <DesktopWindow
-      className="folder-window"
+      className={folderId === "projects" ? "folder-window folder-window--projects" : "folder-window"}
       title={def?.label ?? "Pasta"}
       onClose={onClose}
       onFocus={onFocus}
@@ -91,28 +91,45 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
       {selected ? (
         <div className="folder-window__detail-wrap">
           <article ref={detailRef} className="folder-window__detail">
-            <button type="button" className="folder-window__back" onClick={() => setSelected(null)}>
-              ‹ {def?.label}
+            <button type="button" className="folder-window__back" onClick={() => {
+              if (delivery) setDeliveryIndex(null);
+              else setSelected(null);
+            }}>
+              ‹ {delivery ? selected.brand : def?.label}
             </button>
 
-            {selected.deliveries && (
-              <div className="folder-window__deliveries" role="group" aria-label={selected.brand}>
-                {selected.deliveries.map((item, index) => (
-                  <button key={item.videoUrl} type="button" className="folder-window__back"
-                    aria-pressed={deliveryIndex === index} onClick={() => setDeliveryIndex(index)}>
-                    {item.title}
-                  </button>
-                ))}
-              </div>
+            {selected.deliveries && !delivery && (
+              <section className="folder-window__delivery-section" aria-label={selected.brand}>
+                <h3 className="folder-window__title">{selected.brand}</h3>
+                <div className="folder-window__delivery-grid">
+                  {selected.deliveries.map((item, index) => (
+                    <button key={item.videoUrl} type="button" className="folder-window__delivery-card"
+                      onClick={() => {
+                        setDeliveryIndex(index);
+                        detailRef.current?.scrollTo({ top: 0 });
+                      }}>
+                      <span className="folder-window__delivery-poster">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.posterUrl} alt="" />
+                        <span aria-hidden="true" className="folder-window__delivery-play">▶</span>
+                      </span>
+                      <span>{item.title}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
             )}
 
+            {(!selected.deliveries || delivery) && (
             <div className="folder-window__detail-grid">
               <div className="folder-window__detail-media">
+                {folderId !== "projects" && <>
                 {/* fita washi real, dois pedaços — mesmo truque de Polaroid colada na página */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/desktop/decor/washi-tape.jpg" alt="" aria-hidden="true" className="folder-window__tape folder-window__tape--left" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/desktop/decor/washi-tape.jpg" alt="" aria-hidden="true" className="folder-window__tape folder-window__tape--right" />
+                </>}
 
                 <div
                   className="folder-window__cover"
@@ -127,6 +144,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                       key={videoUrl}
                       src={videoUrl}
                       controls
+                      autoPlay={Boolean(delivery)}
                       playsInline
                       preload="metadata"
                       className="folder-window__cover-video"
@@ -164,6 +182,8 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                 )}
               </div>
             </div>
+
+            )}
 
             {((selected.insightImages && selected.insightImages.length > 0) ||
               (selected.insightStats && selected.insightStats.length > 0)) && (

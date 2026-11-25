@@ -36,7 +36,7 @@ export type ProjectCase = {
   /** vídeo da entrega (o publi em si) — opcional; quando presente, substitui a
    * capa por um player com controles (ver FolderWindow.tsx) */
   videoUrl?: string;
-  deliveries?: { title: string; videoUrl: string }[];
+  deliveries?: { title: string; videoUrl: string; posterUrl: string }[];
   /**
    * Proporção REAL do vídeo (largura/altura do arquivo, lida direto do átomo
    * `tkhd` do mp4 — não é chute). A caixa de preview usa isso pra ter
@@ -73,8 +73,8 @@ export const PROJECTS: ProjectCase[] = [
     brand: "O.U.i Paris",
     description: "",
     deliveries: [
-      { title: "O.U.i Paris · Entrega 1", videoUrl: "/videos/projects/oui-paris.mp4" },
-      { title: "O.U.i Paris · Entrega 2", videoUrl: "/videos/projects/oui-paris-2.mp4" },
+      { title: "O.U.i Paris · Entrega 1", videoUrl: "/videos/projects/oui-paris.mp4", posterUrl: "/images/desktop/projects/oui-paris.jpg" },
+      { title: "O.U.i Paris · Entrega 2", videoUrl: "/videos/projects/oui-paris-2.mp4", posterUrl: "/images/desktop/projects/oui-paris-2.jpg" },
     ],
     videoAspect: { w: 360, h: 640 },
     // logo real da marca — mostrado no ícone da grade (sem aparecer como poster do vídeo)
