@@ -90,3 +90,15 @@
   .guestbook-tabs button, .guestbook-paper form { font-size: .72rem; }
   .guestbook-stickers { grid-template-columns: repeat(auto-fill, minmax(32px, 1fr)); }
 }
+
+.guestbook-paper--draft { display: flex; flex-direction: column; }
+.guestbook-paper--draft .guestbook-page { flex: 1 0 auto; min-height: 120px; }
+.guestbook-sticker-tip { margin: 0; font-size: .72rem; }
+.guestbook button.guestbook-sticker[aria-pressed="true"] {
+  background: transparent;
+  outline: 1px dashed #804746;
+  outline-offset: 2px;
+  z-index: 1;
+}
+.guestbook-rotation { justify-content: center; }
+.guestbook-rotation button { min-width: 38px; min-height: 34px; }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import SceneModal from "@/components/SceneModal/SceneModal";
 import "./Guestbook.css";
 
@@ -21,7 +21,12 @@ function Page({ entry, onMove }: {
   entry: Omit<Entry, "id" | "approved">;
   onMove?: (name: string, update: Partial<Sticker>) => void;
 }) {
+  const [active, setActive] = useState<string | null>(null);
+  const drag = useRef<{ pointer: number; dx: number; dy: number } | null>(null);
+  const selected = entry.stickers.find((item): item is Sticker => typeof item !== "string" && item.name === active);
+
   return (
+    <>
     <article className="guestbook-page">
       {entry.selfie && <span className="guestbook-selfie">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -37,15 +42,27 @@ function Page({ entry, onMove }: {
           const image = <img src={stickerRoot + sticker.name} alt="" draggable={false} />;
           if (!onMove) return <span className="guestbook-sticker" key={sticker.name} style={style}>{image}</span>;
           return <button className="guestbook-sticker" key={sticker.name} type="button" style={style}
-            aria-label={"Mover sticker " + (index + 1)} onPointerDown={(event) => event.currentTarget.setPointerCapture(event.pointerId)}
+            aria-label={"Mover sticker " + (index + 1)} aria-pressed={active === sticker.name}
+            onFocus={() => setActive(sticker.name)}
+            onClick={() => setActive(sticker.name)}
+            onPointerDown={(event) => {
+              if (event.button !== 0) return;
+              const target = event.currentTarget;
+              const rect = target.getBoundingClientRect();
+              drag.current = { pointer: event.pointerId, dx: event.clientX - (rect.left + rect.width / 2), dy: event.clientY - (rect.top + rect.height / 2) };
+              target.setPointerCapture(event.pointerId);
+              setActive(sticker.name);
+            }}
+            onLostPointerCapture={() => { drag.current = null; }}
             onPointerMove={(event) => {
               const target = event.currentTarget;
-              if (!target.hasPointerCapture(event.pointerId)) return;
+              const start = drag.current;
+              if (start?.pointer !== event.pointerId || !target.hasPointerCapture(event.pointerId)) return;
               const bounds = target.parentElement!.getBoundingClientRect();
               const limit = (value: number, inset: number) => Math.max(inset, Math.min(100 - inset, value));
               onMove(sticker.name, {
-                x: limit((event.clientX - bounds.left) / bounds.width * 100, 30 / bounds.width * 100),
-                y: limit((event.clientY - bounds.top) / bounds.height * 100, 30 / bounds.height * 100),
+                x: limit((event.clientX - start.dx - bounds.left) / bounds.width * 100, 30 / bounds.width * 100),
+                y: limit((event.clientY - start.dy - bounds.top) / bounds.height * 100, 30 / bounds.height * 100),
               });
             }}
             onKeyDown={(event) => {
@@ -58,6 +75,13 @@ function Page({ entry, onMove }: {
         })}
       </div>
     </article>
+    {onMove && selected && (
+      <div className="guestbook-rotation" aria-label="Girar sticker selecionado">
+        <button type="button" aria-label="Girar para a esquerda" onClick={() => onMove(selected.name, { angle: (selected.angle + 345) % 360 })}>↶</button>
+        <button type="button" aria-label="Girar para a direita" onClick={() => onMove(selected.name, { angle: (selected.angle + 15) % 360 })}>↷</button>
+      </div>
+    )}
+    </>
   );
 }
 
@@ -183,6 +207,7 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
         ))}
         {tab === "write" && <>
           <div className="guestbook-paper guestbook-paper--draft">
+            {selection.length > 0 && <p className="guestbook-sticker-tip">Arraste na página. Toque no sticker para girar.</p>}
             <Page entry={draft} onMove={moveSticker} />
           </div>
           <div className="guestbook-paper">
@@ -205,10 +230,6 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
               ))}
             </div>
           </fieldset>
-          {selection.length > 0 && <div className="guestbook-rotation">
-            {selection.map((sticker, i) => <button type="button" key={sticker.name}
-              onClick={() => moveSticker(sticker.name, { angle: (sticker.angle + 15) % 360 })}>girar sticker {i + 1}</button>)}
-          </div>}
           <button type="submit" disabled={!message.trim()}>enviar para aprovação</button>
         </form>
           </div>
