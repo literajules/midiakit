@@ -351,3 +351,38 @@
 
 .quarto-closet__looks button[aria-pressed="true"] { background: #f6dce0; border-color: #874d55; }
 .quarto-closet__looks img { height: min(37vh, 240px); width: 100%; object-fit: contain; }
+
+/* Swap complete silhouettes so the two knee positions never overlap. */
+.quarto-doll__shift {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  animation: quarto-doll-shift 11s step-end infinite;
+}
+
+.quarto-doll__outfit > img {
+  animation: quarto-doll-pose 11s step-end infinite;
+}
+
+.quarto-doll__outfit > img.quarto-doll__blink {
+  animation: quarto-doll-pose 11s step-end infinite, quarto-doll-blink 6.7s step-end infinite;
+}
+
+@keyframes quarto-doll-pose {
+  0%, 100% { visibility: visible; }
+  64% { visibility: hidden; }
+  84% { visibility: visible; }
+}
+
+@keyframes quarto-doll-shift {
+  0%, 84%, 100% { visibility: hidden; }
+  64% { visibility: visible; }
+}
+
+.quarto-doll--paused .quarto-doll__shift,
+.quarto-doll--paused .quarto-doll__outfit img { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .quarto-doll .quarto-doll__shift,
+  .quarto-doll .quarto-doll__outfit img { animation: none; }
+}

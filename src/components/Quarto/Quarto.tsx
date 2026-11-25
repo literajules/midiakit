@@ -22,8 +22,8 @@ function centerOf(el: HTMLElement): OriginPoint {
 
 // Permite explorar toda a largura do quarto sempre que a foto excede a tela.
 const DOLL_LOOKS = {
-  dress: { label: "vestido branco", image: "jules-doll.webp", blink: "jules-doll-dress-blink.webp" },
-  pajamas: { label: "pijama rosa", image: "jules-doll-pajamas.webp", blink: "jules-doll-pajamas-blink.webp" },
+  dress: { label: "vestido branco", image: "jules-doll.webp", blink: "jules-doll-dress-blink.webp", shift: "jules-doll-dress-shift.webp", shiftBlink: "jules-doll-dress-shift-blink.webp" },
+  pajamas: { label: "pijama rosa", image: "jules-doll-pajamas.webp", blink: "jules-doll-pajamas-blink.webp", shift: "jules-doll-pajamas-shift.webp", shiftBlink: "jules-doll-pajamas-shift-blink.webp" },
 } as const;
 
 type DollLook = keyof typeof DOLL_LOOKS;
@@ -332,13 +332,19 @@ export default function Quarto({
             <span className="quarto-note quarto-note--3">♪</span>
           </div>
         </div>
-        <figure className={`quarto-doll${roomDark ? " quarto-doll--night" : ""}`}>
+        <figure className={`quarto-doll${roomDark ? " quarto-doll--night" : ""}${anyModalOpen ? " quarto-doll--paused" : ""}`}>
           {DOLL_LOOK_OPTIONS.map((look) => (
             <div key={look} hidden={look !== dollLook} className="quarto-doll__outfit">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/images/quarto/${DOLL_LOOKS[look].image}`} alt="Jules em versão boneca de papel" draggable={false} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/images/quarto/${DOLL_LOOKS[look].blink}`} alt="" draggable={false} className="quarto-doll__blink" />
+              <div className="quarto-doll__shift" aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/images/quarto/${DOLL_LOOKS[look].shift}`} alt="" draggable={false} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/images/quarto/${DOLL_LOOKS[look].shiftBlink}`} alt="" draggable={false} className="quarto-doll__blink" />
+              </div>
             </div>
           ))}
         </figure>
