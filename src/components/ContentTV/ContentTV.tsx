@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import "./ContentTV.css";
 
+const EMBED_WIDTH = 400;
+
 const channels = [
   { id: "DgI-oZFnUfh", title: "moda", format: "carrossel" },
   { id: "DgD3mzBHcaK", title: "lifestyle", format: "carrossel" },
@@ -13,6 +15,8 @@ const channels = [
 export default function ContentTV() {
   const section = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
+  const viewport = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ width: 0, height: 0 });
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(false);
 
@@ -47,6 +51,17 @@ export default function ContentTV() {
     };
   }, []);
 
+  useEffect(() => {
+    const screen = viewport.current;
+    if (!screen) return;
+    const observer = new ResizeObserver(([{ contentRect }]) => {
+      setSize({ width: contentRect.width, height: contentRect.height });
+    });
+    observer.observe(screen);
+    return () => observer.disconnect();
+  }, []);
+
+  const scale = Math.min(1, size.width / EMBED_WIDTH);
   const channel = channels[index];
   const post = "https://www.instagram.com/p/" + channel.id + "/";
   return (
@@ -57,8 +72,20 @@ export default function ContentTV() {
           <p>Role para trocar de canal.</p>
         </div>
         <div className="content-tv__set">
-          <div className="content-tv__screen" key={channel.id}>
-            {visible && <iframe src={post + "embed/"} title={channel.title + " · " + channel.format} allow="fullscreen" />}
+          <div className="content-tv__screen" ref={viewport}>
+            {visible && scale > 0 && (
+              <iframe
+                key={channel.id}
+                src={post + "embed/"}
+                title={channel.title + " · " + channel.format}
+                allow="fullscreen"
+                style={{
+                  width: size.width / scale,
+                  height: size.height / scale,
+                  transform: `scale(${scale})`,
+                }}
+              />
+            )}
           </div>
         </div>
         <div className="content-tv__info">
