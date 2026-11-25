@@ -48,7 +48,7 @@ export default function CozyMapModal({ onClosed }: Props) {
   const firstCityRender = useRef(true);
 
   // cidade inicial: a primeira que tenha lugares; senão New York
-  const [city, setCity] = useState<CityId>(() => CITIES.find((c) => placesIn(c.id).length > 0)?.id ?? "new-york");
+  const [city, setCity] = useState<CityId>("sao-paulo");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [insets, setInsets] = useState<Insets>(SOLO_INSETS);
 
