@@ -51,17 +51,36 @@ type Props = {
   reduced: boolean;
 };
 
-/** Ajusta as cores do Positron à paleta do site (--cream/--off-white/--burgundy, ver globals.css). */
+/** Aplica a paleta do Cozy Map sem alterar a geometria ou os rótulos do Positron. */
 function tint(map: MapLibreMap) {
   const paint = (layer: string, prop: "background-color" | "fill-color", value: string) => {
     if (map.getLayer(layer)) map.setPaintProperty(layer, prop, value);
   };
-  paint("background", "background-color", "#f3e6cc"); // --cream
-  paint("water", "fill-color", "#d7e0d6");
-  paint("park", "fill-color", "#e3e6cf");
-  paint("landcover_wood", "fill-color", "#dde4c8");
-  paint("landuse_residential", "fill-color", "#f7f0df");
-  paint("building", "fill-color", "#efe3c8");
+
+  paint("background", "background-color", "#f5e8d7");
+  paint("water", "fill-color", "#d2dedd");
+  paint("landuse_residential", "fill-color", "#f7ecde");
+  paint("building", "fill-color", "#e8d5c6");
+
+  for (const layer of map.getStyle().layers) {
+    const { id, type } = layer;
+    if (type === "fill" && /^(park|landcover_(wood|grass)|landuse_(park|grass|garden))(?:$|[_-])/.test(id)) {
+      map.setPaintProperty(id, "fill-color", "#c9d4b8");
+    }
+    if (type === "line" && "source-layer" in layer && layer["source-layer"] === "transportation"
+      && /^(road|highway|bridge|tunnel|motorway|street|trunk|primary|secondary|tertiary)(?:$|[_-])/.test(id)
+      && !/(rail|transit|ferry|aero|path|construction)/.test(id)) {
+      const casing = /casing|outer|outline/.test(id);
+      const major = /motorway|trunk|major|primary/.test(id);
+      map.setPaintProperty(id, "line-color", casing ? (major ? "#bb8589" : "#dcc4b5") : "#fff7e9");
+    }
+    if (type === "symbol" && "source-layer" in layer && layer["source-layer"] === "transportation_name"
+      && layer.layout?.["text-field"] && !layer.layout["icon-image"]) {
+      map.setPaintProperty(id, "text-color", "#583139");
+      map.setPaintProperty(id, "text-halo-color", "#fffaf0");
+      map.setPaintProperty(id, "text-halo-width", 1.25);
+    }
+  }
 }
 
 export default function CozyMapCanvas({ city, places, selectedId, onSelect, insets, reduced }: Props) {
