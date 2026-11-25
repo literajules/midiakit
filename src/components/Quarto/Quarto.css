@@ -327,7 +327,7 @@
 }
 
 .scene-modal__dialog.quarto-closet {
-  width: min(470px, 100%);
+  width: min(810px, 100%);
   padding: 24px;
   background: #fff4e7;
   color: #51292c;
@@ -336,7 +336,7 @@
 }
 
 .quarto-closet h2 { margin: 0 36px 16px 0; font: 1.75rem var(--font-script, Georgia); }
-.quarto-closet__looks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.quarto-closet__looks { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr)); gap: 10px; }
 
 .quarto-closet__looks button {
   display: grid;
@@ -350,7 +350,7 @@
 }
 
 .quarto-closet__looks button[aria-pressed="true"] { background: #f6dce0; border-color: #874d55; }
-.quarto-closet__looks img { height: min(37vh, 240px); width: 100%; object-fit: contain; }
+.quarto-closet__looks img { height: clamp(120px, 30vh, 220px); width: 100%; object-fit: contain; }
 
 /* Swap complete silhouettes so the two knee positions never overlap. */
 .quarto-doll__shift {
@@ -360,11 +360,11 @@
   animation: quarto-doll-shift 11s step-end infinite;
 }
 
-.quarto-doll__outfit > img {
+.quarto-doll__outfit--animated > img {
   animation: quarto-doll-pose 11s step-end infinite;
 }
 
-.quarto-doll__outfit > img.quarto-doll__blink {
+.quarto-doll__outfit--animated > img.quarto-doll__blink {
   animation: quarto-doll-pose 11s step-end infinite, quarto-doll-blink 6.7s step-end infinite;
 }
 

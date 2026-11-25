@@ -21,13 +21,24 @@ function centerOf(el: HTMLElement): OriginPoint {
 }
 
 // Permite explorar toda a largura do quarto sempre que a foto excede a tela.
-const DOLL_LOOKS = {
+type Outfit = {
+  label: string;
+  image: string;
+  blink?: string;
+  shift?: string;
+  shiftBlink?: string;
+};
+
+const DOLL_LOOKS: Record<"dress" | "pajamas" | "denim" | "cognac" | "bustier", Outfit> = {
   dress: { label: "vestido branco", image: "jules-doll.webp", blink: "jules-doll-dress-blink.webp", shift: "jules-doll-dress-shift.webp", shiftBlink: "jules-doll-dress-shift-blink.webp" },
   pajamas: { label: "pijama rosa", image: "jules-doll-pajamas.webp", blink: "jules-doll-pajamas-blink.webp", shift: "jules-doll-pajamas-shift.webp", shiftBlink: "jules-doll-pajamas-shift-blink.webp" },
-} as const;
+  denim: { label: "jeans e camiseta", image: "jules-doll-denim.webp" },
+  cognac: { label: "saia midi e botas", image: "jules-doll-cognac.webp" },
+  bustier: { label: "corset e poá", image: "jules-doll-bustier.webp" },
+};
 
 type DollLook = keyof typeof DOLL_LOOKS;
-const DOLL_LOOK_OPTIONS: DollLook[] = ["dress", "pajamas"];
+const DOLL_LOOK_OPTIONS: DollLook[] = ["dress", "pajamas", "denim", "cognac", "bustier"];
 const QUARTO_WITH_CLOSET: HotspotDef[] = [
   ...QUARTO_HOTSPOTS,
   { id: "closet", label: "Doll", destination: "Trocar look", teaser: "trocar look", cx: 50, cy: 48, w: 3.5, h: 13, enabled: true },
@@ -334,17 +345,19 @@ export default function Quarto({
         </div>
         <figure className={`quarto-doll${roomDark ? " quarto-doll--night" : ""}${anyModalOpen ? " quarto-doll--paused" : ""}`}>
           {DOLL_LOOK_OPTIONS.map((look) => (
-            <div key={look} hidden={look !== dollLook} className="quarto-doll__outfit">
+            <div key={look} hidden={look !== dollLook} className={DOLL_LOOKS[look].shift ? "quarto-doll__outfit quarto-doll__outfit--animated" : "quarto-doll__outfit"}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/images/quarto/${DOLL_LOOKS[look].image}`} alt="Jules em versão boneca de papel" draggable={false} />
+              {DOLL_LOOKS[look].blink && <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/images/quarto/${DOLL_LOOKS[look].blink}`} alt="" draggable={false} className="quarto-doll__blink" />
-              <div className="quarto-doll__shift" aria-hidden="true">
+              </>}
+              {DOLL_LOOKS[look].shift && <div className="quarto-doll__shift" aria-hidden="true">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={`/images/quarto/${DOLL_LOOKS[look].shift}`} alt="" draggable={false} />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={`/images/quarto/${DOLL_LOOKS[look].shiftBlink}`} alt="" draggable={false} className="quarto-doll__blink" />
-              </div>
+              </div>}
             </div>
           ))}
         </figure>
