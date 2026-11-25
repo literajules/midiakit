@@ -333,7 +333,8 @@
 }
 
  .scene-modal__dialog.quarto-closet {
-  width: min(94vw, 440px, calc(76dvh * .597));
+  width: min(94vw, 560px, calc(90dvh * .597));
+  max-height: none;
   padding: 0;
   overflow: visible;
   background: transparent;
@@ -348,7 +349,20 @@
 .quarto-closet__rack { position: absolute; inset: 32% 22.6% 26% 18.3%; display: grid; grid-template-columns: repeat(5, 1fr); }
 .quarto-closet__rack[hidden] { display: none; }
 .quarto-closet__rack button { position: relative; color: #51292c; background: transparent; border: 0; padding: 0; cursor: pointer; }
-.quarto-closet__rack button:is(:hover, :focus-visible) { background: rgb(255 248 240 / 22%); outline: 2px solid #a16766; }
+.quarto-closet__rack button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 41%, rgb(255 241 218 / 45%), transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+}
+.quarto-closet__rack button:hover::before { opacity: 1; }
+.quarto-closet__rack button:focus-visible { outline: 2px solid #a16766; outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  .quarto-closet__rack button::before { transition: none; }
+}
 .quarto-closet__rack button span {
   position: absolute;
   bottom: 100%;
