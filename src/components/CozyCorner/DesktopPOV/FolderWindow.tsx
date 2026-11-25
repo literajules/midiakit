@@ -59,9 +59,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
   const [selected, setSelected] = useState<ProjectCase | null>(
     () => (initialSelectedId ? items.find((it) => it.id === initialSelectedId) ?? null : null)
   );
-  const [deliveryIndex, setDeliveryIndex] = useState<number | null>(null);
-  const delivery = deliveryIndex === null ? undefined : selected?.deliveries?.[deliveryIndex];
-  const videoUrl = delivery?.videoUrl ?? selected?.videoUrl;
+  const videoUrl = selected?.videoUrl;
   const detailRef = useRef<HTMLDivElement>(null);
 
   const selectedIndex = selected ? items.findIndex((it) => it.id === selected.id) : -1;
@@ -70,7 +68,6 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
    * sem isso, trocar de item pelas setas manteria a rolagem do item anterior. */
   const selectItem = (item: ProjectCase) => {
     setSelected(item);
-    setDeliveryIndex(null);
     requestAnimationFrame(() => detailRef.current?.scrollTo({ top: 0 }));
   };
 
@@ -91,36 +88,35 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
       {selected ? (
         <div className="folder-window__detail-wrap">
           <article ref={detailRef} className="folder-window__detail">
-            <button type="button" className="folder-window__back" onClick={() => {
-              if (delivery) setDeliveryIndex(null);
-              else setSelected(null);
-            }}>
-              ‹ {delivery ? selected.brand : def?.label}
+            <button type="button" className="folder-window__back" onClick={() => setSelected(null)}>
+              ‹ {def?.label}
             </button>
 
-            {selected.deliveries && !delivery && (
-              <section className="folder-window__delivery-section" aria-label={selected.brand}>
-                <h3 className="folder-window__title">{selected.brand}</h3>
-                <div className="folder-window__delivery-grid">
-                  {selected.deliveries.map((item, index) => (
-                    <button key={item.videoUrl} type="button" className="folder-window__delivery-card"
-                      onClick={() => {
-                        setDeliveryIndex(index);
-                        detailRef.current?.scrollTo({ top: 0 });
-                      }}>
-                      <span className="folder-window__delivery-poster">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={item.posterUrl} alt="" />
-                        <span aria-hidden="true" className="folder-window__delivery-play">▶</span>
-                      </span>
-                      <span>{item.title}</span>
-                    </button>
+            {folderId === "projects" ? (
+              <section className="folder-window__screening" key={selected.id} aria-label={selected.brand}>
+                <h3 className="folder-window__format-title">{selected.format}</h3>
+                <div className="folder-window__screening-videos">
+                  {(selected.deliveries ?? (videoUrl ? [{ title: displayName(selected), videoUrl, posterUrl: undefined }] : [])).map((item) => (
+                    <video
+                      key={item.videoUrl}
+                      aria-label={item.title}
+                      src={item.videoUrl}
+                      poster={item.posterUrl}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      style={{ aspectRatio: selected.videoAspect ? `${selected.videoAspect.w} / ${selected.videoAspect.h}` : "9 / 16" }}
+                      onPlay={(event) => {
+                        const player = event.currentTarget;
+                        player.parentElement?.querySelectorAll("video").forEach((other) => {
+                          if (other !== player) other.pause();
+                        });
+                      }}
+                    />
                   ))}
                 </div>
               </section>
-            )}
-
-            {(!selected.deliveries || delivery) && (
+            ) : (
             <div className="folder-window__detail-grid">
               <div className="folder-window__detail-media">
                 {folderId !== "projects" && <>
@@ -144,7 +140,6 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                       key={videoUrl}
                       src={videoUrl}
                       controls
-                      autoPlay={Boolean(delivery)}
                       playsInline
                       preload="metadata"
                       className="folder-window__cover-video"
@@ -160,7 +155,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
 
               <div className="folder-window__detail-info">
                 <h3 className="folder-window__title">
-                  {delivery?.title ?? displayName(selected)}
+                  {displayName(selected)}
                   {selected.demo && <span className="folder-window__demo-tag">exemplo</span>}
                 </h3>
 
@@ -238,12 +233,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                   {displayName(project).trim().charAt(0).toUpperCase() || "?"}
                 </span>
               )}
-              <span className="folder-window__item-caption">
-                <span className="folder-window__item-label">{folderId === "projects" ? project.brand ?? displayName(project) : displayName(project)}</span>
-                {folderId === "projects" && (project.deliveries?.length || project.videoUrl) && (
-                  <span className="folder-window__item-count">{(project.deliveries?.length ?? 1) === 1 ? "1 vídeo" : `${project.deliveries?.length} vídeos`}</span>
-                )}
-              </span>
+              <span className="folder-window__item-label">{folderId === "projects" ? project.brand ?? displayName(project) : displayName(project)}</span>
             </button>
           ))}
         </div>

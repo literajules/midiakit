@@ -70,6 +70,7 @@ export type ProjectCase = {
 export const PROJECTS: ProjectCase[] = [
   {
     id: "oui-paris",
+    format: "TikTok",
     brand: "O.U.i Paris",
     description: "",
     deliveries: [
@@ -82,6 +83,7 @@ export const PROJECTS: ProjectCase[] = [
   },
   {
     id: "fluency",
+    format: "Reels",
     brand: "Fluency Academy",
     title: "Fluency Academy · Mega Black",
     description: "",
@@ -91,6 +93,7 @@ export const PROJECTS: ProjectCase[] = [
   },
   {
     id: "maracugina",
+    format: "Reels",
     brand: "Maracugina",
     description: "",
     videoUrl: "/videos/projects/maracugina.mp4",
@@ -100,6 +103,7 @@ export const PROJECTS: ProjectCase[] = [
   },
   {
     id: "vinko",
+    format: "Reels",
     brand: "Vinko",
     description: "",
     videoUrl: "/videos/projects/vinko.mp4",

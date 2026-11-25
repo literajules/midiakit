@@ -66,3 +66,36 @@ undefined
 }
 .folder-window--projects .folder-window__detail-grid:has(video) .folder-window__badges { justify-content: center; }
 .folder-window--projects .folder-window__detail-grid:has(video) .folder-window__cover { max-height: min(54svh, 520px); }
+
+.folder-window--projects .folder-window__grid {
+  grid-template-columns: repeat(auto-fill, minmax(82px, 105px));
+  justify-content: center;
+}
+.folder-window--projects .folder-window__item { width: 100%; }
+.folder-window--projects .folder-window__item-label { white-space: normal; overflow-wrap: anywhere; }
+.folder-window__screening {
+  width: min(100%, 460px);
+  text-align: center;
+}
+.folder-window__format-title {
+  margin: 0 0 14px;
+  color: var(--burgundy);
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 1.65rem;
+  line-height: 1.2;
+}
+.folder-window__screening-videos {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  gap: clamp(8px, 2vw, 18px);
+}
+.folder-window__screening-videos video {
+  display: block;
+  width: min(100%, 210px, 29svh);
+  min-width: 0;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #181215;
+}
