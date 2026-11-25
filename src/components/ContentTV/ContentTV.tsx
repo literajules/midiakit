@@ -63,12 +63,15 @@ export default function ContentTV() {
             {channels.map(({ id, title, format }) => {
               const post = "https://www.instagram.com/p/" + id + "/";
               return (
-                <article key={id} className="content-scrapbook__post">
-                  <h3>{title} <span>· {format}</span></h3>
+                <article key={id} className="content-scrapbook__post" data-format={format}>
+                  <h3 className="content-scrapbook__labels">
+                    <span className="content-scrapbook__category" data-category={title}>{title}</span>
+                    <span className="content-scrapbook__format">{format}</span>
+                  </h3>
                   <div className="content-scrapbook__media">
                     <iframe src={post + "embed/"} title={title + " · " + format} loading="lazy" allow="fullscreen" />
                   </div>
-                  <a href={post} target="_blank" rel="noreferrer">Ver no Instagram ↗</a>
+
                 </article>
               );
             })}

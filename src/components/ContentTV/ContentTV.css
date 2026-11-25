@@ -77,7 +77,6 @@
   height: calc(100% + var(--instagram-header-height));
   border: 0;
 }
-.content-scrapbook__post a { color: inherit; font-size: .8rem; padding-top: 7px; }
 .content-scrapbook__post:focus-within { outline: 2px solid #8c4653; }
 @media (prefers-reduced-motion: reduce) {
   .content-scrapbook { min-height: auto; }
@@ -86,3 +85,26 @@
   .content-scrapbook__strip { width: auto; height: auto; flex-wrap: wrap; justify-content: center; padding: 16px; transform: none; }
   .content-scrapbook__post { height: min(620px, 85svh); }
 }
+
+.content-scrapbook__post { container-type: inline-size; }
+.content-scrapbook__labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.content-scrapbook__labels span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: .75rem;
+  line-height: 1.25;
+}
+.content-scrapbook__labels .content-scrapbook__category { background: #e2ead9; color: #304530; font-weight: 700; }
+.content-scrapbook__category[data-category="moda"] { background: #f1d1db; color: #712c48; }
+.content-scrapbook__category[data-category="vlog & lifestyle"] { background: #ddd7ee; color: #4e386e; }
+.content-scrapbook__labels .content-scrapbook__format { background: #eee0ce; color: #664631; }
+.content-scrapbook__post[data-format="reel"] .content-scrapbook__format { background: #f6dfb9; color: #684120; }
+
+.content-scrapbook__post[data-format="carrossel"] .content-scrapbook__media { max-height: calc(100cqw - 4px); }
+.content-scrapbook__post[data-format="reel"] .content-scrapbook__media { max-height: calc(100cqw * 16 / 9 - 4px); }
+.content-scrapbook__media iframe { height: calc(100% + var(--instagram-header-height) + 156px); }
