@@ -164,10 +164,11 @@ export default function SceneModal({
   /* ---- Esc fecha ---- */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        requestClose();
-      }
+      if (e.key !== "Escape") return;
+      const overlays = document.querySelectorAll(".scene-modal");
+      if (overlays[overlays.length - 1] !== overlayRef.current) return;
+      e.preventDefault();
+      requestClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
