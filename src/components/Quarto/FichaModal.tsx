@@ -30,7 +30,7 @@ import "./FichaModal.css";
  */
 
 const TO_EMAIL = "literajules@gmail.com";
-const FORM_ENDPOINT = process.env.NEXT_PUBLIC_FICHA_FORM_ENDPOINT;
+const FORM_ENDPOINT = process.env.NEXT_PUBLIC_FICHA_FORM_ENDPOINT?.trim() || "https://formspree.io/f/mljjznvg";
 
 const FORMATOS = ["Reels", "TikTok", "YouTube", "Stories", "UGC", "Evento ou viagem"];
 const NICHOS = ["Autocuidado", "Rotina", "Moda", "Decor"];
