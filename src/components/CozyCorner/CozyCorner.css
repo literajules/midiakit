@@ -69,3 +69,50 @@
     animation: none;
   }
 }
+
+/* The glass panes in cafe-scene.webp, excluding the window frames. */
+.cozy-window-leaves {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: polygon(evenodd,
+    0 0, 3.6% 0, 3.6% 42%, 0 44%, 0 0,
+    7.1% 0, 19.1% 0, 19.1% 46%, 7.1% 56%, 7.1% 0,
+    20.7% 0, 25.4% 0, 25.4% 17%, 23.4% 19%, 23.4% 40%, 20.7% 41%, 20.7% 0,
+    7.1% 0, 0 0);
+}
+.cozy-window-leaf {
+  position: absolute;
+  top: 3%;
+  left: 9%;
+  width: .72%;
+  aspect-ratio: 1;
+  opacity: 0;
+  background: url("/images/cafe/autumn-leaf.png") center / contain no-repeat;
+  animation: cozy-leaf-fall 7s linear -1s infinite;
+}
+.cozy-window-leaf:nth-child(2) {
+  top: 5%;
+  left: 15%;
+  width: .55%;
+  animation-delay: -.25s;
+  --sway: -110%;
+}
+.cozy-window-leaf:nth-child(3) {
+  top: 1%;
+  left: 22%;
+  width: .62%;
+  animation-delay: .65s;
+  --sway: -180%;
+}
+@keyframes cozy-leaf-fall {
+  0% { opacity: 0; transform: translateX(0) rotate(-35deg); }
+  8% { opacity: .84; }
+  18% { transform: translateX(90%) rotate(42deg) scaleX(.6); }
+  33% { transform: translateX(var(--sway, -70%)) rotate(120deg); }
+  52% { opacity: .8; }
+  67%, 100% { top: 40%; opacity: 0; transform: translateX(125%) rotate(240deg) scaleX(.65); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cozy-window-leaves { display: none; }
+}

@@ -184,6 +184,11 @@ export default function CozyCorner({
             `laptop` de verdade (que continua abrindo o DesktopPOV de tela
             cheia no clique). ——— */}
         <MiniDesktopScreen corners={LAPTOP_SCREEN_CORNERS} />
+        <div className="cozy-window-leaves" aria-hidden="true">
+          <span className="cozy-window-leaf" />
+          <span className="cozy-window-leaf" />
+          <span className="cozy-window-leaf" />
+        </div>
 
         {/* ——— máquina de café: vapor sobe enquanto o mouse está no
             hotspot `breville` (sem som, a pedido — clique continua
