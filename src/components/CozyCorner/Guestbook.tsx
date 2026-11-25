@@ -10,10 +10,19 @@ type Entry = {
   id: string;
   message: string;
   signature: string;
+  ink?: string;
   selfie: string | null;
   stickers: (Sticker | string)[];
   approved: boolean;
 };
+
+const inks = [
+  { color: "#702b42", pt: "Vinho", en: "Burgundy" },
+  { color: "#303e69", pt: "Azul", en: "Blue" },
+  { color: "#342b28", pt: "Grafite", en: "Charcoal" },
+  { color: "#31594c", pt: "Verde", en: "Green" },
+  { color: "#64466f", pt: "Ameixa", en: "Plum" },
+];
 
 const storageKey = "literajules-guestbook-preview";
 const stickerRoot = "/journal-stickers/";
@@ -27,7 +36,7 @@ function Page({ entry, onMove }: {
   const drag = useRef<{ pointer: number; dx: number; dy: number } | null>(null);
 
   return (
-    <article className="guestbook-page">
+    <article className="guestbook-page" style={{ color: inks.find(({ color }) => color === entry.ink)?.color }}>
       {entry.selfie && <span className="guestbook-selfie">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={entry.selfie} alt="Selfie de quem deixou o recado" />
@@ -113,6 +122,7 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
     t("ultimamente tenho gostado de…", "lately i’ve been enjoying…"),
   ];
   const [message, setMessage] = useState("");
+  const [ink, setInk] = useState(inks[0].color);
   const [signature, setSignature] = useState("");
   const [includePhoto, setIncludePhoto] = useState(false);
   const [selection, setSelection] = useState<Sticker[]>([]);
@@ -148,7 +158,7 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
   const pages = paginate(entries.filter((entry) => entry.approved));
   const spreads = Math.ceil(pages.length / 2);
   const index = Math.min(page, Math.max(0, spreads - 1));
-  const draft = { message, signature, selfie: includePhoto ? selfie : null, stickers: selection };
+  const draft = { message, signature, ink, selfie: includePhoto ? selfie : null, stickers: selection };
 
   function save(next: Entry[]) {
     try {
@@ -223,8 +233,28 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
           </div>
           <div className="guestbook-paper">
         <form className="guestbook-compose" onSubmit={submit}>
-          <label>{t("Seu recado", "Your note")}<textarea ref={messageField} required maxLength={500} rows={4} value={message} onChange={(event) => setMessage(event.target.value)} /></label>
-          <label>{t("Assinatura (opcional)", "Signature (optional)")}<input maxLength={40} value={signature} onChange={(event) => setSignature(event.target.value)} /></label>
+          <h3>{t("deixe um recado", "leave a note")}</h3>
+          <label>
+            <span className="guestbook-sr-only">{t("Seu recado", "Your note")}</span>
+            <textarea ref={messageField} required maxLength={500} rows={4} value={message}
+              style={{ color: ink }} placeholder={t("escreva alguma coisa…", "write something…")}
+              onChange={(event) => setMessage(event.target.value)} />
+          </label>
+          <div className="guestbook-signature-row">
+            <label>
+              <span className="guestbook-sr-only">{t("Assinatura (opcional)", "Signature (optional)")}</span>
+              <input maxLength={40} value={signature} style={{ color: ink }}
+                placeholder={t("seu nome (opcional)", "your name (optional)")}
+                onChange={(event) => setSignature(event.target.value)} />
+            </label>
+            <span>{message.length}/500</span>
+          </div>
+          <div className="guestbook-inks" role="group" aria-label={t("Cor da tinta", "Ink color")}>
+            {inks.map(({ color, pt, en }) => (
+              <button key={color} type="button" aria-label={t(pt, en)} aria-pressed={ink === color}
+                style={{ backgroundColor: color }} onClick={() => setInk(color)} />
+            ))}
+          </div>
           {selfie && <label className="guestbook-consent">
             <input type="checkbox" checked={includePhoto} onChange={(event) => setIncludePhoto(event.target.checked)} />
             {t("Quero incluir minha selfie e autorizo que ela apareça com o recado após aprovação.", "Include my selfie and allow it to appear with my note after approval.")}

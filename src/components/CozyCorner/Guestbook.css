@@ -173,3 +173,34 @@
 @media (prefers-reduced-motion: reduce) {
   .guestbook-sticker-sheet:not([hidden]) { animation: none; }
 }
+
+.guestbook-paper--draft {
+  background: repeating-linear-gradient(transparent 0 1.7rem, #795c521b 1.7rem calc(1.7rem + 1px));
+}
+.guestbook form.guestbook-compose { gap: .65rem; padding: .15rem .2rem; }
+.guestbook-compose h3 { margin: 0; font-size: clamp(.95rem, 2.4vw, 1.45rem); }
+.guestbook .guestbook-compose textarea,
+.guestbook .guestbook-compose input:not([type="checkbox"]) {
+  box-sizing: border-box;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #795c5266;
+  border-radius: 0;
+  font-family: var(--font-homemade-apple), cursive;
+  font-size: clamp(.68rem, 1.5vw, .95rem);
+}
+.guestbook .guestbook-compose textarea { resize: none; }
+.guestbook-compose :is(input, textarea)::placeholder { color: #735e57; opacity: 1; }
+.guestbook-signature-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: .4rem; }
+.guestbook-signature-row span:not(.guestbook-sr-only) { font-size: .66rem; color: #735e57; }
+.guestbook-inks { display: flex; flex-wrap: wrap; gap: 7px; }
+.guestbook .guestbook-inks button {
+  width: 25px;
+  height: 25px;
+  border: 2px solid #fff8ed;
+  padding: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #795c5255;
+}
+.guestbook .guestbook-inks button[aria-pressed="true"] { box-shadow: 0 0 0 2px #702b42; }
+.guestbook .guestbook-send { border-radius: 999px; }
