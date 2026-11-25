@@ -612,3 +612,53 @@
     transition: none;
   }
 }
+
+.cozy-map__sticker-layer {
+  grid-area: map;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cozy-map__sticker {
+  position: absolute;
+  aspect-ratio: 1;
+  pointer-events: none;
+  background: url("/images/cozy-map/stickers.png") no-repeat;
+  background-size: 200% 200%;
+}
+
+.cozy-map__sticker--swans {
+  left: 10px;
+  bottom: 24px;
+  width: clamp(68px, 12vw, 136px);
+  rotate: -8deg;
+  opacity: .9;
+}
+
+.cozy-map__sticker--stars {
+  right: 47px;
+  top: 7px;
+  width: 41px;
+  background-position: right top;
+  opacity: .82;
+}
+
+.cozy-map__sticker--heart {
+  right: 14px;
+  bottom: 5px;
+  width: 53px;
+  background-position: left bottom;
+  rotate: 10deg;
+}
+
+@media (min-width: 900px) and (min-height: 560px) {
+  .cozy-map__sticker-layer { position: absolute; inset: 0; }
+  .cozy-map__sticker--swans { left: 28px; bottom: 28px; }
+  .cozy-map__sticker--stars { width: 58px; right: 78px; top: 14px; }
+  .cozy-map__sticker--heart { width: 78px; right: 18px; bottom: 6px; }
+}
+
+@media (max-width: 400px) {
+  .cozy-map__sticker--stars { display: none; }
+}
