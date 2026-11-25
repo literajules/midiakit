@@ -53,24 +53,26 @@ const NAV_ITEMS: Array<{ label: string; target: NavTarget; cta?: boolean }> = [
 export default function QuickNav({ onNavigate }: Props) {
   const { language, setLanguage, t } = useLanguage();
   return (
-    <nav className="quick-nav" aria-label={t("Menu rápido", "Quick navigation")}>
-      <ul className="quick-nav__list">
-        {NAV_ITEMS.map((item) => (
-          <li key={item.label}>
-            <button
-              type="button"
-              className={`quick-nav__link${item.cta ? " quick-nav__link--cta" : ""}`}
-              onClick={() => onNavigate(item.target)}
-            >
-              {t(item.label, ({"Conteúdos":"Content","Entregas":"Brand work","Números":"Stats","Público":"Audience","Contato":"Contact"} as Record<string, string>)[item.label])}
-            </button>
-          </li>
-        ))}
-        <li style={{ display: "flex", gap: 2 }} aria-label={t("Idioma", "Language")}>
-          <button type="button" className={`quick-nav__link${language === "pt" ? " quick-nav__link--cta" : ""}`} aria-pressed={language === "pt"} onClick={() => setLanguage("pt")}>PT</button>
-          <button type="button" className={`quick-nav__link${language === "en" ? " quick-nav__link--cta" : ""}`} aria-pressed={language === "en"} onClick={() => setLanguage("en")}>ENG</button>
-        </li>
-      </ul>
-    </nav>
+    <div className="quick-nav-controls">
+      <nav className="quick-nav" aria-label={t("Menu rápido", "Quick navigation")}>
+        <ul className="quick-nav__list">
+          {NAV_ITEMS.map((item) => (
+            <li key={item.label}>
+              <button
+                type="button"
+                className={`quick-nav__link${item.cta ? " quick-nav__link--cta" : ""}`}
+                onClick={() => onNavigate(item.target)}
+              >
+                {t(item.label, ({"Conteúdos":"Content","Entregas":"Brand work","Números":"Stats","Público":"Audience","Contato":"Contact"} as Record<string, string>)[item.label])}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div className="language-toggle" role="group" aria-label={t("Idioma", "Language")}>
+        <button type="button" lang="pt-BR" aria-label="Português" aria-pressed={language === "pt"} onClick={() => setLanguage("pt")}>PT</button>
+        <button type="button" lang="en" aria-label="English" aria-pressed={language === "en"} onClick={() => setLanguage("en")}>ENG</button>
+      </div>
+    </div>
   );
 }
