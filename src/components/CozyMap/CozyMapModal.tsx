@@ -286,12 +286,12 @@ export default function CozyMapModal({ onClosed }: Props) {
           reduced={reduced}
         />
 
-        <div className="cozy-map__sticker-layer" aria-hidden="true">
-          <span className="cozy-map__sticker cozy-map__sticker--swans" />
-          <span className="cozy-map__sticker cozy-map__sticker--stars" />
-          <span className="cozy-map__sticker cozy-map__sticker--heart" />
-        </div>
         <header ref={headerRef} className="cozy-map__header">
+  <div className="cozy-map__sticker-layer" aria-hidden="true">
+            <span className="cozy-map__sticker cozy-map__sticker--swans" />
+            <span className="cozy-map__sticker cozy-map__sticker--stars" />
+            <span className="cozy-map__sticker cozy-map__sticker--heart" />
+          </div>
           <p className="cozy-map__sign">the cozy map · by jules</p>
           <h2 id="cozy-map-title" className="cozy-map__title">
             um bom café &amp; um livro

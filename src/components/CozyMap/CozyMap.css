@@ -614,11 +614,12 @@
 }
 
 .cozy-map__sticker-layer {
-  --collage-size: clamp(118px, 31vw, 164px);
-  --collage-top: 8px;
-  --collage-right: 22px;
-  grid-area: map;
-  position: relative;
+  --collage-size: clamp(68px, 19vw, 104px);
+  --collage-top: calc(50% - var(--collage-size) * .53);
+  --collage-right: 0px;
+  position: absolute;
+  inset: 0 46px 0 auto;
+  width: min(30%, 200px);
   z-index: 1;
   pointer-events: none;
 }
@@ -684,14 +685,17 @@
 
 @media (min-width: 900px) and (min-height: 560px) {
   .cozy-map__sticker-layer {
-    --collage-size: clamp(185px, 20vw, 255px);
-    --collage-top: 126px;
-    --collage-right: 25px;
-    position: absolute;
-    inset: 0;
+    --collage-size: clamp(138px, 17vw, 194px);
+    --collage-right: 20px;
+    right: 0;
+    width: min(30%, 230px);
   }
 }
 
 @media (max-height: 520px) {
-  .cozy-map__sticker-layer { --collage-size: 105px; }
+  .cozy-map__sticker-layer { --collage-size: 72px; }
+}
+
+@media (max-width: 899px), (max-height: 559px) {
+  .cozy-map__header:has(.cozy-map__sticker-layer) { padding-right: max(132px, 34%); }
 }
