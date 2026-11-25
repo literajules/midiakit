@@ -312,6 +312,10 @@ export default function Quarto({
             <span className="quarto-note quarto-note--3">♪</span>
           </div>
         </div>
+        <figure className={`quarto-doll${roomDark ? " quarto-doll--night" : ""}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/quarto/jules-doll.webp" alt="Jules em versão boneca de papel" draggable={false} />
+        </figure>
       </RoomScene>
 
       {contactOpen && <FichaModal onClosed={() => setContactOpen(false)} />}

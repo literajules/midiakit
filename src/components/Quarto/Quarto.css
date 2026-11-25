@@ -270,3 +270,38 @@
 }
 
 /* ——— porta: seta + convite, ver DoorInvite.css ——— */
+
+.quarto-doll {
+  position: absolute;
+  left: 50%;
+  bottom: 5%;
+  height: 52%;
+  translate: -50% 0;
+  margin: 0;
+  pointer-events: none;
+  transition: filter .35s ease;
+}
+
+.quarto-doll::before {
+  content: "";
+  position: absolute;
+  left: 34%;
+  right: 34%;
+  bottom: 0;
+  height: 3%;
+  border-radius: 50%;
+  background: rgb(38 24 19 / 45%);
+  filter: blur(3px);
+}
+
+.quarto-doll img {
+  position: relative;
+  display: block;
+  height: 100%;
+  width: auto;
+  user-select: none;
+}
+
+.quarto-doll--night {
+  filter: brightness(.65) saturate(.85);
+}
