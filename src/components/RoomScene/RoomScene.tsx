@@ -167,7 +167,7 @@ export default function RoomScene({
                 ? {
                     tabIndex: 0,
                     role: "region",
-                    "aria-label": `${ariaLabel}. Deslize na horizontal para ver todos os objetos.`,
+                    "aria-label": `${ariaLabel}. ${t("Deslize na horizontal para ver todos os objetos.", "Swipe horizontally to see all objects.")}`,
                     onScroll: (e: UIEvent<HTMLDivElement>) => {
                       const { scrollLeft } = e.currentTarget;
                       if (showPanArrows) setPanPosition(scrollLeft);
@@ -206,7 +206,7 @@ export default function RoomScene({
               <button
                 type="button"
                 className="room-scene__pan-arrow room-scene__pan-arrow--left"
-                aria-label={t("Explorar o lado esquerdo do quarto", "Explore the left side of the room")}
+                aria-label={t("Explorar o lado esquerdo", "Explore left")}
                 disabled={panPosition <= 1}
                 onClick={() => panBy(-1)}
               >
@@ -217,7 +217,7 @@ export default function RoomScene({
               <button
                 type="button"
                 className="room-scene__pan-arrow room-scene__pan-arrow--right"
-                aria-label={t("Explorar o lado direito do quarto", "Explore the right side of the room")}
+                aria-label={t("Explorar o lado direito", "Explore right")}
                 disabled={panPosition >= layout.frameW - w - 1}
                 onClick={() => panBy(1)}
               >
