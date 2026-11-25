@@ -114,13 +114,6 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
   const [tab, setTab] = useState<"read" | "write" | "admin">(selfie ? "write" : "read");
   const [page, setPage] = useState(0);
   const [stickersOpen, setStickersOpen] = useState(false);
-  const [promptIndex, setPromptIndex] = useState(-1);
-  const messageField = useRef<HTMLTextAreaElement>(null);
-  const prompts = [
-    t("uma coisinha boa do meu dia foi…", "one little good thing about my day was…"),
-    t("passei aqui pra te contar que…", "i stopped by to tell you that…"),
-    t("ultimamente tenho gostado de…", "lately i’ve been enjoying…"),
-  ];
   const [message, setMessage] = useState("");
   const [ink, setInk] = useState(inks[0].color);
   const [signature, setSignature] = useState("");
@@ -236,7 +229,7 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
           <h3>{t("deixe um recado", "leave a note")}</h3>
           <label>
             <span className="guestbook-sr-only">{t("Seu recado", "Your note")}</span>
-            <textarea ref={messageField} required maxLength={500} rows={4} value={message}
+            <textarea required maxLength={500} rows={4} value={message}
               style={{ color: ink }} placeholder={t("escreva alguma coisa…", "write something…")}
               onChange={(event) => setMessage(event.target.value)} />
           </label>
@@ -249,6 +242,7 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
             </label>
             <span>{message.length}/500</span>
           </div>
+          <div className="guestbook-tools">
           <div className="guestbook-inks" role="group" aria-label={t("Cor da tinta", "Ink color")}>
             {inks.map(({ color, pt, en }) => (
               <button key={color} type="button" aria-label={t(pt, en)} aria-pressed={ink === color}
@@ -260,21 +254,15 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
             {t("Quero incluir minha selfie e autorizo que ela apareça com o recado após aprovação.", "Include my selfie and allow it to appear with my note after approval.")}
           </label>}
 
-          <div className="guestbook-prompt">
-            <button type="button" onClick={() => setPromptIndex((index) => (index + 1) % prompts.length)}>{t("sem ideia?", "need an idea?")}</button>
-            {promptIndex >= 0 && <div>
-              <p aria-live="polite">{prompts[promptIndex]}</p>
-              {!message.trim() && <button type="button" onClick={() => {
-                setMessage(prompts[promptIndex] + " ");
-                messageField.current?.focus();
-              }}>{t("usar sugestão", "use prompt")}</button>}
-            </div>}
+            <button className="guestbook-sticker-tool" type="button" aria-expanded={stickersOpen}
+              aria-label={t("Cartela de stickers", "Sticker sheet")} aria-controls="guestbook-sticker-sheet"
+              onClick={() => setStickersOpen((open) => !open)}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+                <path d="M5 3h14a2 2 0 0 1 2 2v8l-8 8H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z M13 21v-6a2 2 0 0 1 2-2h6" />
+                <path d="M8 9h.01M15 8h.01M8 13q1 2 3 1" strokeLinecap="round" />
+              </svg>
+            </button>
           </div>
-          <button className="guestbook-send" type="submit" disabled={!message.trim()}>{t("enviar recado", "send note")}</button>
-        </form>
-          </div>
-          <button className="guestbook-sticker-tab" type="button" aria-expanded={stickersOpen}
-            aria-controls="guestbook-sticker-sheet" onClick={() => setStickersOpen((open) => !open)}>stickers ♡</button>
           <fieldset className="guestbook-sticker-sheet" id="guestbook-sticker-sheet" hidden={!stickersOpen}>
             <legend>{t("Cartela de stickers", "Sticker sheet")}</legend>
             <div className="guestbook-stickers">
@@ -287,6 +275,10 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
               ))}
             </div>
           </fieldset>
+          <button className="guestbook-send" type="submit" disabled={!message.trim()}>{t("enviar recado", "send note")}</button>
+        </form>
+          </div>
+
         </>}
         {tab === "admin" && <div className="guestbook-paper guestbook-paper--admin">
       {tab === "admin" && !admin && <form onSubmit={unlock}>

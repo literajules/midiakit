@@ -131,21 +131,9 @@
   line-height: 1.75rem;
   background: repeating-linear-gradient(to bottom, transparent 0 calc(1.75rem - 1px), #a47a6b66 calc(1.75rem - 1px) 1.75rem);
 }
-.guestbook .guestbook-sticker-tab {
-  position: absolute;
-  z-index: 3;
-  top: 18%;
-  right: 2.5%;
-  writing-mode: vertical-rl;
-  padding: .55rem .35rem;
-  background: #ead5c8;
-}
 .guestbook .guestbook-sticker-sheet {
-  position: absolute;
-  z-index: 2;
-  inset: 12% 9% auto auto;
-  width: min(38%, 330px);
-  max-height: 78%;
+  min-width: 0;
+  max-height: 145px;
   overflow: auto;
   box-sizing: border-box;
   margin: 0;
@@ -159,13 +147,6 @@
 .guestbook-sticker-sheet .guestbook-stickers button { border-color: transparent; background: transparent; }
 .guestbook-sticker-sheet .guestbook-stickers button[aria-pressed="true"] { background: #ead5c8; }
 .guestbook-sticker-sheet .guestbook-stickers button:hover img { transform: rotate(-8deg); }
-.guestbook-prompt p { margin: .35rem 0; font-style: italic; }
-.guestbook .guestbook-prompt button {
-  border: 0;
-  background: transparent;
-  color: #6e363e;
-  text-decoration: underline;
-}
 .guestbook-send { justify-self: start; }
 @keyframes guestbook-sheet-in {
   from { transform: translateX(12px); opacity: 0; }
@@ -204,3 +185,17 @@
 }
 .guestbook .guestbook-inks button[aria-pressed="true"] { box-shadow: 0 0 0 2px #702b42; }
 .guestbook .guestbook-send { border-radius: 999px; }
+
+.guestbook-tools { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem; }
+.guestbook .guestbook-sticker-tool {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #702b42;
+}
+.guestbook .guestbook-sticker-tool:is(:hover, [aria-expanded="true"]) { background: #ead5c8; }
