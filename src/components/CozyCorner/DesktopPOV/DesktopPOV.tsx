@@ -5,7 +5,8 @@ import SceneModal from "@/components/SceneModal/SceneModal";
 import AboutMeWindow from "./AboutMeWindow";
 import BrowserView from "./BrowserView";
 import FolderWindow from "./FolderWindow";
-import Dock from "./Dock";
+import Dock, { DockGlyph } from "./Dock";
+import FichaModal from "@/components/Quarto/FichaModal";
 import { BRAND_LOGOS, type BrandLogoDef } from "./brandLogos";
 import { DESKTOP_FOLDERS, type DesktopFolderId } from "./folders";
 import type { DockAppId } from "./dockApps";
@@ -125,6 +126,7 @@ export default function DesktopPOV({ onClosed, originPoint, initialFolder }: Pro
     initialFolder ? [{ id: `folder-${initialFolder}`, kind: "folder", folderId: initialFolder }] : []
   );
   const [zOrder, setZOrder] = useState<WinId[]>(initialFolder ? [`folder-${initialFolder}`] : []);
+  const [contactOpen, setContactOpen] = useState(false);
   const [bouncingId, setBouncingId] = useState<DockAppId | null>(null);
   const [soonId, setSoonId] = useState<string | null>(null);
   const bounceTimer = useRef<number | null>(null);
@@ -162,10 +164,9 @@ export default function DesktopPOV({ onClosed, originPoint, initialFolder }: Pro
     setZOrder((cur) => (cur[cur.length - 1] === id ? cur : [...cur.filter((x) => x !== id), id]));
   };
 
-  // só o Chrome é clicável na dock agora (ver Dock.tsx) — este handler só
-  // é mesmo chamado pra ele, mas mantém o `id` no parâmetro por clareza.
   const handleDockClick = (id: DockAppId) => {
     bounce(id);
+    if (id === "mail") setContactOpen(true);
     if (id === "chrome") openWindow({ id: "browser", kind: "browser" });
   };
 
@@ -191,6 +192,7 @@ export default function DesktopPOV({ onClosed, originPoint, initialFolder }: Pro
   const dockActiveIds: DockAppId[] = wins.some((w) => w.kind === "browser") ? ["chrome"] : [];
 
   return (
+    <>
     <SceneModal
       onClosed={onClosed}
       dialogClassName="desktop-pov__dialog"
@@ -237,6 +239,12 @@ export default function DesktopPOV({ onClosed, originPoint, initialFolder }: Pro
                 <span className="desktop-pov__folder-label">{folder.label}</span>
               </button>
             ))}
+            <button type="button" className="desktop-pov__folder" onClick={() => setContactOpen(true)}>
+              <span aria-hidden="true" style={{ width: 34, height: 28, display: "grid", placeItems: "center", background: "#286cd0", color: "white", borderRadius: 7 }}>
+                <DockGlyph id="mail" />
+              </span>
+              <span className="desktop-pov__folder-label">Contato</span>
+            </button>
           </div>
 
           {/* ——— logos das marcas, canto superior ESQUERDO (espelha as pastas
@@ -304,5 +312,7 @@ export default function DesktopPOV({ onClosed, originPoint, initialFolder }: Pro
         </div>
       </div>
     </SceneModal>
+    {contactOpen && <FichaModal onClosed={() => setContactOpen(false)} />}
+    </>
   );
 }

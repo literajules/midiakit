@@ -213,7 +213,7 @@ export default function Dock({ activeIds, bouncingId, onAppClick }: Props) {
         const dist = hoverIndex === -1 ? Infinity : Math.abs(i - hoverIndex);
         const scale = dist === 0 ? 1.34 : dist === 1 ? 1.16 : dist === 2 ? 1.06 : 1;
         const bare = BARE_IDS.includes(app.id);
-        const clickable = app.id === "chrome";
+        const clickable = app.id === "chrome" || app.id === "mail";
         const className = [
           "dock__item",
           bare ? "dock__item--bare" : "",
