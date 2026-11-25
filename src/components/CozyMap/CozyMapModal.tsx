@@ -296,7 +296,7 @@ export default function CozyMapModal({ onClosed }: Props) {
           </div>
           <p className="cozy-map__sign">the cozy map · by jules</p>
           <h2 id="cozy-map-title" className="cozy-map__title">
-            {t("um bom café &amp; um livro", "good coffee & a book")}
+            {t("um bom café & um livro", "good coffee & a book")}
           </h2>
           <p id="cozy-map-sub" className="cozy-map__sub">
             {t("minha coleção de lugares que vale a pena conhecer.", "my collection of places worth a visit.")}
