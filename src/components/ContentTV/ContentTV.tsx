@@ -31,6 +31,9 @@ export default function ContentTV() {
 
       const bounds = scrapbook.getBoundingClientRect();
       const stickyHeight = windowEl.parentElement?.offsetHeight ?? window.innerHeight;
+      const turn = Math.min(1, Math.max(0, 1 - bounds.top / Math.max(1, stickyHeight * 0.7)));
+      scrapbook.style.setProperty("--scrapbook-curl", String(Math.sin(turn * Math.PI)));
+      scrapbook.style.setProperty("--scrapbook-entry", String(turn));
       const progress = Math.min(1, Math.max(0, -bounds.top / Math.max(1, bounds.height - stickyHeight)));
       const travel = Math.max(0, track.scrollWidth - windowEl.clientWidth);
       track.style.setProperty("--scrapbook-offset", "-" + progress * travel + "px");
