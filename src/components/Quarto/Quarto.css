@@ -276,6 +276,7 @@
   left: 50%;
   bottom: 5%;
   height: 77.5%;
+  aspect-ratio: 1 / 2;
   translate: -50% 0;
   margin: 0;
   pointer-events: none;
@@ -305,3 +306,48 @@
 .quarto-doll--night {
   filter: brightness(.65) saturate(.85);
 }
+
+.quarto-doll__outfit { position: relative; height: 100%; }
+
+.quarto-doll .quarto-doll__blink {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  clip-path: inset(9.2% 41.3% 87.3% 41%);
+  animation: quarto-doll-blink 6.7s step-end infinite;
+}
+
+@keyframes quarto-doll-blink {
+  0%, 77%, 100% { opacity: 0; }
+  75% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quarto-doll .quarto-doll__blink { animation: none; }
+}
+
+.scene-modal__dialog.quarto-closet {
+  width: min(470px, 100%);
+  padding: 24px;
+  background: #fff4e7;
+  color: #51292c;
+  border: 2px solid #b68483;
+  border-radius: 16px;
+}
+
+.quarto-closet h2 { margin: 0 36px 16px 0; font: 1.75rem var(--font-script, Georgia); }
+.quarto-closet__looks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+.quarto-closet__looks button {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 10px 4px;
+  border: 1px solid #cfa8a2;
+  border-radius: 10px;
+  background: #fffaf3;
+  cursor: pointer;
+}
+
+.quarto-closet__looks button[aria-pressed="true"] { background: #f6dce0; border-color: #874d55; }
+.quarto-closet__looks img { height: min(37vh, 240px); width: 100%; object-fit: contain; }

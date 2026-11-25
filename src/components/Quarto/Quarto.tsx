@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import RoomScene from "@/components/RoomScene/RoomScene";
+import SceneModal from "@/components/SceneModal/SceneModal";
 import type { HotspotDef } from "@/components/RoomScene/types";
 import { playPhoneRing, playSound } from "@/lib/sound";
 import BookReceiptModal from "./BookReceiptModal";
@@ -20,6 +21,18 @@ function centerOf(el: HTMLElement): OriginPoint {
 }
 
 // Permite explorar toda a largura do quarto sempre que a foto excede a tela.
+const DOLL_LOOKS = {
+  dress: { label: "vestido branco", image: "jules-doll.webp", blink: "jules-doll-dress-blink.webp" },
+  pajamas: { label: "pijama rosa", image: "jules-doll-pajamas.webp", blink: "jules-doll-pajamas-blink.webp" },
+} as const;
+
+type DollLook = keyof typeof DOLL_LOOKS;
+const DOLL_LOOK_OPTIONS: DollLook[] = ["dress", "pajamas"];
+const QUARTO_WITH_CLOSET: HotspotDef[] = [
+  ...QUARTO_HOTSPOTS,
+  { id: "closet", label: "Doll", destination: "Trocar look", teaser: "trocar look", cx: 50, cy: 48, w: 3.5, h: 13, enabled: true },
+];
+
 const QUARTO_LAYOUT = { focalX: 0.6, panTrigger: 1 };
 
 /**
@@ -72,6 +85,9 @@ export default function Quarto({
   // padrão: luz acesa (quarto abre de dia/iluminado) — a pessoa apaga no
   // interruptor se quiser.
   const [roomDark, setRoomDark] = useState(false);
+  const [chosenLook, setChosenLook] = useState<DollLook | null>(null);
+  const [closetOpen, setClosetOpen] = useState(false);
+  const dollLook = chosenLook ?? (roomDark ? "pajamas" : "dress");
   const doorHover = hoveredId === "porta";
   const swaySuffix = roomDark ? "noite" : "dia";
 
@@ -87,7 +103,7 @@ export default function Quarto({
   // Quarto.css): a planta/relógio balançando, o brilho do disco girando,
   // as notas musicais, o brilho do mural e o cursor do convite da porta
   // todos pausam enquanto um modal estiver em cima.
-  const anyModalOpen = contactOpen || playlistOpen || bookOpen || note !== null;
+  const anyModalOpen = closetOpen || contactOpen || playlistOpen || bookOpen || note !== null;
 
   // abertura externa (menu rápido) — ver doc da prop acima. Os setState
   // ficam dentro do callback do rAF (não direto no corpo do efeito): evita
@@ -133,9 +149,13 @@ export default function Quarto({
         setOrigin(centerOf(el));
         setNote("relogio");
         return;
+      case "closet":
+        setClosetOpen(true);
+        return;
       case "interruptor":
         playSound("switch");
         setRoomDark((v) => !v);
+        setChosenLook(null);
         return;
       case "porta":
         onDoorClick();
@@ -162,7 +182,7 @@ export default function Quarto({
         sceneH={659}
         imageSrc="/images/quarto/bg-01-dia-fechada.png"
         imageAlt="Quarto cozy da Jules: cama de bolinhas, cômoda com toca-discos e telefone vintage, relógio de gato, quadro de recados, luminária de papel e porta branca."
-        hotspots={QUARTO_HOTSPOTS}
+        hotspots={QUARTO_WITH_CLOSET}
         onActivate={handleActivate}
         activeId={activeId}
         onHotspotHover={handleHover}
@@ -313,11 +333,31 @@ export default function Quarto({
           </div>
         </div>
         <figure className={`quarto-doll${roomDark ? " quarto-doll--night" : ""}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/quarto/jules-doll.webp" alt="Jules em versão boneca de papel" draggable={false} />
+          {DOLL_LOOK_OPTIONS.map((look) => (
+            <div key={look} hidden={look !== dollLook} className="quarto-doll__outfit">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/images/quarto/${DOLL_LOOKS[look].image}`} alt="Jules em versão boneca de papel" draggable={false} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/images/quarto/${DOLL_LOOKS[look].blink}`} alt="" draggable={false} className="quarto-doll__blink" />
+            </div>
+          ))}
         </figure>
       </RoomScene>
 
+      {closetOpen && (
+        <SceneModal dialogClassName="quarto-closet" aria-labelledby="quarto-closet-title" onClosed={() => setClosetOpen(false)}>
+          <h2 id="quarto-closet-title">closet da jules</h2>
+          <div className="quarto-closet__looks">
+            {DOLL_LOOK_OPTIONS.map((look) => (
+              <button type="button" key={look} aria-pressed={dollLook === look} onClick={() => setChosenLook(look)}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/images/quarto/${DOLL_LOOKS[look].image}`} alt="" />
+                <span>{DOLL_LOOKS[look].label}</span>
+              </button>
+            ))}
+          </div>
+        </SceneModal>
+      )}
       {contactOpen && <FichaModal onClosed={() => setContactOpen(false)} />}
       {playlistOpen && <PlaylistModal onClosed={() => setPlaylistOpen(false)} />}
       {bookOpen && <BookReceiptModal onClosed={() => setBookOpen(false)} />}
