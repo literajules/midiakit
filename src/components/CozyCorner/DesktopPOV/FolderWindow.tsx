@@ -238,7 +238,12 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                   {displayName(project).trim().charAt(0).toUpperCase() || "?"}
                 </span>
               )}
-              <span className="folder-window__item-label">{folderId === "projects" ? project.brand ?? displayName(project) : displayName(project)}</span>
+              <span className="folder-window__item-caption">
+                <span className="folder-window__item-label">{folderId === "projects" ? project.brand ?? displayName(project) : displayName(project)}</span>
+                {folderId === "projects" && (project.deliveries?.length || project.videoUrl) && (
+                  <span className="folder-window__item-count">{(project.deliveries?.length ?? 1) === 1 ? "1 vídeo" : `${project.deliveries?.length} vídeos`}</span>
+                )}
+              </span>
             </button>
           ))}
         </div>
