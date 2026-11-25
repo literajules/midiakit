@@ -1,7 +1,7 @@
 .dock {
   position: absolute;
   left: 50%;
-  bottom: clamp(10px, 2.4vh, 20px);
+  bottom: calc(clamp(10px, 2.4vh, 20px) + env(safe-area-inset-bottom, 0px));
   translate: -50% 0;
   z-index: 6;
   display: flex;
@@ -151,5 +151,35 @@
   .dock__item--active,
   .dock__item--active::after {
     animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .dock {
+    width: max-content;
+    max-width: calc(100% - 16px);
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 6px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .dock__item {
+    width: clamp(24px, 7vw, 38px);
+    height: clamp(24px, 7vw, 38px);
+    border-radius: 8px;
+  }
+
+  .dock__item--active {
+    width: 44px;
+    height: 44px;
+  }
+
+  .dock__item svg {
+    max-width: 80%;
+    max-height: 80%;
   }
 }

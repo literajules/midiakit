@@ -1,11 +1,13 @@
 /* ——— Janela do desktop: ocupa a tela INTEIRA (viewport 100%), sem moldura,
    cantos ou fundo desfocado ao redor — é a visão em primeira pessoa da
    tela do laptop, não um cartão flutuando por cima da cena. ——— */
-.desktop-pov__dialog {
+.scene-modal__dialog.desktop-pov__dialog {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   max-width: 100vw;
   max-height: 100vh;
+  max-height: 100dvh;
   margin: 0;
   padding: 0;
   overflow: hidden;
