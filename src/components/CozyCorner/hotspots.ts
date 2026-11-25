@@ -4,10 +4,7 @@
  * (1670×942 — cafe-scene.webp), já medidas no site original, reaproveitadas
  * sem alteração.
  *
- * Máquina de café (breville), laptop e câmera DJI já têm experiência de
- * verdade (mapa, desktop e selfie redonda). Celular e fones ainda não —
- * `enabled: false` neles, aparecem só no modo de teste. Journal e óculos
- * ficaram de fora do plano do mídia kit (ver MIDIA-KIT-REUSO.md).
+ * Pontos interativos: máquina de café, laptop e câmera DJI.
  */
 
 import type { HotspotDef } from "../RoomScene/types";
@@ -47,24 +44,5 @@ export const COZY_CORNER_HOTSPOTS: HotspotDef[] = [
     w: 7,
     h: 29.3,
     enabled: true,
-  },
-  {
-    id: "phone",
-    label: "Celular",
-    destination: "Ficha de contato",
-    cx: 50.7,
-    cy: 89.7,
-    w: 10.9,
-    h: 17.2,
-  },
-  {
-    id: "earphones",
-    label: "Fones",
-    destination: "Playlist do Spotify",
-    cx: 91.4,
-    cy: 89.1,
-    w: 13.9,
-    h: 15.1,
-    shape: "ellipse",
   },
 ];
