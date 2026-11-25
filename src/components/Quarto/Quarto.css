@@ -272,6 +272,7 @@
 /* ——— porta: seta + convite, ver DoorInvite.css ——— */
 
 .quarto-doll {
+  --quarto-blink-cycle: 4.8s;
   position: absolute;
   z-index: 1;
   left: var(--room-pan-center, 50%);
@@ -315,11 +316,15 @@
   inset: 0;
   opacity: 0;
   clip-path: inset(9.2% 41.3% 87.3% 41%);
-  animation: quarto-doll-blink 6.7s step-end infinite;
+  animation: quarto-doll-blink var(--quarto-blink-cycle) step-end infinite;
+}
+
+.quarto-doll .quarto-doll__blink--glasses {
+  clip-path: inset(9% 40% 86.7% 40%);
 }
 
 @keyframes quarto-doll-blink {
-  0%, 77%, 100% { opacity: 0; }
+  0%, 77.5%, 100% { opacity: 0; }
   75% { opacity: 1; }
 }
 
@@ -398,7 +403,7 @@
 }
 
 .quarto-doll__outfit--animated > img.quarto-doll__blink {
-  animation: quarto-doll-pose 11s step-end infinite, quarto-doll-blink 6.7s step-end infinite;
+  animation: quarto-doll-pose 11s step-end infinite, quarto-doll-blink var(--quarto-blink-cycle) step-end infinite;
 }
 
 @keyframes quarto-doll-pose {

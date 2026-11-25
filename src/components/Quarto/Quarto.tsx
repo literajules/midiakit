@@ -32,8 +32,8 @@ type Outfit = {
 const DOLL_LOOKS: Record<"dress" | "pajamas" | "denim" | "cognac" | "bustier", Outfit> = {
   dress: { label: "vestido branco", image: "jules-doll.webp", blink: "jules-doll-dress-blink.webp", shift: "jules-doll-dress-shift.webp", shiftBlink: "jules-doll-dress-shift-blink.webp" },
   pajamas: { label: "pijama rosa", image: "jules-doll-pajamas.webp", blink: "jules-doll-pajamas-blink.webp", shift: "jules-doll-pajamas-shift.webp", shiftBlink: "jules-doll-pajamas-shift-blink.webp" },
-  denim: { label: "jeans e camiseta", image: "jules-doll-denim.webp" },
-  cognac: { label: "saia midi e botas", image: "jules-doll-cognac.webp" },
+  denim: { label: "jeans e camiseta", image: "jules-doll-denim.webp", blink: "jules-doll-denim-blink.webp" },
+  cognac: { label: "saia midi e botas", image: "jules-doll-cognac.webp", blink: "jules-doll-cognac-blink.webp" },
   bustier: { label: "corset e poá", image: "jules-doll-bustier.webp" },
 };
 
@@ -345,7 +345,7 @@ export default function Quarto({
               <img src={`/images/quarto/${DOLL_LOOKS[look].image}`} alt="Jules em versão boneca de papel" draggable={false} />
               {DOLL_LOOKS[look].blink && <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/images/quarto/${DOLL_LOOKS[look].blink}`} alt="" draggable={false} className="quarto-doll__blink" />
+              <img src={`/images/quarto/${DOLL_LOOKS[look].blink}`} alt="" draggable={false} className={`quarto-doll__blink${look === "denim" || look === "cognac" ? " quarto-doll__blink--glasses" : ""}`} />
               </>}
               {DOLL_LOOKS[look].shift && <div className="quarto-doll__shift" aria-hidden="true">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
