@@ -8,6 +8,7 @@ import BackArrow from "./BackArrow";
 import DesktopPOV from "./DesktopPOV/DesktopPOV";
 import MiniDesktopScreen from "./DesktopPOV/MiniDesktopScreen";
 import DjiPhotobooth from "./DjiPhotobooth";
+import Guestbook from "./Guestbook";
 import { COZY_CORNER_HOTSPOTS } from "./hotspots";
 import "./CozyCorner.css";
 
@@ -59,7 +60,12 @@ function centerOf(el: HTMLElement): OriginPoint {
  * menor que a do quarto nessa mesma faixa) — serve só de rede de segurança
  * pra proporções mais extremas que as testadas.
  */
-const COZY_CORNER_LAYOUT = { focalX: 0.524, panTrigger: 0.2 };
+const GUESTBOOK_PREVIEW = process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+const COZY_CORNER_LAYOUT = { focalX: 0.524, panTrigger: GUESTBOOK_PREVIEW ? 1 : 0.2 };
+const hotspots: HotspotDef[] = GUESTBOOK_PREVIEW ? [
+  ...COZY_CORNER_HOTSPOTS,
+  { id: "guestbook", label: "Caderno", destination: "Livro de visitas", teaser: "meu journal", cx: 16.6, cy: 82.5, w: 28, h: 20, enabled: true },
+] : COZY_CORNER_HOTSPOTS;
 
 /**
  * Cena 2 — o cozy corner (cafeteria). Reaproveitada do `literajules-site`
@@ -104,6 +110,7 @@ export default function CozyCorner({
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [initialFolder, setInitialFolder] = useState<"work" | "projects" | null>(null);
   const [djiOpen, setDjiOpen] = useState(false);
+  const [guestbook, setGuestbook] = useState<{ selfie: string | null } | null>(null);
   const [origin, setOrigin] = useState<OriginPoint | null>(null);
 
   const [steamOn, setSteamOn] = useState(false);
@@ -134,6 +141,10 @@ export default function CozyCorner({
       setDesktopOpen(true);
       return;
     }
+    if (def.id === "guestbook") {
+      setGuestbook({ selfie: null });
+      return;
+    }
     if (def.id === "dji") {
       setOrigin(centerOf(el));
       setDjiOpen(true);
@@ -155,7 +166,7 @@ export default function CozyCorner({
         sceneH={CAFE_SCENE_HEIGHT}
         imageSrc="/images/cafe/cafe-scene.webp"
         imageAlt="Mesa de madeira numa cafeteria ao lado da janela: MacBook aberto no centro, café gelado com chantilly, caderno aberto, máquina de café Breville ao fundo, câmera DJI, recibo da cafeteria, fones de ouvido e um abajur aceso."
-        hotspots={COZY_CORNER_HOTSPOTS}
+        hotspots={hotspots}
         onActivate={handleActivate}
         activeId={activeId}
         onHotspotHover={handleHover}
@@ -196,7 +207,9 @@ export default function CozyCorner({
           initialFolder={initialFolder}
         />
       )}
-      {djiOpen && <DjiPhotobooth onClosed={() => setDjiOpen(false)} originPoint={origin} />}
+      {djiOpen && <DjiPhotobooth onClosed={() => setDjiOpen(false)} originPoint={origin}
+        onJournal={GUESTBOOK_PREVIEW ? (selfie) => { setDjiOpen(false); setGuestbook({ selfie }); } : undefined} />}
+      {guestbook && <Guestbook selfie={guestbook.selfie} onClosed={() => setGuestbook(null)} />}
     </>
   );
 }
