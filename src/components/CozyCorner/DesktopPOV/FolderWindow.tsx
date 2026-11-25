@@ -59,6 +59,9 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
   const [selected, setSelected] = useState<ProjectCase | null>(
     () => (initialSelectedId ? items.find((it) => it.id === initialSelectedId) ?? null : null)
   );
+  const [deliveryIndex, setDeliveryIndex] = useState(0);
+  const delivery = selected?.deliveries?.[deliveryIndex];
+  const videoUrl = delivery?.videoUrl ?? selected?.videoUrl;
   const detailRef = useRef<HTMLDivElement>(null);
 
   const selectedIndex = selected ? items.findIndex((it) => it.id === selected.id) : -1;
@@ -67,6 +70,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
    * sem isso, trocar de item pelas setas manteria a rolagem do item anterior. */
   const selectItem = (item: ProjectCase) => {
     setSelected(item);
+    setDeliveryIndex(0);
     requestAnimationFrame(() => detailRef.current?.scrollTo({ top: 0 }));
   };
 
@@ -91,6 +95,17 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
               ‹ {def?.label}
             </button>
 
+            {selected.deliveries && (
+              <div className="folder-window__deliveries" role="group" aria-label={selected.brand}>
+                {selected.deliveries.map((item, index) => (
+                  <button key={item.videoUrl} type="button" className="folder-window__back"
+                    aria-pressed={deliveryIndex === index} onClick={() => setDeliveryIndex(index)}>
+                    {item.title}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="folder-window__detail-grid">
               <div className="folder-window__detail-media">
                 {/* fita washi real, dois pedaços — mesmo truque de Polaroid colada na página */}
@@ -102,15 +117,15 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                 <div
                   className="folder-window__cover"
                   style={
-                    selected.videoUrl && selected.videoAspect
+                    videoUrl && selected.videoAspect
                       ? { aspectRatio: `${selected.videoAspect.w} / ${selected.videoAspect.h}` }
                       : undefined
                   }
                 >
-                  {selected.videoUrl ? (
+                  {videoUrl ? (
                     <video
-                      key={selected.videoUrl}
-                      src={selected.videoUrl}
+                      key={videoUrl}
+                      src={videoUrl}
                       controls
                       playsInline
                       preload="metadata"
@@ -127,7 +142,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
 
               <div className="folder-window__detail-info">
                 <h3 className="folder-window__title">
-                  {displayName(selected)}
+                  {delivery?.title ?? displayName(selected)}
                   {selected.demo && <span className="folder-window__demo-tag">exemplo</span>}
                 </h3>
 
@@ -140,7 +155,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                 </div>
 
                 {selected.role && <p className="folder-window__eyebrow">{selected.role}</p>}
-                <p className="folder-window__desc">{selected.description}</p>
+                {selected.description && <p className="folder-window__desc">{selected.description}</p>}
 
                 {selected.visitUrl && (
                   <a className="folder-window__visit" href={selected.visitUrl} target="_blank" rel="noopener noreferrer">
@@ -203,7 +218,7 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                   {displayName(project).trim().charAt(0).toUpperCase() || "?"}
                 </span>
               )}
-              <span className="folder-window__item-label">{displayName(project)}</span>
+              <span className="folder-window__item-label">{folderId === "projects" ? project.brand ?? displayName(project) : displayName(project)}</span>
             </button>
           ))}
         </div>

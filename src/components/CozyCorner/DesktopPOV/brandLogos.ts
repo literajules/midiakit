@@ -24,4 +24,5 @@ export const BRAND_LOGOS: BrandLogoDef[] = [
   { id: "maracugina", name: "Maracugina", logoSrc: "/images/desktop/brands/maracugina.jpg", projectId: "maracugina" },
   { id: "vinko", name: "Vinko", logoSrc: "/images/desktop/brands/vinko.png", projectId: "vinko" },
   { id: "oui-paris", name: "O.U.i Paris", logoSrc: "/images/desktop/brands/oui-paris.jpg", projectId: "oui-paris" },
+  { id: "fluency", name: "Fluency Academy", logoSrc: "/images/desktop/brands/fluency.png", projectId: "fluency" },
 ];

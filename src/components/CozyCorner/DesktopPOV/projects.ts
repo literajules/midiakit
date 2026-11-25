@@ -36,6 +36,7 @@ export type ProjectCase = {
   /** vídeo da entrega (o publi em si) — opcional; quando presente, substitui a
    * capa por um player com controles (ver FolderWindow.tsx) */
   videoUrl?: string;
+  deliveries?: { title: string; videoUrl: string }[];
   /**
    * Proporção REAL do vídeo (largura/altura do arquivo, lida direto do átomo
    * `tkhd` do mp4 — não é chute). A caixa de preview usa isso pra ter
@@ -70,12 +71,23 @@ export const PROJECTS: ProjectCase[] = [
   {
     id: "oui-paris",
     brand: "O.U.i Paris",
-    role: "Entrega em breve",
-    description: "Case ainda no forno — falta só o texto (o que foi pedido, formato de entrega, link). O vídeo já está aqui.",
-    videoUrl: "/videos/projects/oui-paris.mp4",
-    videoAspect: { w: 480, h: 848 },
+    description: "",
+    deliveries: [
+      { title: "O.U.i Paris · Entrega 1", videoUrl: "/videos/projects/oui-paris.mp4" },
+      { title: "O.U.i Paris · Entrega 2", videoUrl: "/videos/projects/oui-paris-2.mp4" },
+    ],
+    videoAspect: { w: 360, h: 640 },
     // logo real da marca — mostrado no ícone da grade (sem aparecer como poster do vídeo)
     imageUrl: "/images/desktop/brands/oui-paris.jpg",
+  },
+  {
+    id: "fluency",
+    brand: "Fluency Academy",
+    title: "Fluency Academy · Mega Black",
+    description: "",
+    videoUrl: "/videos/projects/fluency.mp4",
+    videoAspect: { w: 360, h: 640 },
+    imageUrl: "/images/desktop/brands/fluency.png",
   },
   {
     id: "maracugina",
