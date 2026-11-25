@@ -69,7 +69,19 @@ export default function Site() {
     setOpenNote(target.note);
   };
 
+  const openScrapbook = () => {
+    setOpenFolder(null);
+    setScene("quarto");
+    requestAnimationFrame(() => {
+      document.getElementById("meu-scrapbook")?.scrollIntoView({ behavior: "instant", block: "start" });
+    });
+  };
+
   const goTo = (target: NavTarget) => {
+    if (target.scene === "cozy-corner" && target.openFolder === "work") {
+      openScrapbook();
+      return;
+    }
     if (scene === target.scene) {
       // já está na cena certa: só espera um frame (layout assentar) e aplica
       requestAnimationFrame(() => applyTarget(target));
@@ -114,6 +126,7 @@ export default function Site() {
       {scene === "cozy-corner" && (
         <CozyCorner
           onBackClick={() => switchScene("quarto")}
+          onOpenScrapbook={openScrapbook}
           openFolder={openFolder}
           onOpenFolderHandled={() => setOpenFolder(null)}
         />

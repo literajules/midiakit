@@ -16,6 +16,7 @@ type OriginPoint = { x: number; y: number };
 
 type Props = {
   onClosed: () => void;
+  onOpenScrapbook: () => void;
   /** centro do hotspot do laptop — a janela "nasce" literalmente dali (zoom
    * pra dentro da tela), em vez de crescer a partir do centro da tela. */
   originPoint?: OriginPoint | null;
@@ -119,7 +120,7 @@ function offsetFor(index: number) {
  * tudo as janelas abertas (navegador e pastas), cada uma arrastável e com
  * seu próprio z-index (clicar numa janela traz ela pra frente).
  */
-export default function DesktopPOV({ onClosed, originPoint, initialFolder }: Props) {
+export default function DesktopPOV({ onClosed, originPoint, initialFolder, onOpenScrapbook }: Props) {
   const clock = useMenubarClock();
 
   const [wins, setWins] = useState<WinInstance[]>(
@@ -171,6 +172,10 @@ export default function DesktopPOV({ onClosed, originPoint, initialFolder }: Pro
   };
 
   const handleFolderClick = (folderId: DesktopFolderId) => {
+    if (folderId === "work") {
+      onOpenScrapbook();
+      return;
+    }
     openWindow({ id: `folder-${folderId}`, kind: "folder", folderId });
   };
 

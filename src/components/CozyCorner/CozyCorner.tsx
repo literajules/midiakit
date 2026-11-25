@@ -98,10 +98,12 @@ const hotspots: HotspotDef[] = GUESTBOOK_PREVIEW ? [
  */
 export default function CozyCorner({
   onBackClick,
+  onOpenScrapbook,
   openFolder,
   onOpenFolderHandled,
 }: {
   onBackClick: () => void;
+  onOpenScrapbook: () => void;
   openFolder?: "work" | "projects" | null;
   onOpenFolderHandled?: () => void;
 }) {
@@ -205,6 +207,7 @@ export default function CozyCorner({
           }}
           originPoint={origin}
           initialFolder={initialFolder}
+          onOpenScrapbook={onOpenScrapbook}
         />
       )}
       {djiOpen && <DjiPhotobooth onClosed={() => setDjiOpen(false)} originPoint={origin}

@@ -32,14 +32,14 @@
   width: max-content;
   height: 100%;
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   gap: clamp(18px, 4vw, 56px);
   padding: 16px max(16px, calc((100vw - 410px) / 2));
   transform: translateX(var(--scrapbook-offset, 0));
 }
 .content-scrapbook__post {
   position: relative;
-  width: min(410px, calc(100vw - 36px));
+  width: min(410px, calc(100vw - 36px), 49svh);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -64,8 +64,8 @@
 .content-scrapbook__media {
   --instagram-header-height: 54px;
   position: relative;
-  flex: 1 1 0;
-  min-height: 0;
+  display: block;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   background: white;
 }
@@ -76,6 +76,7 @@
   width: 100%;
   height: calc(100% + var(--instagram-header-height));
   border: 0;
+  pointer-events: none;
 }
 .content-scrapbook__post:focus-within { outline: 2px solid #8c4653; }
 @media (prefers-reduced-motion: reduce) {
@@ -83,7 +84,6 @@
   .content-scrapbook__stage { position: static; height: auto; }
   .content-scrapbook__viewport { overflow: visible; }
   .content-scrapbook__strip { width: auto; height: auto; flex-wrap: wrap; justify-content: center; padding: 16px; transform: none; }
-  .content-scrapbook__post { height: min(620px, 85svh); }
 }
 
 .content-scrapbook__post { container-type: inline-size; }
@@ -105,6 +105,6 @@
 .content-scrapbook__labels .content-scrapbook__format { background: #eee0ce; color: #664631; }
 .content-scrapbook__post[data-format="reel"] .content-scrapbook__format { background: #f6dfb9; color: #684120; }
 
-.content-scrapbook__post[data-format="carrossel"] .content-scrapbook__media { max-height: calc(100cqw - 4px); }
-.content-scrapbook__post[data-format="reel"] .content-scrapbook__media { max-height: calc(100cqw * 16 / 9 - 4px); }
+.content-scrapbook__post[data-format="reel"] { width: min(360px, calc(100vw - 36px), 36svh); }
+.content-scrapbook__post[data-format="reel"] .content-scrapbook__media { aspect-ratio: 9 / 16; }
 .content-scrapbook__media iframe { height: calc(100% + var(--instagram-header-height) + 156px); }

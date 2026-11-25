@@ -52,7 +52,7 @@ export default function ContentTV() {
   }, []);
 
   return (
-    <section className="content-scrapbook" ref={section} aria-labelledby="scrapbook-title">
+    <section id="meu-scrapbook" className="content-scrapbook" ref={section} aria-labelledby="scrapbook-title">
       <div className="content-scrapbook__stage">
         <header className="content-scrapbook__header">
           <h2 id="scrapbook-title">meu scrapbook</h2>
@@ -68,9 +68,10 @@ export default function ContentTV() {
                     <span className="content-scrapbook__category" data-category={title}>{title}</span>
                     <span className="content-scrapbook__format">{format}</span>
                   </h3>
-                  <div className="content-scrapbook__media">
-                    <iframe src={post + "embed/"} title={title + " · " + format} loading="lazy" allow="fullscreen" />
-                  </div>
+                  <a className="content-scrapbook__media" href={post} target="_blank" rel="noreferrer"
+                    aria-label={`Abrir ${title} · ${format} no Instagram`}>
+                    <iframe src={post + "embed/"} title={title + " · " + format} loading="lazy" tabIndex={-1} aria-hidden="true" />
+                  </a>
 
                 </article>
               );
