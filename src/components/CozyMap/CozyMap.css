@@ -614,10 +614,38 @@
 }
 
 .cozy-map__sticker-layer {
+  --collage-size: clamp(118px, 31vw, 164px);
   grid-area: map;
   position: relative;
   z-index: 1;
   pointer-events: none;
+}
+
+/* A torn scrap and a strip of tape anchor the overlapping stickers. */
+.cozy-map__sticker-layer::before,
+.cozy-map__sticker-layer::after {
+  content: "";
+  position: absolute;
+}
+
+.cozy-map__sticker-layer::before {
+  left: 14px;
+  bottom: calc(22px + var(--collage-size) * .13);
+  width: calc(var(--collage-size) * .92);
+  height: calc(var(--collage-size) * .46);
+  rotate: -9deg;
+  background: repeating-linear-gradient(#f7ecd9 0 9px, #eadbcc 9px 10px);
+  clip-path: polygon(2% 3%, 19% 1%, 29% 4%, 52% 0, 69% 3%, 98% 0, 97% 19%, 100% 40%, 98% 65%, 100% 97%, 79% 100%, 61% 97%, 43% 100%, 23% 97%, 0 100%, 3% 69%, 0 47%, 3% 22%);
+  opacity: .88;
+}
+
+.cozy-map__sticker-layer::after {
+  left: calc(14px + var(--collage-size) * .32);
+  bottom: calc(22px + var(--collage-size) * .55);
+  width: calc(var(--collage-size) * .36);
+  height: calc(var(--collage-size) * .11);
+  rotate: 7deg;
+  background: repeating-linear-gradient(100deg, #e7b6b8ad 0 4px, #f5d6c6b5 4px 8px);
 }
 
 .cozy-map__sticker {
@@ -630,35 +658,37 @@
 
 .cozy-map__sticker--swans {
   left: 10px;
-  bottom: 24px;
-  width: clamp(68px, 12vw, 136px);
+  bottom: 22px;
+  width: var(--collage-size);
   rotate: -8deg;
-  opacity: .9;
+  filter: drop-shadow(0 3px 2px #51292c38);
 }
 
 .cozy-map__sticker--stars {
-  right: 47px;
-  top: 7px;
-  width: 41px;
+  left: calc(10px + var(--collage-size) * .73);
+  bottom: calc(22px + var(--collage-size) * .34);
+  width: calc(var(--collage-size) * .49);
   background-position: right top;
-  opacity: .82;
+  rotate: 9deg;
 }
 
 .cozy-map__sticker--heart {
-  right: 14px;
-  bottom: 5px;
-  width: 53px;
+  right: 8px;
+  bottom: 0;
+  width: 70px;
   background-position: left bottom;
   rotate: 10deg;
 }
 
 @media (min-width: 900px) and (min-height: 560px) {
-  .cozy-map__sticker-layer { position: absolute; inset: 0; }
-  .cozy-map__sticker--swans { left: 28px; bottom: 28px; }
-  .cozy-map__sticker--stars { width: 58px; right: 78px; top: 14px; }
-  .cozy-map__sticker--heart { width: 78px; right: 18px; bottom: 6px; }
+  .cozy-map__sticker-layer {
+    --collage-size: clamp(185px, 20vw, 255px);
+    position: absolute;
+    inset: 0;
+  }
+  .cozy-map__sticker--heart { width: 104px; right: 14px; }
 }
 
-@media (max-width: 400px) {
-  .cozy-map__sticker--stars { display: none; }
+@media (max-height: 520px) {
+  .cozy-map__sticker-layer { --collage-size: 105px; }
 }
