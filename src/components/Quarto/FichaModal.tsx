@@ -116,8 +116,10 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
 
   if (status === "sent") {
     return (
-      <SceneModal onClosed={onClosed} dialogClassName="ficha-modal" aria-labelledby="ficha-modal-title">
-        <div style={{ display: "grid", placeItems: "center", minHeight: "min(270px, 48svh)", padding: "36px 24px", textAlign: "center" }}>
+      <SceneModal onClosed={onClosed} dialogClassName="ficha-modal ficha-modal--sent" aria-labelledby="ficha-modal-title">
+        <div className="ficha-confirmation">
+          <span className="ficha-confirmation__ziggy" aria-hidden="true" />
+          <span className="ficha-confirmation__seal" aria-hidden="true">♡</span>
           <p id="ficha-modal-title" role="status" className="ficha-modal__title">{STATUS_MESSAGE.sent}</p>
         </div>
       </SceneModal>

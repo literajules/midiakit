@@ -289,3 +289,77 @@
     transform: none;
   }
 }
+
+.scene-modal__dialog.ficha-modal--sent {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+.ficha-confirmation {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: min(270px, 48svh);
+  padding: 44px clamp(24px, 7vw, 68px);
+  text-align: center;
+  animation: ficha-note-in .38s ease-out both;
+}
+.ficha-confirmation::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle, rgb(82 16 16 / 7%) 1.1px, transparent 1.2px) 0 0 / 15px 15px, var(--off-white);
+  clip-path: polygon(0 2%, 8% 1%, 16% 2%, 26% 0, 34% 1%, 45% 0, 56% 1%, 65% 0, 76% 2%, 85% 1%, 94% 0, 100% 2%, 99.6% 42%, 100% 73%, 99.5% 98%, 90% 99%, 82% 98%, 72% 100%, 62% 99%, 48% 100%, 37% 99%, 24% 100%, 14% 98%, 5% 99%, 0 98%, .4% 64%, 0 34%);
+}
+.ficha-confirmation .ficha-modal__title {
+  margin: 0;
+  animation: ficha-note-reveal .95s .25s ease-out both;
+}
+.ficha-confirmation__ziggy {
+  position: absolute;
+  z-index: -2;
+  width: 63px;
+  height: 46px;
+  bottom: calc(100% - 10px);
+  left: 16%;
+  border-radius: 48% 48% 42% 42%;
+  background: radial-gradient(circle at 34% 62%, #392226 0 2px, transparent 3px),
+              radial-gradient(circle at 66% 62%, #392226 0 2px, transparent 3px),
+              #d5a98c;
+  animation: ficha-cat-peek .45s .1s ease-out both;
+}
+.ficha-confirmation__ziggy::before,
+.ficha-confirmation__ziggy::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  width: 23px;
+  height: 25px;
+  background: #d5a98c;
+  clip-path: polygon(4% 2%, 100% 75%, 18% 100%);
+}
+.ficha-confirmation__ziggy::before { left: 1px; }
+.ficha-confirmation__ziggy::after { right: 1px; scale: -1 1; }
+.ficha-confirmation__seal {
+  position: absolute;
+  right: clamp(6px, 3vw, 22px);
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  aspect-ratio: 1;
+  border-radius: 47% 53% 45% 55% / 52% 42% 58% 48%;
+  background: radial-gradient(circle at 35% 26%, #993d51, #651b31 67%, #4d1424);
+  box-shadow: 0 2px 4px #52102140, inset 0 0 0 3px #aa596747;
+  color: #f0a4ae;
+  font: 24px / 1 Georgia, serif;
+  rotate: -9deg;
+}
+@keyframes ficha-note-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0; } }
+@keyframes ficha-note-reveal { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0); } }
+@keyframes ficha-cat-peek { from { translate: 0 25px; } to { translate: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .ficha-confirmation, .ficha-confirmation .ficha-modal__title, .ficha-confirmation__ziggy { animation: none; }
+}
