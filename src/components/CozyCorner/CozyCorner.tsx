@@ -56,12 +56,11 @@ function centerOf(el: HTMLElement): OriginPoint {
  *
  * Em telas estreitas, a foto pode ser explorada horizontalmente.
  */
-const GUESTBOOK_PREVIEW = process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
 const COZY_CORNER_LAYOUT = { focalX: 0.524, panTrigger: 0.75 };
-const hotspots: HotspotDef[] = GUESTBOOK_PREVIEW ? [
+const hotspots: HotspotDef[] = [
   ...COZY_CORNER_HOTSPOTS,
   { id: "guestbook", label: "Caderno", destination: "Livro de visitas", teaser: "meu journal", cx: 16.6, cy: 82.5, w: 28, h: 20, enabled: true },
-] : COZY_CORNER_HOTSPOTS;
+];
 
 /**
  * Cena 2 — o cozy corner (cafeteria). Reaproveitada do `literajules-site`
@@ -214,7 +213,7 @@ export default function CozyCorner({
         />
       )}
       {djiOpen && <DjiPhotobooth onClosed={() => setDjiOpen(false)} originPoint={origin}
-        onJournal={GUESTBOOK_PREVIEW ? (selfie) => { setDjiOpen(false); setGuestbook({ selfie }); } : undefined} />}
+        onJournal={(selfie) => { setDjiOpen(false); setGuestbook({ selfie }); }} />}
       {guestbook && <Guestbook selfie={guestbook.selfie} onClosed={() => setGuestbook(null)} />}
     </>
   );
