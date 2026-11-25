@@ -1,18 +1,6 @@
-/**
- * Dados do "The Cozy Map" — dados puros, sem React.
- *
- * Dois blocos, de propósito separados:
- *  - PLACES       → conteúdo DEFINITIVO, da Jules. Está vazio até ela passar a lista real.
- *  - DEMO_PLACES  → exemplos só para testar o mapa (pins, filtros, painel).
- *                   Aparecem apenas em dev / preview (ver `visiblePlaces`) e vêm
- *                   marcados com `demo: true` e rótulo "exemplo" na interface.
- *
- * Para publicar o conteúdo real: preencha PLACES. Nada mais precisa mudar.
- */
+/** Cafeterias favoritas da Jules para o Cozy Map. */
 
-import { HOTSPOT_DEBUG } from "@/components/RoomScene/debug";
-
-export type CityId = "new-york" | "sao-paulo" | "buenos-aires";
+export type CityId = "new-york" | "sao-paulo";
 
 export type CozyPlace = {
   id: string;
@@ -43,7 +31,6 @@ export type CityDef = {
 export const CITIES: CityDef[] = [
   { id: "new-york", label: "New York", center: [-73.9857, 40.7484], zoom: 10.6 },
   { id: "sao-paulo", label: "São Paulo", center: [-46.6333, -23.5505], zoom: 10.6 },
-  { id: "buenos-aires", label: "Buenos Aires", center: [-58.3888, -34.6096], zoom: 11 },
 ];
 
 /* ───────────── CONTEÚDO DEFINITIVO (Jules) ───────────── */
@@ -58,7 +45,7 @@ const mapsSearch = (name: string, address: string, city: string) =>
 /**
  * Lote da lista salva da Jules no Google Maps (São Paulo + New York) —
  * endereços e coordenadas confirmados (OpenStreetMap/Nominatim, rua +
- * número exatos). Buenos Aires ainda não tem lugares reais (ver DEMO_PLACES).
+ * número exatos).
  *
  * `description` está vazia em todos por enquanto: TROCAR por uma frase
  * pessoal e curta antes de publicar (ex. "meu lugar favorito pra brunch de
@@ -224,45 +211,7 @@ export const PLACES: CozyPlace[] = [
   },
 ];
 
-/* ───────────── EXEMPLOS DE TESTE — não são recomendações reais ─────────────
-   As coordenadas são pontos de bairros reais, só para o mapa ter onde posicionar
-   os pins. Nenhum nome, endereço ou texto aqui é um estabelecimento de verdade.
-   São Paulo e New York já têm conteúdo real (ver PLACES) e não precisam de
-   exemplo; Buenos Aires ainda não tem lugares reais, então fica com exemplo
-   pra testar o mapa/painel até a lista real chegar. */
-
-const mapsAt = (lat: number, lng: number) => `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-
-const demo = (p: Omit<CozyPlace, "demo" | "mapsUrl" | "address"> & { address?: string }): CozyPlace => ({
-  address: "endereço de exemplo",
-  ...p,
-  mapsUrl: mapsAt(p.latitude, p.longitude),
-  demo: true,
-});
-
-export const DEMO_PLACES: CozyPlace[] = [
-  demo({
-    id: "demo-ba-1",
-    name: "Lugar de exemplo 1",
-    city: "buenos-aires",
-    neighborhood: "Palermo",
-    latitude: -34.5803362,
-    longitude: -58.4245236,
-    description: "texto de exemplo, troque pelo comentário real da Jules",
-  }),
-  demo({
-    id: "demo-ba-2",
-    name: "Lugar de exemplo 2",
-    city: "buenos-aires",
-    neighborhood: "Recoleta",
-    latitude: -34.587358,
-    longitude: -58.39157,
-    description: "texto de exemplo, troque pelo comentário real da Jules",
-  }),
-];
-
-/** Lista que a interface usa: definitiva sempre; exemplos só em dev/preview. */
-export const visiblePlaces: CozyPlace[] = HOTSPOT_DEBUG ? [...PLACES, ...DEMO_PLACES] : PLACES;
+export const visiblePlaces: CozyPlace[] = PLACES;
 
 /** O hotspot da máquina de café só fica ativo na versão pública quando há conteúdo real. */
 export const HAS_REAL_PLACES = PLACES.length > 0;
