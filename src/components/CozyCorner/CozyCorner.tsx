@@ -39,28 +39,7 @@ const LAPTOP_SCREEN_CORNERS = {
   bl: { x: 38.82, y: 61.11 },
 };
 
-/**
- * Caixas (em % da imagem original, 1670×942 — mesma convenção dos
- * hotspots) dos efeitos de hover ambiente pedidos pela Jules:
- *  - `DRINK_ZONE`: café gelado — o copo balança levemente (ver
- *    sway-drink.png, recorte com borda emplumada da própria foto).
- *  - `STEAM_POS`: ponto de onde sobe o vapor da máquina (breville) —
- *    hotspot de verdade, não precisa de zona própria.
- * Café não é hotspot (não abre nada): zona de hover "muda" desenhada como
- * `children` do RoomScene, sem o `+`/tooltip dos hotspots de verdade.
- *
- * O caderno ("escrevendo minha própria história...") usava um retalho
- * cobrindo a tinta da foto + texto redesenhado em código por cima — o
- * retalho aparecia como uma mancha por cima da mesa, em vez de parecer
- * papel de verdade. Removido: a foto original já tem esse texto escrito à
- * mão, legível sem nenhuma camada por cima — ver conversa "remover o blur
- * do caderno".
- */
-// reposicionados depois da foto nova (2026-11-09, "sunset v2"): o drink e a
-// máquina de café trocaram de lado na nova composição (antes à esquerda do
-// laptop, agora à direita, perto do abajur/DJI) — remedido com grade de
-// referência em cima da foto nova, não é mais o mesmo ponto da foto anterior.
-const DRINK_ZONE = { cx: 74, cy: 50, w: 16, h: 46 };
+// Ponto de origem do vapor, em porcentagem da foto atual.
 const STEAM_POS = { left: 72, top: 10 };
 
 // o mapa (e o MapLibre) só é baixado quando alguém clica na máquina de café.
@@ -139,10 +118,7 @@ export default function CozyCorner({
   const [djiOpen, setDjiOpen] = useState(false);
   const [origin, setOrigin] = useState<OriginPoint | null>(null);
 
-  // hover ambiente (copo, vapor da máquina) — "breville" chega daqui via
-  // `onHotspotHover` (hotspot de verdade); "drink" vem da zona muda
-  // desenhada como children do RoomScene (ver abaixo).
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [steamOn, setSteamOn] = useState(false);
 
   // abertura externa (menu rápido) — ver doc da prop acima. setState dentro
   // do callback do rAF (não direto no corpo do efeito), mesmo motivo do
@@ -178,11 +154,8 @@ export default function CozyCorner({
     window.setTimeout(() => setActiveId((cur) => (cur === def.id ? null : cur)), 1200);
   };
 
-  // hover de um hotspot de verdade (`breville`, pro vapor subir — ver
-  // `.cozy-steam` abaixo, SEM som, a pedido) + da zona muda do copo (mesma
-  // assinatura, pra reaproveitar no onPointerEnter/Leave dela).
   const handleHover = (id: string, hovering: boolean) => {
-    setHoveredId(hovering ? id : null);
+    if (id === "breville") setSteamOn(hovering);
   };
 
   return (
@@ -202,39 +175,6 @@ export default function CozyCorner({
         revealOnScroll={false}
         layoutOptions={COZY_CORNER_LAYOUT}
       >
-        {/* ——— café gelado: copo + chantilly + canudo balançam juntos no
-            hover (ver sway-drink.png e o comentário em CozyCorner.css) ——— */}
-        <div
-          className="cozy-drink-wrap"
-          style={{
-            left: `${DRINK_ZONE.cx}%`,
-            top: `${DRINK_ZONE.cy}%`,
-            width: `${DRINK_ZONE.w}%`,
-            height: `${DRINK_ZONE.h}%`,
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/cafe/sway-drink.png"
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className={`cozy-drink${hoveredId === "drink" ? " is-on" : ""}`}
-          />
-        </div>
-        <div
-          className="cozy-fx-zone"
-          aria-hidden="true"
-          style={{
-            left: `${DRINK_ZONE.cx}%`,
-            top: `${DRINK_ZONE.cy}%`,
-            width: `${DRINK_ZONE.w}%`,
-            height: `${DRINK_ZONE.h}%`,
-          }}
-          onPointerEnter={() => handleHover("drink", true)}
-          onPointerLeave={() => handleHover("drink", false)}
-        />
-
         {/* ——— miniatura do desktop, projetada na tela do laptop (ver
             MiniDesktopScreen.tsx) — só decoração, por baixo do hotspot
             `laptop` de verdade (que continua abrindo o DesktopPOV de tela
@@ -245,7 +185,7 @@ export default function CozyCorner({
             hotspot `breville` (sem som, a pedido — clique continua
             abrindo o mapa de cafeterias, normalmente — ver handleActivate) ——— */}
         <div
-          className={`cozy-steam${hoveredId === "breville" ? " is-on" : ""}`}
+          className={`cozy-steam${steamOn ? " is-on" : ""}`}
           aria-hidden="true"
           style={{ left: `${STEAM_POS.left}%`, top: `${STEAM_POS.top}%` }}
         >
