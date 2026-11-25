@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import RoomScene from "@/components/RoomScene/RoomScene";
@@ -107,6 +109,7 @@ export default function CozyCorner({
   openFolder?: "work" | "projects" | null;
   onOpenFolderHandled?: () => void;
 }) {
+  const { t } = useLanguage();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mapOpen, setMapOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(false);
@@ -163,7 +166,7 @@ export default function CozyCorner({
     <>
       <RoomScene
         id="cozy-corner"
-        ariaLabel="A cafeteria"
+        ariaLabel={t("A cafeteria", "The café")}
         sceneW={CAFE_SCENE_WIDTH}
         sceneH={CAFE_SCENE_HEIGHT}
         imageSrc="/images/cafe/cafe-scene.webp"

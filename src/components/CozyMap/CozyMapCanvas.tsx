@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/Language";
+
 import { useEffect, useRef, useState } from "react";
 import type { LngLatBoundsLike, Map as MapLibreMap, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -84,6 +86,7 @@ function tint(map: MapLibreMap) {
 }
 
 export default function CozyMapCanvas({ city, places, selectedId, onSelect, insets, reduced }: Props) {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const pinsRef = useRef<Map<string, { marker: Marker; el: HTMLElement }>>(new Map());
@@ -231,7 +234,7 @@ export default function CozyMapCanvas({ city, places, selectedId, onSelect, inse
       {!ready && !failed && <div className="cozy-map__loading" aria-hidden="true" />}
       {failed && (
         <p className="cozy-map__fail" role="status">
-          Não consegui carregar o mapa agora. A lista de lugares continua funcionando.
+          {t("Não consegui carregar o mapa agora. A lista de lugares continua funcionando.", "Couldn’t load the map. You can still browse the list of cafés.")}
         </p>
       )}
     </div>

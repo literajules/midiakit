@@ -1,3 +1,5 @@
+
+import { useLanguage } from "@/components/Language";
 import type { CSSProperties } from "react";
 import type { HotspotDef } from "./types";
 
@@ -30,6 +32,36 @@ type Props = {
  * É um <button>: foco por teclado e leitor de tela funcionam sem código extra.
  */
 export default function Hotspot({ def, index, debug = false, active = false, onActivate, onHover }: Props) {
+  const { t } = useLanguage();
+  const english: Record<string, string> = {
+  "Telefone": "Telephone",
+  "Ficha de contato para marcas": "Brand inquiry form",
+  "contato": "contact",
+  "Toca-discos": "Record player",
+  "Playlist do Spotify": "Spotify playlist",
+  "Quadro de recados": "Corkboard",
+  "Métricas de público": "Audience insights",
+  "público": "audience",
+  "Relógio de gato": "Cat clock",
+  "Métricas e números": "Stats and numbers",
+  "números": "stats",
+  "Interruptor": "Light switch",
+  "Acender/apagar a luz aconchegante": "Turn the light on or off",
+  "luz": "light",
+  "Porta": "Door",
+  "Sair para o cozy corner": "Go to the Cozy Corner",
+  "Livro": "Book",
+  "Recibo — o que tá rolando por aqui": "Receipt — what’s happening around here",
+  "Máquina de café": "Coffee machine",
+  "Mapa de cafeterias favoritas": "Favorite cafés map",
+  "Desktop interativo": "Interactive desktop",
+  "Câmera DJI": "DJI camera",
+  "Selfie redonda com a câmera": "Take a round selfie",
+  "Caderno": "Notebook",
+  "Livro de visitas": "Guestbook",
+  "meu journal": "my journal"
+};
+  const labelFor = (label: string) => t(label, english[label] ?? label);
   const style: CSSProperties = {
     left: `${def.cx}%`,
     top: `${def.cy}%`,
@@ -44,7 +76,7 @@ export default function Hotspot({ def, index, debug = false, active = false, onA
       type="button"
       className={className}
       style={style}
-      aria-label={`${def.label}: ${def.destination}`}
+      aria-label={`${labelFor(def.label)}: ${labelFor(def.destination)}`}
       onClick={(e) => onActivate(def, e.currentTarget)}
       onPointerEnter={() => onHover?.(def.id, true)}
       onPointerLeave={() => onHover?.(def.id, false)}
@@ -61,7 +93,7 @@ export default function Hotspot({ def, index, debug = false, active = false, onA
           </svg>
         </span>
         <span className="hotspot__tooltip">
-          {debug ? `${index + 1}. ${def.label}` : def.teaser ?? def.label}
+          {debug ? `${index + 1}. ${labelFor(def.label)}` : labelFor(def.teaser ?? def.label)}
         </span>
       </span>
     </button>

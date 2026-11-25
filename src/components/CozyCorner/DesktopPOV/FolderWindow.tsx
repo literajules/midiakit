@@ -200,9 +200,9 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
                 )}
 
                 {selected.insightStats && selected.insightStats.length > 0 && (
-                  <div className="folder-window__stats" aria-label="Números da publi">
+                  <div className="folder-window__stats" aria-label={t("Números da publi", "Campaign stats")}>
                     {selected.insightStats.map((s) => (
-                      <span key={s.label} className="folder-window__stat">
+                      <span key={t(s.label, ({ curtidas: "likes", comentários: "comments", salvamentos: "saves", compartilhamentos: "shares" } as Record<string, string>)[s.label] ?? s.label)} className="folder-window__stat">
                         <strong>{s.value}</strong> {s.label}
                       </span>
                     ))}
@@ -214,10 +214,10 @@ export default function FolderWindow({ folderId, onClose, onFocus, zIndex, initi
 
           {folderId !== "projects" && items.length > 1 && (
             <>
-              <button type="button" className="folder-window__nav folder-window__nav--prev" onClick={() => goToOffset(-1)} aria-label="Item anterior">
+              <button type="button" className="folder-window__nav folder-window__nav--prev" onClick={() => goToOffset(-1)} aria-label={t("Item anterior", "Previous item")}>
                 ‹
               </button>
-              <button type="button" className="folder-window__nav folder-window__nav--next" onClick={() => goToOffset(1)} aria-label="Próximo item">
+              <button type="button" className="folder-window__nav folder-window__nav--next" onClick={() => goToOffset(1)} aria-label={t("Próximo item", "Next item")}>
                 ›
               </button>
             </>
