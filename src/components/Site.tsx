@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import CozyCorner from "@/components/CozyCorner/CozyCorner";
+import ContentTV from "@/components/ContentTV/ContentTV";
 import Quarto from "@/components/Quarto/Quarto";
 import QuickNav, { type NavTarget } from "@/components/QuickNav/QuickNav";
 
@@ -99,6 +100,7 @@ export default function Site() {
       <QuickNav onNavigate={goTo} />
 
       {scene === "quarto" && (
+        <>
         <Quarto
           onDoorClick={() => switchScene("cozy-corner")}
           openNote={openNote}
@@ -106,6 +108,8 @@ export default function Site() {
           openContact={openContact}
           onOpenContactHandled={() => setOpenContact(false)}
         />
+        <ContentTV />
+        </>
       )}
       {scene === "cozy-corner" && (
         <CozyCorner
