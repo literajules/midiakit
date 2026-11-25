@@ -365,7 +365,12 @@ export default function Quarto({
       {closetOpen && (
         <SceneModal dialogClassName="quarto-closet" aria-labelledby="quarto-closet-title" onClosed={() => setClosetOpen(false)}>
           <h2 id="quarto-closet-title" className="quarto-closet__title">closet da jules</h2>
-          <div className="quarto-closet__cabinet">
+          <div className="quarto-closet__cabinet"
+            onPointerLeave={(event) => {
+              if (event.pointerType === "mouse" && !event.currentTarget.querySelector(":focus-visible")) {
+                setDoorsOpen(false);
+              }
+            }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/quarto/closet-open.webp" alt="" draggable={false} />
             {!doorsOpen && <button className="quarto-closet__doors" type="button" aria-label="Abrir as portas do armário"
