@@ -44,21 +44,17 @@ export default function AboutMeWindow({ onClose, onFocus, zIndex, initialOffset 
       initialOffset={initialOffset}
     >
       <div className="about-me">
-        <div className="about-me__photos" aria-hidden="true">
+        <div className="about-me__photos about-me__photos--left" aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/desktop/about/about-triptych.webp" alt="" className="about-me__photo about-me__photo--triptych" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/desktop/about/about-selfie.webp" alt="" className="about-me__photo about-me__photo--selfie" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/desktop/about/about-bts.webp" alt="" className="about-me__photo about-me__photo--bts" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/desktop/about/about-matcha.webp" alt="" className="about-me__photo about-me__photo--matcha" />
         </div>
 
         <div className="about-me__text">
           <h3 className="about-me__title">a little bit about me. ♡</h3>
 
-          <p className="about-me__p">oi, eu sou a jules.</p>
+          <p className="about-me__p">oi, eu sou a jules. sou criadora de conteúdo &amp; UGC, e adoro gravar as coisas que já fariam parte do meu dia: um café, algumas páginas de um livro ou a primeira tentativa de um hobby novo.</p>
 
           <p className="about-me__p">
             tenho 27 anos, sou formada em publicidade e sempre fui o tipo de pessoa que encontra{" "}
@@ -90,6 +86,12 @@ export default function AboutMeWindow({ onClose, onFocus, zIndex, initialOffset 
           </p>
 
           <p className="about-me__signature">still figuring it out, one little chapter at a time. ✷</p>
+        </div>
+        <div className="about-me__photos about-me__photos--right" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/desktop/about/about-bts.webp" alt="" className="about-me__photo about-me__photo--bts" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/desktop/about/about-matcha.webp" alt="" className="about-me__photo about-me__photo--matcha" />
         </div>
       </div>
     </DesktopWindow>

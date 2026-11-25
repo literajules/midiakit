@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import RoomScene from "@/components/RoomScene/RoomScene";
+import SceneModal from "@/components/SceneModal/SceneModal";
 import type { HotspotDef } from "@/components/RoomScene/types";
 import { playPhoneRing, playSound } from "@/lib/sound";
 import BookReceiptModal from "./BookReceiptModal";
@@ -19,34 +20,28 @@ function centerOf(el: HTMLElement): OriginPoint {
   return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 }
 
-/**
- * Ponto focal do recorte "cover" do quarto (ver RoomScene/layout.ts).
- *
- * `bg-01-dia-fechada.png` é 1536×659 (2,33:1) — mais larga que qualquer
- * tela comum, então cobrir SEMPRE recorta dos lados; a pergunta é só qual
- * lado sacrificar. Ajuste feito a pedido (cama mais centralizada, telefone
- * mais visível, mural pode perder um pouco — ver conversa "ajustes no
- * enquadramento do quarto"): `focalX` baixou de 0,90 pra **0,60**, puxando
- * o recorte pra perto do centro da cama em vez de ancorado na porta/mural.
- *
- * Resultado por tela (fração de largura visível entre parênteses):
- *  - Desktop 1920×1080 / 1366×768 (76%): cama bem centralizada; telefone
- *    ~39% visível (bem melhor que 0% antes); porta inteira; mural ~31%.
- *  - Notebook 1440×900 (69% — a faixa mais apertada que ainda usa "cover"):
- *    cama centralizada, porta inteira; telefone e mural quase não aparecem
- *    aqui especificamente (a janela de 69% não é larga o suficiente pra
- *    incluir telefone + mural ao mesmo tempo que cama + porta inteiras —
- *    nessa faixa, mural cede o lugar).
- *  - Celular na horizontal (93%): quase tudo visível — telefone e porta
- *    inteiros, mural ~81%.
- *
- * `panTrigger` subiu de 0,5 pra **0,6**: tablet em paisagem (1024×768, 57%
- * de largura visível) não cabia mais com esse focal point sem cortar a
- * própria porta — em vez disso, passa pro modo "pan" (sem recorte, rolagem
- * horizontal) junto com tablet/celular em pé, preservando porta+mural+cama
- * inteiros ali, só a um gesto de distância.
- */
-const QUARTO_LAYOUT = { focalX: 0.6, panTrigger: 0.6 };
+// Permite explorar toda a largura do quarto sempre que a foto excede a tela.
+type Outfit = {
+  label: string;
+  image: string;
+  blink?: string;
+  shift?: string;
+  shiftBlink?: string;
+};
+
+const DOLL_LOOKS: Record<"dress" | "pajamas" | "denim" | "cognac" | "bustier", Outfit> = {
+  dress: { label: "vestido branco", image: "jules-doll.webp", blink: "jules-doll-dress-blink.webp", shift: "jules-doll-dress-shift.webp", shiftBlink: "jules-doll-dress-shift-blink.webp" },
+  pajamas: { label: "pijama rosa", image: "jules-doll-pajamas.webp", blink: "jules-doll-pajamas-blink.webp", shift: "jules-doll-pajamas-shift.webp", shiftBlink: "jules-doll-pajamas-shift-blink.webp" },
+  denim: { label: "jeans e camiseta", image: "jules-doll-denim.webp", blink: "jules-doll-denim-blink.webp" },
+  cognac: { label: "saia midi e botas", image: "jules-doll-cognac.webp", blink: "jules-doll-cognac-blink.webp" },
+  bustier: { label: "corset e poá", image: "jules-doll-bustier.webp" },
+};
+
+type DollLook = keyof typeof DOLL_LOOKS;
+const DOLL_LOOK_OPTIONS: DollLook[] = ["dress", "pajamas", "denim", "cognac", "bustier"];
+const CLOSET_RACK: DollLook[] = ["dress", "pajamas", "denim", "bustier", "cognac"];
+
+const QUARTO_LAYOUT = { focalX: 0.6, panTrigger: 1 };
 
 /**
  * Cena 1 — o quarto. Primeira seção interativa do mídia kit.
@@ -98,6 +93,10 @@ export default function Quarto({
   // padrão: luz acesa (quarto abre de dia/iluminado) — a pessoa apaga no
   // interruptor se quiser.
   const [roomDark, setRoomDark] = useState(false);
+  const [chosenLook, setChosenLook] = useState<DollLook | null>(null);
+  const [closetOpen, setClosetOpen] = useState(false);
+  const [doorsOpen, setDoorsOpen] = useState(false);
+  const dollLook = chosenLook ?? (roomDark ? "pajamas" : "dress");
   const doorHover = hoveredId === "porta";
   const swaySuffix = roomDark ? "noite" : "dia";
 
@@ -113,7 +112,7 @@ export default function Quarto({
   // Quarto.css): a planta/relógio balançando, o brilho do disco girando,
   // as notas musicais, o brilho do mural e o cursor do convite da porta
   // todos pausam enquanto um modal estiver em cima.
-  const anyModalOpen = contactOpen || playlistOpen || bookOpen || note !== null;
+  const anyModalOpen = closetOpen || contactOpen || playlistOpen || bookOpen || note !== null;
 
   // abertura externa (menu rápido) — ver doc da prop acima. Os setState
   // ficam dentro do callback do rAF (não direto no corpo do efeito): evita
@@ -162,6 +161,7 @@ export default function Quarto({
       case "interruptor":
         playSound("switch");
         setRoomDark((v) => !v);
+        setChosenLook(null);
         return;
       case "porta":
         onDoorClick();
@@ -195,6 +195,7 @@ export default function Quarto({
         background="var(--cream)"
         revealOnScroll={revealOnScroll}
         layoutOptions={QUARTO_LAYOUT}
+        showPanArrows
       >
         {/* ——— as outras 3 fotos (dia+entreaberta, noite+fechada, noite+entreaberta)
             empilhadas por cima da base (dia+fechada), cada uma some/aparece
@@ -337,8 +338,63 @@ export default function Quarto({
             <span className="quarto-note quarto-note--3">♪</span>
           </div>
         </div>
+        <figure className={`quarto-doll${roomDark ? " quarto-doll--night" : ""}${anyModalOpen ? " quarto-doll--paused" : ""}`}>
+          {DOLL_LOOK_OPTIONS.map((look) => (
+            <div key={look} hidden={look !== dollLook} className={DOLL_LOOKS[look].shift ? "quarto-doll__outfit quarto-doll__outfit--animated" : "quarto-doll__outfit"}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/images/quarto/${DOLL_LOOKS[look].image}`} alt="Jules em versão boneca de papel" draggable={false} />
+              {DOLL_LOOKS[look].blink && <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/images/quarto/${DOLL_LOOKS[look].blink}`} alt="" draggable={false} className={`quarto-doll__blink${look === "denim" || look === "cognac" ? " quarto-doll__blink--glasses" : ""}`} />
+              </>}
+              {DOLL_LOOKS[look].shift && <div className="quarto-doll__shift" aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/images/quarto/${DOLL_LOOKS[look].shift}`} alt="" draggable={false} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/images/quarto/${DOLL_LOOKS[look].shiftBlink}`} alt="" draggable={false} className="quarto-doll__blink" />
+              </div>}
+            </div>
+          ))}
+          <button className="quarto-doll__closet-button" type="button" aria-label="Abrir closet da Jules"
+            aria-haspopup="dialog" onClick={() => { setDoorsOpen(false); setClosetOpen(true); }}>
+            <span aria-hidden="true">+</span>
+          </button>
+        </figure>
       </RoomScene>
 
+      {closetOpen && (
+        <SceneModal dialogClassName="quarto-closet" aria-labelledby="quarto-closet-title" onClosed={() => setClosetOpen(false)}>
+          <h2 id="quarto-closet-title" className="quarto-closet__title">closet da jules</h2>
+          <div className="quarto-closet__cabinet"
+            onPointerLeave={(event) => {
+              if (event.pointerType === "mouse" && !event.currentTarget.querySelector(":focus-visible")) {
+                setDoorsOpen(false);
+              }
+            }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/quarto/closet-open.webp" alt="" draggable={false} />
+            {!doorsOpen && <button className="quarto-closet__doors" type="button" aria-label="Abrir as portas do armário"
+              onPointerMove={(event) => { if (event.pointerType === "mouse") setDoorsOpen(true); }}
+              onClick={() => {
+                const firstOutfit = document.getElementById("quarto-closet-first-outfit");
+                setDoorsOpen(true);
+                requestAnimationFrame(() => firstOutfit?.focus());
+              }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/quarto/closet-closed.png" alt="" draggable={false} />
+            </button>}
+            <div className="quarto-closet__rack" hidden={!doorsOpen}>
+              {CLOSET_RACK.map((look, index) => (
+                <button type="button" key={look} id={index === 0 ? "quarto-closet-first-outfit" : undefined}
+                  aria-label={DOLL_LOOKS[look].label} aria-pressed={dollLook === look}
+                  onClick={() => { setChosenLook(look); setClosetOpen(false); }}>
+                  <span>{DOLL_LOOKS[look].label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </SceneModal>
+      )}
       {contactOpen && <FichaModal onClosed={() => setContactOpen(false)} />}
       {playlistOpen && <PlaylistModal onClosed={() => setPlaylistOpen(false)} />}
       {bookOpen && <BookReceiptModal onClosed={() => setBookOpen(false)} />}

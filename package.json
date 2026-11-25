@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/export-journal-stickers.mjs && python3 -m zipfile -c public/stickers-journal.zip public/journal-stickers/*.png && next build",
     "start": "next start",
     "lint": "eslint",
     "sync:maplibre-worker": "node -e \"const fs=require('fs');fs.mkdirSync('public/vendor/maplibre',{recursive:true});for(const f of ['maplibre-gl-worker.mjs','maplibre-gl-shared.mjs'])fs.copyFileSync('node_modules/maplibre-gl/dist/'+f,'public/vendor/maplibre/'+f);console.log('maplibre worker synced');\""

@@ -48,7 +48,7 @@ export default function CozyMapModal({ onClosed }: Props) {
   const firstCityRender = useRef(true);
 
   // cidade inicial: a primeira que tenha lugares; senão New York
-  const [city, setCity] = useState<CityId>(() => CITIES.find((c) => placesIn(c.id).length > 0)?.id ?? "new-york");
+  const [city, setCity] = useState<CityId>("sao-paulo");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [insets, setInsets] = useState<Insets>(SOLO_INSETS);
 
@@ -287,6 +287,11 @@ export default function CozyMapModal({ onClosed }: Props) {
         />
 
         <header ref={headerRef} className="cozy-map__header">
+  <div className="cozy-map__sticker-layer" aria-hidden="true">
+            <span className="cozy-map__sticker cozy-map__sticker--swans" />
+            <span className="cozy-map__sticker cozy-map__sticker--stars" />
+            <span className="cozy-map__sticker cozy-map__sticker--heart" />
+          </div>
           <p className="cozy-map__sign">the cozy map · by jules</p>
           <h2 id="cozy-map-title" className="cozy-map__title">
             um bom café &amp; um livro

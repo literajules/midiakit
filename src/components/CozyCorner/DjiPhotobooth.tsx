@@ -25,10 +25,11 @@ const SHUTTER_DELAY_MS = 500;
 
 type Props = {
   onClosed: () => void;
+  onJournal?: (photo: string) => void;
   originPoint?: { x: number; y: number } | null;
 };
 
-export default function DjiPhotobooth({ onClosed, originPoint }: Props) {
+export default function DjiPhotobooth({ onClosed, originPoint, onJournal }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -207,6 +208,11 @@ export default function DjiPhotobooth({ onClosed, originPoint }: Props) {
               <a className="dji-photobooth__btn" href={photo} download="selfie-dollhouse.png">
                 baixar
               </a>
+            )}
+            {photo && onJournal && (
+              <button type="button" className="dji-photobooth__btn" onClick={() => onJournal(photo)}>
+                deixar um recado no meu journal
+              </button>
             )}
           </>
         )}

@@ -8,59 +8,27 @@ import BackArrow from "./BackArrow";
 import DesktopPOV from "./DesktopPOV/DesktopPOV";
 import MiniDesktopScreen from "./DesktopPOV/MiniDesktopScreen";
 import DjiPhotobooth from "./DjiPhotobooth";
+import Guestbook from "./Guestbook";
 import { COZY_CORNER_HOTSPOTS } from "./hotspots";
 import "./CozyCorner.css";
 
-/**
- * Os 4 cantos da TELA do laptop (não a moldura/teclado — só o retângulo
- * de vidro, por DENTRO do bisel preto) dentro da foto `cafe-scene.webp`
- * (1672×941), em % da cena. Medidos com grades de referência finas
- * (passo de 5px) nos 4 lados separadamente + 3px de margem pra dentro em
- * cada canto — garante que a miniatura nunca vaze pro bisel preto mesmo
- * com um resto pequeno de imprecisão de medida.
- *
- * 2ª rodada de medição (ver conversa "ícones das marcas ultrapassando a
- * tela"): a 1ª medida da borda ESQUERDA tinha pego a borda do CHASSI de
- * alumínio (a moldura metálica fora da tela), não a borda real do vidro
- * depois do bisel preto — erro de ~23px, bem maior que a margem de 3px
- * prevista, por isso os logos de marca (perto da borda esquerda da
- * miniatura) e a maçã da barra de menu vazavam visivelmente. Medido de
- * novo com uma grade separada pra cada lado (esquerda/direita/cima/baixo)
- * em vez de uma grade só cobrindo tudo de uma vez, pra não repetir esse
- * erro de "qual bisel é esse".
- *
- * Alimenta a `MiniDesktopScreen` (réplica em miniatura do desktop,
- * projetada com a perspectiva real da foto — ver lib/cornerPin.ts).
- */
+const CAFE_SCENE_WIDTH = 1672;
+const CAFE_SCENE_HEIGHT = 941;
+
+// Limites internos do vidro na foto, em pixels. A conversão mantém a
+// barra junto ao topo da tela em qualquer enquadramento da cena.
+function screenPoint(x: number, y: number) {
+  return { x: (x / CAFE_SCENE_WIDTH) * 100, y: (y / CAFE_SCENE_HEIGHT) * 100 };
+}
+
 const LAPTOP_SCREEN_CORNERS = {
-  tl: { x: 38.94, y: 36.13 },
-  tr: { x: 65.43, y: 35.92 },
-  br: { x: 65.31, y: 61.11 },
-  bl: { x: 38.82, y: 61.11 },
+  tl: screenPoint(643.5, 338),
+  tr: screenPoint(1102, 338),
+  br: screenPoint(1109.5, 592),
+  bl: screenPoint(637, 592),
 };
 
-/**
- * Caixas (em % da imagem original, 1670×942 — mesma convenção dos
- * hotspots) dos efeitos de hover ambiente pedidos pela Jules:
- *  - `DRINK_ZONE`: café gelado — o copo balança levemente (ver
- *    sway-drink.png, recorte com borda emplumada da própria foto).
- *  - `STEAM_POS`: ponto de onde sobe o vapor da máquina (breville) —
- *    hotspot de verdade, não precisa de zona própria.
- * Café não é hotspot (não abre nada): zona de hover "muda" desenhada como
- * `children` do RoomScene, sem o `+`/tooltip dos hotspots de verdade.
- *
- * O caderno ("escrevendo minha própria história...") usava um retalho
- * cobrindo a tinta da foto + texto redesenhado em código por cima — o
- * retalho aparecia como uma mancha por cima da mesa, em vez de parecer
- * papel de verdade. Removido: a foto original já tem esse texto escrito à
- * mão, legível sem nenhuma camada por cima — ver conversa "remover o blur
- * do caderno".
- */
-// reposicionados depois da foto nova (2026-11-09, "sunset v2"): o drink e a
-// máquina de café trocaram de lado na nova composição (antes à esquerda do
-// laptop, agora à direita, perto do abajur/DJI) — remedido com grade de
-// referência em cima da foto nova, não é mais o mesmo ponto da foto anterior.
-const DRINK_ZONE = { cx: 74, cy: 50, w: 16, h: 46 };
+// Ponto de origem do vapor, em porcentagem da foto atual.
 const STEAM_POS = { left: 72, top: 10 };
 
 // o mapa (e o MapLibre) só é baixado quando alguém clica na máquina de café.
@@ -92,7 +60,12 @@ function centerOf(el: HTMLElement): OriginPoint {
  * menor que a do quarto nessa mesma faixa) — serve só de rede de segurança
  * pra proporções mais extremas que as testadas.
  */
-const COZY_CORNER_LAYOUT = { focalX: 0.524, panTrigger: 0.2 };
+const GUESTBOOK_PREVIEW = process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+const COZY_CORNER_LAYOUT = { focalX: 0.524, panTrigger: GUESTBOOK_PREVIEW ? 1 : 0.2 };
+const hotspots: HotspotDef[] = GUESTBOOK_PREVIEW ? [
+  ...COZY_CORNER_HOTSPOTS,
+  { id: "guestbook", label: "Caderno", destination: "Livro de visitas", teaser: "meu journal", cx: 16.6, cy: 82.5, w: 28, h: 20, enabled: true },
+] : COZY_CORNER_HOTSPOTS;
 
 /**
  * Cena 2 — o cozy corner (cafeteria). Reaproveitada do `literajules-site`
@@ -125,10 +98,12 @@ const COZY_CORNER_LAYOUT = { focalX: 0.524, panTrigger: 0.2 };
  */
 export default function CozyCorner({
   onBackClick,
+  onOpenScrapbook,
   openFolder,
   onOpenFolderHandled,
 }: {
   onBackClick: () => void;
+  onOpenScrapbook: () => void;
   openFolder?: "work" | "projects" | null;
   onOpenFolderHandled?: () => void;
 }) {
@@ -137,12 +112,10 @@ export default function CozyCorner({
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [initialFolder, setInitialFolder] = useState<"work" | "projects" | null>(null);
   const [djiOpen, setDjiOpen] = useState(false);
+  const [guestbook, setGuestbook] = useState<{ selfie: string | null } | null>(null);
   const [origin, setOrigin] = useState<OriginPoint | null>(null);
 
-  // hover ambiente (copo, vapor da máquina) — "breville" chega daqui via
-  // `onHotspotHover` (hotspot de verdade); "drink" vem da zona muda
-  // desenhada como children do RoomScene (ver abaixo).
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [steamOn, setSteamOn] = useState(false);
 
   // abertura externa (menu rápido) — ver doc da prop acima. setState dentro
   // do callback do rAF (não direto no corpo do efeito), mesmo motivo do
@@ -170,6 +143,10 @@ export default function CozyCorner({
       setDesktopOpen(true);
       return;
     }
+    if (def.id === "guestbook") {
+      setGuestbook({ selfie: null });
+      return;
+    }
     if (def.id === "dji") {
       setOrigin(centerOf(el));
       setDjiOpen(true);
@@ -178,11 +155,8 @@ export default function CozyCorner({
     window.setTimeout(() => setActiveId((cur) => (cur === def.id ? null : cur)), 1200);
   };
 
-  // hover de um hotspot de verdade (`breville`, pro vapor subir — ver
-  // `.cozy-steam` abaixo, SEM som, a pedido) + da zona muda do copo (mesma
-  // assinatura, pra reaproveitar no onPointerEnter/Leave dela).
   const handleHover = (id: string, hovering: boolean) => {
-    setHoveredId(hovering ? id : null);
+    if (id === "breville") setSteamOn(hovering);
   };
 
   return (
@@ -190,11 +164,11 @@ export default function CozyCorner({
       <RoomScene
         id="cozy-corner"
         ariaLabel="A cafeteria"
-        sceneW={1672}
-        sceneH={941}
+        sceneW={CAFE_SCENE_WIDTH}
+        sceneH={CAFE_SCENE_HEIGHT}
         imageSrc="/images/cafe/cafe-scene.webp"
         imageAlt="Mesa de madeira numa cafeteria ao lado da janela: MacBook aberto no centro, café gelado com chantilly, caderno aberto, máquina de café Breville ao fundo, câmera DJI, recibo da cafeteria, fones de ouvido e um abajur aceso."
-        hotspots={COZY_CORNER_HOTSPOTS}
+        hotspots={hotspots}
         onActivate={handleActivate}
         activeId={activeId}
         onHotspotHover={handleHover}
@@ -202,39 +176,6 @@ export default function CozyCorner({
         revealOnScroll={false}
         layoutOptions={COZY_CORNER_LAYOUT}
       >
-        {/* ——— café gelado: copo + chantilly + canudo balançam juntos no
-            hover (ver sway-drink.png e o comentário em CozyCorner.css) ——— */}
-        <div
-          className="cozy-drink-wrap"
-          style={{
-            left: `${DRINK_ZONE.cx}%`,
-            top: `${DRINK_ZONE.cy}%`,
-            width: `${DRINK_ZONE.w}%`,
-            height: `${DRINK_ZONE.h}%`,
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/cafe/sway-drink.png"
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className={`cozy-drink${hoveredId === "drink" ? " is-on" : ""}`}
-          />
-        </div>
-        <div
-          className="cozy-fx-zone"
-          aria-hidden="true"
-          style={{
-            left: `${DRINK_ZONE.cx}%`,
-            top: `${DRINK_ZONE.cy}%`,
-            width: `${DRINK_ZONE.w}%`,
-            height: `${DRINK_ZONE.h}%`,
-          }}
-          onPointerEnter={() => handleHover("drink", true)}
-          onPointerLeave={() => handleHover("drink", false)}
-        />
-
         {/* ——— miniatura do desktop, projetada na tela do laptop (ver
             MiniDesktopScreen.tsx) — só decoração, por baixo do hotspot
             `laptop` de verdade (que continua abrindo o DesktopPOV de tela
@@ -245,7 +186,7 @@ export default function CozyCorner({
             hotspot `breville` (sem som, a pedido — clique continua
             abrindo o mapa de cafeterias, normalmente — ver handleActivate) ——— */}
         <div
-          className={`cozy-steam${hoveredId === "breville" ? " is-on" : ""}`}
+          className={`cozy-steam${steamOn ? " is-on" : ""}`}
           aria-hidden="true"
           style={{ left: `${STEAM_POS.left}%`, top: `${STEAM_POS.top}%` }}
         >
@@ -266,9 +207,12 @@ export default function CozyCorner({
           }}
           originPoint={origin}
           initialFolder={initialFolder}
+          onOpenScrapbook={onOpenScrapbook}
         />
       )}
-      {djiOpen && <DjiPhotobooth onClosed={() => setDjiOpen(false)} originPoint={origin} />}
+      {djiOpen && <DjiPhotobooth onClosed={() => setDjiOpen(false)} originPoint={origin}
+        onJournal={GUESTBOOK_PREVIEW ? (selfie) => { setDjiOpen(false); setGuestbook({ selfie }); } : undefined} />}
+      {guestbook && <Guestbook selfie={guestbook.selfie} onClosed={() => setGuestbook(null)} />}
     </>
   );
 }

@@ -270,3 +270,178 @@
 }
 
 /* ——— porta: seta + convite, ver DoorInvite.css ——— */
+
+.quarto-doll {
+  --quarto-blink-cycle: 4.8s;
+  position: absolute;
+  z-index: 1;
+  left: var(--room-pan-center, 50%);
+  bottom: 5%;
+  height: 77.5%;
+  aspect-ratio: 1 / 2;
+  translate: -50% 0;
+  margin: 0;
+  pointer-events: none;
+  transition: filter .35s ease;
+}
+
+.quarto-doll::before {
+  content: "";
+  position: absolute;
+  left: 34%;
+  right: 34%;
+  bottom: 0;
+  height: 3%;
+  border-radius: 50%;
+  background: rgb(38 24 19 / 45%);
+  filter: blur(3px);
+}
+
+.quarto-doll img {
+  position: relative;
+  display: block;
+  height: 100%;
+  width: auto;
+  user-select: none;
+}
+
+.quarto-doll--night {
+  filter: brightness(.65) saturate(.85);
+}
+
+.quarto-doll__outfit { position: relative; height: 100%; }
+
+.quarto-doll .quarto-doll__blink {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  clip-path: inset(9.2% 41.3% 87.3% 41%);
+  animation: quarto-doll-blink var(--quarto-blink-cycle) step-end infinite;
+}
+
+.quarto-doll .quarto-doll__blink--glasses {
+  clip-path: inset(9% 40% 86.7% 40%);
+}
+
+@keyframes quarto-doll-blink {
+  0%, 77.5%, 100% { opacity: 0; }
+  75% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quarto-doll .quarto-doll__blink { animation: none; }
+}
+
+ .scene-modal__dialog.quarto-closet {
+  width: min(94vw, 560px, calc(90dvh * .597));
+  max-height: none;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.quarto-closet__title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.quarto-closet__cabinet { position: relative; aspect-ratio: 969 / 1624; }
+.quarto-closet__cabinet img { display: block; width: 100%; height: 100%; object-fit: fill; }
+.quarto-closet__doors { position: absolute; inset: 0; border: 0; background: transparent; padding: 0; cursor: pointer; }
+.quarto-closet__rack { position: absolute; inset: 32% 22.6% 26% 18.3%; display: grid; grid-template-columns: repeat(5, 1fr); }
+.quarto-closet__rack[hidden] { display: none; }
+.quarto-closet__rack button { position: relative; color: #51292c; background: transparent; border: 0; padding: 0; cursor: pointer; }
+.quarto-closet__rack button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 41%, rgb(255 241 218 / 45%), transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+}
+.quarto-closet__rack button:hover::before { opacity: 1; }
+.quarto-closet__rack button:focus-visible { outline: 2px solid #a16766; outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  .quarto-closet__rack button::before { transition: none; }
+}
+.quarto-closet__rack button span {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% -4px;
+  width: max-content;
+  padding: .2rem .35rem;
+  border-radius: .3rem;
+  background: #fff6ed;
+  font-size: .72rem;
+  opacity: 0;
+  pointer-events: none;
+}
+.quarto-closet__rack button:is(:hover, :focus-visible) span { opacity: 1; }
+.quarto-closet .scene-modal__close { z-index: 2; }
+
+.quarto-doll__closet-button {
+  position: absolute;
+  inset: 0 28%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #51292c;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.quarto-doll__closet-button span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff8ef;
+  box-shadow: 0 1px 4px #51292c50;
+}
+.quarto-doll__closet-button:hover span { background: #f6dce0; }
+
+/* Swap complete silhouettes so the two knee positions never overlap. */
+.quarto-doll__shift {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  animation: quarto-doll-shift 11s step-end infinite;
+}
+
+.quarto-doll__outfit--animated > img {
+  animation: quarto-doll-pose 11s step-end infinite;
+}
+
+.quarto-doll__outfit--animated > img.quarto-doll__blink {
+  animation: quarto-doll-pose 11s step-end infinite, quarto-doll-blink var(--quarto-blink-cycle) step-end infinite;
+}
+
+@keyframes quarto-doll-pose {
+  0%, 100% { visibility: visible; }
+  64% { visibility: hidden; }
+  84% { visibility: visible; }
+}
+
+@keyframes quarto-doll-shift {
+  0%, 84%, 100% { visibility: hidden; }
+  64% { visibility: visible; }
+}
+
+.quarto-doll--paused .quarto-doll__shift,
+.quarto-doll--paused .quarto-doll__outfit img { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .quarto-doll .quarto-doll__shift,
+  .quarto-doll .quarto-doll__outfit img { animation: none; }
+}
+
+/* Keep the supplied furniture edges while letting the room show through. */
+.quarto-closet__cabinet > img {
+  clip-path: polygon(8.8% 8.1%, 14.8% 8%, 16% 5.9%, 18.3% 6.1%, 18.5% 8%, 25% 7.1%, 34% 5.1%, 42% 3.7%, 49% 3.25%, 56% 3.5%, 65% 4.8%, 77% 7.4%, 77.3% 5.5%, 79% 5.5%, 82.3% 7.8%, 91.5% 7.8%, 91.6% 8.6%, 88.5% 10.8%, 88.5% 87.5%, 87.8% 91%, 88.5% 96.3%, 86% 96.4%, 84.5% 94.4%, 83.5% 91.2%, 82% 89.5%, 80% 88.5%, 75% 88%, 71% 88.7%, 66% 89.2%, 59% 90%, 51% 90.5%, 43% 90%, 37% 89.3%, 29% 88.2%, 26% 88.4%, 23% 89.4%, 20% 88.2%, 18% 88%, 16% 89%, 15.7% 92.1%, 15.3% 94.8%, 14.2% 96.1%, 12.5% 96.1%, 12% 94.8%, 12.8% 91%, 12% 87.4%, 11.8% 10.8%, 10% 9.7%, 8.8% 8.8%);
+}
+
+.quarto-closet__cabinet:has(.quarto-closet__doors) > img { visibility: hidden; }

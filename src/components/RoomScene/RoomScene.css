@@ -42,7 +42,7 @@
   will-change: transform;
 }
 
-/* Rolagem horizontal só no modo "pan" (celular / tablet em pé) */
+/* Rolagem horizontal quando a cena permite explorar os lados da imagem. */
 .room-scene__scroller {
   position: absolute;
   inset: 0;
@@ -91,6 +91,41 @@
 .room-scene__hotspots {
   position: absolute;
   inset: 0;
+}
+
+.room-scene__pan-arrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(28, 20, 13, 0.15);
+  border-radius: 50%;
+  background: var(--off-white);
+  color: var(--burgundy);
+  box-shadow: 0 2px 10px rgba(28, 20, 13, 0.2);
+  cursor: pointer;
+}
+
+.room-scene__pan-arrow--left {
+  left: 12px;
+}
+
+.room-scene__pan-arrow--right {
+  right: 12px;
+}
+
+.room-scene__pan-arrow:focus-visible {
+  outline: 2px solid var(--burgundy);
+  outline-offset: 3px;
+}
+
+.room-scene__pan-arrow:disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 /* Dica de deslize (só no modo pan, some após o primeiro gesto) */

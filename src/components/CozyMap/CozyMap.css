@@ -612,3 +612,90 @@
     transition: none;
   }
 }
+
+.cozy-map__sticker-layer {
+  --collage-size: clamp(68px, 19vw, 104px);
+  --collage-top: calc(50% - var(--collage-size) * .53);
+  --collage-right: 0px;
+  position: absolute;
+  inset: 0 46px 0 auto;
+  width: min(30%, 200px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* A torn scrap and a strip of tape anchor the overlapping stickers. */
+.cozy-map__sticker-layer::before,
+.cozy-map__sticker-layer::after {
+  content: "";
+  position: absolute;
+}
+
+.cozy-map__sticker-layer::before {
+  right: var(--collage-right);
+  top: calc(var(--collage-top) + var(--collage-size) * .39);
+  width: calc(var(--collage-size) * .92);
+  height: calc(var(--collage-size) * .46);
+  rotate: -9deg;
+  background: repeating-linear-gradient(#f7ecd9 0 9px, #eadbcc 9px 10px);
+  clip-path: polygon(2% 3%, 19% 1%, 29% 4%, 52% 0, 69% 3%, 98% 0, 97% 19%, 100% 40%, 98% 65%, 100% 97%, 79% 100%, 61% 97%, 43% 100%, 23% 97%, 0 100%, 3% 69%, 0 47%, 3% 22%);
+  opacity: .88;
+}
+
+.cozy-map__sticker-layer::after {
+  right: calc(var(--collage-right) + var(--collage-size) * .24);
+  top: calc(var(--collage-top) + var(--collage-size) * .27);
+  width: calc(var(--collage-size) * .36);
+  height: calc(var(--collage-size) * .11);
+  rotate: 7deg;
+  background: repeating-linear-gradient(100deg, #e7b6b8ad 0 4px, #f5d6c6b5 4px 8px);
+}
+
+.cozy-map__sticker {
+  position: absolute;
+  aspect-ratio: 1;
+  pointer-events: none;
+  background: url("/images/cozy-map/stickers.png") no-repeat;
+  background-size: 200% 200%;
+}
+
+.cozy-map__sticker--swans {
+  right: var(--collage-right);
+  top: var(--collage-top);
+  width: var(--collage-size);
+  rotate: -8deg;
+  filter: drop-shadow(0 3px 2px #51292c38);
+}
+
+.cozy-map__sticker--stars {
+  right: calc(var(--collage-right) - var(--collage-size) * .12);
+  top: calc(var(--collage-top) + var(--collage-size) * .13);
+  width: calc(var(--collage-size) * .49);
+  background-position: right top;
+  rotate: 9deg;
+}
+
+.cozy-map__sticker--heart {
+  right: calc(var(--collage-right) + var(--collage-size) * .13);
+  top: calc(var(--collage-top) + var(--collage-size) * .56);
+  width: calc(var(--collage-size) * .42);
+  background-position: left bottom;
+  rotate: 10deg;
+}
+
+@media (min-width: 900px) and (min-height: 560px) {
+  .cozy-map__sticker-layer {
+    --collage-size: clamp(138px, 17vw, 194px);
+    --collage-right: 20px;
+    right: 0;
+    width: min(30%, 230px);
+  }
+}
+
+@media (max-height: 520px) {
+  .cozy-map__sticker-layer { --collage-size: 72px; }
+}
+
+@media (max-width: 899px), (max-height: 559px) {
+  .cozy-map__header:has(.cozy-map__sticker-layer) { padding-right: max(132px, 34%); }
+}

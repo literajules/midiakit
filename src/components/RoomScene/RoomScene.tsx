@@ -46,6 +46,8 @@ export type RoomSceneProps = {
   background?: string;
   /** dica mostrada no modo "pan" (celular) */
   panHint?: string;
+  /** Mostra controles nos lados da cena quando há rolagem horizontal. */
+  showPanArrows?: boolean;
   /**
    * `true` (padrão): a cena esmaece/assenta conforme o scroll a revela —
    * certo pra cenas que vêm DEPOIS de outra seção (ex. cozy corner, se um
@@ -74,6 +76,7 @@ export default function RoomScene({
   layoutOptions,
   background,
   panHint = "‹ deslize para explorar ›",
+  showPanArrows = false,
   revealOnScroll = true,
   children,
 }: RoomSceneProps) {
@@ -104,6 +107,13 @@ export default function RoomScene({
   const lastFrameW = useRef(0);
   const initialLeft = useRef(0);
   const [panned, setPanned] = useState(false);
+  const [panPosition, setPanPosition] = useState(0);
+
+  function panBy(direction: -1 | 1) {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * el.clientWidth * 0.7, behavior: reduced ? "instant" : "smooth" });
+  }
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -119,7 +129,11 @@ export default function RoomScene({
       el.scrollLeft = center * layout.frameW - w / 2;
     }
     lastFrameW.current = layout.frameW;
-  }, [isPan, layout, w, focalX]);
+    if (showPanArrows) {
+      const syncPosition = requestAnimationFrame(() => setPanPosition(el.scrollLeft));
+      return () => cancelAnimationFrame(syncPosition);
+    }
+  }, [isPan, layout, w, focalX, showPanArrows]);
 
   const visibleHotspots = hotspots
     .map((def, i) => ({ def, i }))
@@ -130,6 +144,7 @@ export default function RoomScene({
     top: layout.top,
     width: layout.frameW,
     height: layout.frameH,
+    ...(isPan && showPanArrows ? { "--room-pan-center": `${panPosition + w / 2}px` } : {}),
   };
 
   return (
@@ -152,7 +167,9 @@ export default function RoomScene({
                     role: "region",
                     "aria-label": `${ariaLabel}. Deslize na horizontal para ver todos os objetos.`,
                     onScroll: (e: UIEvent<HTMLDivElement>) => {
-                      if (!panned && Math.abs(e.currentTarget.scrollLeft - initialLeft.current) > 24) setPanned(true);
+                      const { scrollLeft } = e.currentTarget;
+                      if (showPanArrows) setPanPosition(scrollLeft);
+                      if (!panned && Math.abs(scrollLeft - initialLeft.current) > 24) setPanned(true);
                     },
                   }
                 : {})}
@@ -181,6 +198,33 @@ export default function RoomScene({
               </div>
             </div>
           </div>
+
+          {isPan && showPanArrows && (
+            <>
+              <button
+                type="button"
+                className="room-scene__pan-arrow room-scene__pan-arrow--left"
+                aria-label="Explorar o lado esquerdo do quarto"
+                disabled={panPosition <= 1}
+                onClick={() => panBy(-1)}
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                className="room-scene__pan-arrow room-scene__pan-arrow--right"
+                aria-label="Explorar o lado direito do quarto"
+                disabled={panPosition >= layout.frameW - w - 1}
+                onClick={() => panBy(1)}
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </>
+          )}
 
           {isPan && (
             <span className={`room-scene__hint${panned ? " is-hidden" : ""}`} aria-hidden="true">

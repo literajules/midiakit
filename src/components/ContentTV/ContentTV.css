@@ -1,0 +1,110 @@
+.content-scrapbook {
+  color: #51252d;
+  min-height: 340svh;
+}
+.content-scrapbook__stage {
+  position: sticky;
+  top: 0;
+  background: repeating-linear-gradient(0deg, #f3e6d7 0 24px, #e9d9c8 25px 26px);
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(54px, 9svh, 88px) 0 12px;
+  overflow: hidden;
+}
+.content-scrapbook__header { position: relative; text-align: center; padding: 0 20px 15px; }
+.content-scrapbook__header::before,
+.content-scrapbook__header::after {
+  content: "";
+  position: absolute;
+  width: clamp(60px, 13vw, 150px);
+  aspect-ratio: 1;
+  background: url("/images/cozy-map/stickers.png") no-repeat;
+  background-size: 200% 200%;
+  pointer-events: none;
+}
+.content-scrapbook__header::before { left: 5%; top: -12px; rotate: -10deg; }
+.content-scrapbook__header::after { right: 5%; top: -18px; background-position: right top; rotate: 12deg; }
+.content-scrapbook__header h2 { margin: 0; font: clamp(1.4rem, 4vw, 2.4rem) var(--font-homemade-apple), cursive; }
+.content-scrapbook__header p { margin: 5px 0 0; font-size: .84rem; }
+.content-scrapbook__viewport { flex: 1; min-height: 0; overflow: clip; }
+.content-scrapbook__strip {
+  width: max-content;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(18px, 4vw, 56px);
+  padding: 16px max(16px, calc((100vw - 410px) / 2));
+  transform: translateX(var(--scrapbook-offset, 0));
+}
+.content-scrapbook__post {
+  position: relative;
+  width: min(410px, calc(100vw - 36px), 49svh);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #ddc6b6;
+  background: #fffbf2;
+  box-shadow: 0 5px 12px #51252d26;
+}
+.content-scrapbook__post::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: calc(50% - 34px);
+  width: 68px;
+  height: 17px;
+  rotate: -5deg;
+  background: repeating-linear-gradient(110deg, #d9959ca6 0 5px, #f0c1b9ab 5px 10px);
+}
+.content-scrapbook__post:nth-child(even)::before { rotate: 6deg; background: #aab89aab; }
+.content-scrapbook__post h3 { margin: 0 0 6px; font-size: .92rem; }
+.content-scrapbook__post h3 span { font-weight: normal; }
+.content-scrapbook__media {
+  --instagram-header-height: 54px;
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: white;
+}
+.content-scrapbook__media iframe {
+  position: absolute;
+  top: calc(-1 * var(--instagram-header-height));
+  left: 0;
+  width: 100%;
+  height: calc(100% + var(--instagram-header-height));
+  border: 0;
+  pointer-events: none;
+}
+.content-scrapbook__post:focus-within { outline: 2px solid #8c4653; }
+@media (prefers-reduced-motion: reduce) {
+  .content-scrapbook { min-height: auto; }
+  .content-scrapbook__stage { position: static; height: auto; }
+  .content-scrapbook__viewport { overflow: visible; }
+  .content-scrapbook__strip { width: auto; height: auto; flex-wrap: wrap; justify-content: center; padding: 16px; transform: none; }
+}
+
+.content-scrapbook__post { container-type: inline-size; }
+.content-scrapbook__labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.content-scrapbook__labels span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: .75rem;
+  line-height: 1.25;
+}
+.content-scrapbook__labels .content-scrapbook__category { background: #e2ead9; color: #304530; font-weight: 700; }
+.content-scrapbook__category[data-category="moda"] { background: #f1d1db; color: #712c48; }
+.content-scrapbook__category[data-category="vlog & lifestyle"] { background: #ddd7ee; color: #4e386e; }
+.content-scrapbook__labels .content-scrapbook__format { background: #eee0ce; color: #664631; }
+.content-scrapbook__post[data-format="reel"] .content-scrapbook__format { background: #f6dfb9; color: #684120; }
+
+.content-scrapbook__post[data-format="reel"] { width: min(360px, calc(100vw - 36px), 36svh); }
+.content-scrapbook__post[data-format="reel"] .content-scrapbook__media { aspect-ratio: 9 / 16; }
+.content-scrapbook__media iframe { height: calc(100% + var(--instagram-header-height) + 156px); }

@@ -48,7 +48,8 @@ body {
   margin: 0;
   color: var(--ink);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  overflow-x: hidden;
+  /* Clip horizontal overflow without creating a scroll container for sticky sections. */
+  overflow-x: clip;
 }
 
 body::before {

@@ -30,7 +30,7 @@ import "./FichaModal.css";
  */
 
 const TO_EMAIL = "literajules@gmail.com";
-const FORM_ENDPOINT = process.env.NEXT_PUBLIC_FICHA_FORM_ENDPOINT;
+const FORM_ENDPOINT = process.env.NEXT_PUBLIC_FICHA_FORM_ENDPOINT?.trim() || "https://formspree.io/f/mljjznvg";
 
 const FORMATOS = ["Reels", "TikTok", "YouTube", "Stories", "UGC", "Evento ou viagem"];
 const NICHOS = ["Autocuidado", "Rotina", "Moda", "Decor"];
@@ -72,7 +72,7 @@ function buildMailto(data: FichaData) {
 const STATUS_MESSAGE: Record<Status, string | null> = {
   idle: null,
   sending: "enviando…",
-  sent: "chegou! te respondo rapidinho ♡",
+  sent: "chegou aqui! te respondo em breve ♡",
   error: `não consegui enviar — escreve direto pra ${TO_EMAIL}, por favor?`,
   mailto: `abri seu e-mail com tudo prontinho, só clicar em enviar! se não abriu nada, escreve direto pra ${TO_EMAIL}.`,
 };
@@ -113,6 +113,18 @@ export default function FichaModal({ onClosed }: { onClosed: () => void }) {
     window.location.href = buildMailto(data);
     setStatus("mailto");
   };
+
+  if (status === "sent") {
+    return (
+      <SceneModal onClosed={onClosed} dialogClassName="ficha-modal ficha-modal--sent" aria-labelledby="ficha-modal-title">
+        <div className="ficha-confirmation">
+          <span className="ficha-confirmation__ziggy" aria-hidden="true" />
+
+          <p id="ficha-modal-title" role="status" className="ficha-modal__title">{STATUS_MESSAGE.sent}</p>
+        </div>
+      </SceneModal>
+    );
+  }
 
   return (
     <SceneModal onClosed={onClosed} dialogClassName="ficha-modal" aria-labelledby="ficha-modal-title">
