@@ -104,6 +104,14 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
   const [stickers, setStickers] = useState<string[]>([]);
   const [tab, setTab] = useState<"read" | "write" | "admin">(selfie ? "write" : "read");
   const [page, setPage] = useState(0);
+  const [stickersOpen, setStickersOpen] = useState(false);
+  const [promptIndex, setPromptIndex] = useState(-1);
+  const messageField = useRef<HTMLTextAreaElement>(null);
+  const prompts = [
+    t("uma coisinha boa do meu dia foi…", "one little good thing about my day was…"),
+    t("passei aqui pra te contar que…", "i stopped by to tell you that…"),
+    t("ultimamente tenho gostado de…", "lately i’ve been enjoying…"),
+  ];
   const [message, setMessage] = useState("");
   const [signature, setSignature] = useState("");
   const [includePhoto, setIncludePhoto] = useState(false);
@@ -214,15 +222,31 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
             <Page entry={draft} onMove={moveSticker} />
           </div>
           <div className="guestbook-paper">
-        <form onSubmit={submit}>
-          <label>{t("Seu recado", "Your note")}<textarea required maxLength={500} rows={4} value={message} onChange={(event) => setMessage(event.target.value)} /></label>
+        <form className="guestbook-compose" onSubmit={submit}>
+          <label>{t("Seu recado", "Your note")}<textarea ref={messageField} required maxLength={500} rows={4} value={message} onChange={(event) => setMessage(event.target.value)} /></label>
           <label>{t("Assinatura (opcional)", "Signature (optional)")}<input maxLength={40} value={signature} onChange={(event) => setSignature(event.target.value)} /></label>
           {selfie && <label className="guestbook-consent">
             <input type="checkbox" checked={includePhoto} onChange={(event) => setIncludePhoto(event.target.checked)} />
             {t("Quero incluir minha selfie e autorizo que ela apareça com o recado após aprovação.", "Include my selfie and allow it to appear with my note after approval.")}
           </label>}
-          <fieldset>
-            <legend>{t("Stickers (opcional)", "Stickers (optional)")}</legend>
+
+          <div className="guestbook-prompt">
+            <button type="button" onClick={() => setPromptIndex((index) => (index + 1) % prompts.length)}>{t("sem ideia?", "need an idea?")}</button>
+            {promptIndex >= 0 && <div>
+              <p aria-live="polite">{prompts[promptIndex]}</p>
+              {!message.trim() && <button type="button" onClick={() => {
+                setMessage(prompts[promptIndex] + " ");
+                messageField.current?.focus();
+              }}>{t("usar sugestão", "use prompt")}</button>}
+            </div>}
+          </div>
+          <button className="guestbook-send" type="submit" disabled={!message.trim()}>{t("enviar recado", "send note")}</button>
+        </form>
+          </div>
+          <button className="guestbook-sticker-tab" type="button" aria-expanded={stickersOpen}
+            aria-controls="guestbook-sticker-sheet" onClick={() => setStickersOpen((open) => !open)}>stickers ♡</button>
+          <fieldset className="guestbook-sticker-sheet" id="guestbook-sticker-sheet" hidden={!stickersOpen}>
+            <legend>{t("Cartela de stickers", "Sticker sheet")}</legend>
             <div className="guestbook-stickers">
               {stickers.map((name, i) => (
                 <button key={name} type="button" aria-label={"Sticker " + (i + 1)} aria-pressed={selection.some((item) => item.name === name)}
@@ -233,9 +257,6 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
               ))}
             </div>
           </fieldset>
-          <button type="submit" disabled={!message.trim()}>{t("enviar para aprovação", "send for approval")}</button>
-        </form>
-          </div>
         </>}
         {tab === "admin" && <div className="guestbook-paper guestbook-paper--admin">
       {tab === "admin" && !admin && <form onSubmit={unlock}>

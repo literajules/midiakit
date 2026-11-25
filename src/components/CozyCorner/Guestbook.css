@@ -122,3 +122,54 @@
   left: auto;
   right: 26px;
 }
+
+.guestbook-compose textarea,
+.guestbook-compose input:not([type="checkbox"]) {
+  border: 0;
+  border-radius: 0;
+  padding: 0 .15rem;
+  line-height: 1.75rem;
+  background: repeating-linear-gradient(to bottom, transparent 0 calc(1.75rem - 1px), #a47a6b66 calc(1.75rem - 1px) 1.75rem);
+}
+.guestbook .guestbook-sticker-tab {
+  position: absolute;
+  z-index: 3;
+  top: 18%;
+  right: 2.5%;
+  writing-mode: vertical-rl;
+  padding: .55rem .35rem;
+  background: #ead5c8;
+}
+.guestbook .guestbook-sticker-sheet {
+  position: absolute;
+  z-index: 2;
+  inset: 12% 9% auto auto;
+  width: min(38%, 330px);
+  max-height: 78%;
+  overflow: auto;
+  box-sizing: border-box;
+  margin: 0;
+  padding: .55rem;
+  border: 1px solid #c8a78f;
+  background: #fff8ed;
+  box-shadow: 0 5px 18px #41252440;
+}
+.guestbook-sticker-sheet:not([hidden]) { animation: guestbook-sheet-in .2s ease-out; }
+.guestbook-sticker-sheet .guestbook-stickers { max-height: none; overflow: visible; }
+.guestbook-sticker-sheet .guestbook-stickers button { border-color: transparent; background: transparent; }
+.guestbook-sticker-sheet .guestbook-stickers button[aria-pressed="true"] { background: #ead5c8; }
+.guestbook-sticker-sheet .guestbook-stickers button:hover img { transform: rotate(-8deg); }
+.guestbook-prompt p { margin: .35rem 0; font-style: italic; }
+.guestbook .guestbook-prompt button {
+  border: 0;
+  background: transparent;
+  color: #6e363e;
+  text-decoration: underline;
+}
+.guestbook-send { justify-self: start; }
+@keyframes guestbook-sheet-in {
+  from { transform: translateX(12px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guestbook-sticker-sheet:not([hidden]) { animation: none; }
+}
