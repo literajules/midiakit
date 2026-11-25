@@ -168,35 +168,24 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
 
   return (
     <SceneModal onClosed={onClosed} dialogClassName="guestbook" aria-labelledby="guestbook-title">
-      <header>
-        <h2 id="guestbook-title">meu journal</h2>
-        <p>livro de visitas do cozy corner</p>
-      </header>
-      <p className="guestbook-preview">Preview local. Os recados ficam neste navegador.</p>
-      <nav aria-label="Livro de visitas">
-        <button type="button" aria-pressed={tab === "read"} onClick={() => setTab("read")}>folhear</button>
-        <button type="button" aria-pressed={tab === "write"} onClick={() => setTab("write")}>deixar um recado</button>
-        <button type="button" aria-pressed={tab === "admin"} onClick={() => setTab("admin")}>admin</button>
+      <h2 id="guestbook-title" className="guestbook-sr-only">Meu journal</h2>
+      <nav className="guestbook-tabs" aria-label="Livro de visitas">
+        {tab !== "read" && <button type="button" onClick={() => setTab("read")}>folhear</button>}
+        {tab !== "write" && <button type="button" onClick={() => setTab("write")}>deixar um recado</button>}
+        {tab !== "admin" && <button type="button" onClick={() => setTab("admin")}>admin</button>}
       </nav>
-      {notice && <p role="status">{notice}</p>}
-      {tab === "read" && (
-        <>
-          <div className="guestbook-spread">
-            {[0, 1].map((side) => (
-              <div className="guestbook-paper" key={side}>
-                {pages[index * 2 + side]?.map((entry) => <Page entry={entry} key={entry.id} />)}
-                {side === 0 && !pages.length && <p>Ainda não há recados aprovados.</p>}
-              </div>
-            ))}
+      <div className="guestbook-spread">
+        {tab === "read" && [0, 1].map((side) => (
+          <div className="guestbook-paper" key={side}>
+            {pages[index * 2 + side]?.map((entry) => <Page entry={entry} key={entry.id} />)}
+            {side === 0 && !pages.length && <p className="guestbook-page">Ainda não há recados aprovados.</p>}
           </div>
-          {spreads > 0 && <div className="guestbook-pages">
-            <button type="button" disabled={index === 0} onClick={() => setPage(index - 1)}>← anterior</button>
-            <span>{index + 1} / {spreads}</span>
-            <button type="button" disabled={index === spreads - 1} onClick={() => setPage(index + 1)}>próxima →</button>
-          </div>}
-        </>
-      )}
-      {tab === "write" && (
+        ))}
+        {tab === "write" && <>
+          <div className="guestbook-paper guestbook-paper--draft">
+            <Page entry={draft} onMove={moveSticker} />
+          </div>
+          <div className="guestbook-paper">
         <form onSubmit={submit}>
           <label>Seu recado<textarea required maxLength={500} rows={4} value={message} onChange={(event) => setMessage(event.target.value)} /></label>
           <label>Assinatura (opcional)<input maxLength={40} value={signature} onChange={(event) => setSignature(event.target.value)} /></label>
@@ -220,10 +209,11 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
             {selection.map((sticker, i) => <button type="button" key={sticker.name}
               onClick={() => moveSticker(sticker.name, { angle: (sticker.angle + 15) % 360 })}>girar sticker {i + 1}</button>)}
           </div>}
-          <Page entry={draft} onMove={moveSticker} />
           <button type="submit" disabled={!message.trim()}>enviar para aprovação</button>
         </form>
-      )}
+          </div>
+        </>}
+        {tab === "admin" && <div className="guestbook-paper guestbook-paper--admin">
       {tab === "admin" && !admin && <form onSubmit={unlock}>
         <label>Senha de admin<input required type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
         <button type="submit">entrar</button>
@@ -241,6 +231,14 @@ export default function Guestbook({ selfie, onClosed }: { selfie: string | null;
           ))}
         </section>
       )}
+        </div>}
+        {tab === "read" && spreads > 1 && <div className="guestbook-pages">
+          <button type="button" aria-label="Página anterior" disabled={index === 0} onClick={() => setPage(index - 1)}>←</button>
+          <span>{index + 1} / {spreads}</span>
+          <button type="button" aria-label="Próxima página" disabled={index === spreads - 1} onClick={() => setPage(index + 1)}>→</button>
+        </div>}
+      </div>
+      {notice && <p className="guestbook-notice" role="status">{notice}</p>}
     </SceneModal>
   );
 }

@@ -1,26 +1,29 @@
 .scene-modal__dialog.guestbook {
-  width: min(860px, 100%);
+  width: min(960px, 100%, calc((100dvh - 100px) * 1.5));
+  max-height: none;
+  overflow: visible;
   color: #412524;
-  background: #fff4e2;
-  border: 3px solid #804746;
-  border-radius: 14px;
-  padding: clamp(18px, 5vw, 42px);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
 }
-.guestbook h2 { font: 2.2rem var(--font-script, Georgia); margin: 0; }
-.guestbook header p { margin: 0 0 1rem; }
-.guestbook-preview { font-size: .8rem; }
-.guestbook nav, .guestbook-pages, .guestbook-decoration { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; }
+.guestbook-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.guestbook-tabs { position: absolute; z-index: 1; left: 15%; bottom: 90%; display: flex; gap: .3rem; }
+.guestbook .scene-modal__close { right: 7%; top: 0; }
+.guestbook-notice { position: absolute; left: 14%; bottom: 0; margin: 0; color: white; background: #412524; border-radius: .4rem; padding: .2rem .5rem; font-size: .75rem; }
 .guestbook button { border: 1px solid #9d6b62; border-radius: 8px; padding: .45rem .7rem; cursor: pointer; background: #fff8ed; }
 .guestbook button[aria-pressed="true"], .guestbook button[type="submit"] { background: #804746; color: white; }
 .guestbook button:disabled { opacity: .45; cursor: default; }
 .guestbook form, .guestbook label { display: grid; gap: .4rem; }
-.guestbook form { margin-top: 1rem; gap: .9rem; }
+.guestbook form { margin: 0; gap: .55rem; }
 .guestbook textarea, .guestbook input:not([type="checkbox"]) { width: 100%; border: 1px solid #b99383; border-radius: 6px; background: #fffaf3; padding: .55rem; }
 .guestbook label.guestbook-consent { display: flex; align-items: start; }
 .guestbook-stickers { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: .3rem; max-height: 132px; overflow: auto; }
 .guestbook-stickers button { padding: .2rem; }
 .guestbook-stickers img { width: 100%; height: 38px; object-fit: contain; }
-.guestbook-page { display: flow-root; margin: .8rem 0; padding: 1rem; min-height: 120px; background: #fffbf2; border: 1px solid #dfc4ab; border-radius: 8px; overflow-wrap: anywhere; }
+.guestbook-page { display: flow-root; margin: 0; padding: .55rem; min-height: 120px; overflow-wrap: anywhere; font-family: var(--font-homemade-apple), cursive; line-height: 1.85; }
 .guestbook-page p { white-space: pre-wrap; }
 .guestbook-review button { margin-right: .4rem; }
 
@@ -31,8 +34,9 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 3%;
   aspect-ratio: 736 / 490;
-  padding: 9% 15% 8%;
-  margin: .8rem 0;
+  padding: 10% 15% 9%;
+  margin: 0;
+  grid-template-rows: minmax(0, 1fr);
 }
 .guestbook-spread::before {
   content: "";
@@ -73,7 +77,16 @@
 .guestbook button.guestbook-sticker:active { cursor: grabbing; }
 .guestbook-sticker img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .guestbook-rotation { display: flex; gap: .35rem; flex-wrap: wrap; }
-@media (max-width: 560px) {
-  .guestbook-spread { min-height: 320px; padding-inline: 13%; }
-  .guestbook-paper .guestbook-page { padding-inline: .35rem; }
+
+.guestbook-paper--draft .guestbook-page { min-height: 95%; }
+.guestbook-paper--admin { grid-column: 1 / -1; padding: 0 4%; }
+.guestbook-paper fieldset { min-width: 0; margin: 0; }
+.guestbook-paper textarea { resize: vertical; }
+.guestbook-pages { position: absolute; inset: auto 15% 10% 15%; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.guestbook-pages button { pointer-events: auto; }
+@media (max-width: 620px) {
+  .guestbook-spread { aspect-ratio: auto; height: min(68dvh, 480px); padding: 15% 13% 14%; }
+  .guestbook-paper .guestbook-page { padding-inline: .2rem; font-size: .72rem; }
+  .guestbook-tabs button, .guestbook-paper form { font-size: .72rem; }
+  .guestbook-stickers { grid-template-columns: repeat(auto-fill, minmax(32px, 1fr)); }
 }
