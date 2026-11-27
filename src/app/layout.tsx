@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Geist, Geist_Mono, Homemade_Apple, Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import CustomCursor from "@/components/CustomCursor/CustomCursor";
 import SoundToggle from "@/components/SoundToggle/SoundToggle";
 import "./globals.css";
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <CustomCursor />
         <SoundToggle />
         <LanguageProvider>{children}</LanguageProvider>
+        <Analytics />
       </body>
     </html>
   );
